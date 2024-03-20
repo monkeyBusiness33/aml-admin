@@ -1,0 +1,275 @@
+{% load static %}
+{% load filters %}
+{{ pax_payload_formset.0.media.css }}
+
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+            {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        {% if metacontext.text %}
+            {% autoescape off %}
+                <p>{{ metacontext.text }}</p>
+            {% endautoescape %}
+        {% endif %}
+
+        <div id="passengers_payload_section" class="formset-section">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+            Passengers
+        </span>
+            {{ pax_payload_formset.management_form }}
+            {{ pax_payload_formset.non_field_errors }}
+            {% for error in form.non_form_errors %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        {{ error }}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+                    <thead class="thead-light">
+                    <tr>
+                        <th class="border-0 text-center">Male/Female</th>
+                        <th class="border-0 text-center">Weight (lbs)</th>
+                        <th class="border-0 text-center">Notes</th>
+                        <th class="border-0 text-center">Arriving</th>
+                        <th class="border-0 text-center">Departing</th>
+                        <th class="border-0"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for form in pax_payload_formset %}
+                        {{ form.management_form }}
+                        {{ form.non_field_errors }}
+                        {{ form.non_form_errors }}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <tr id="id_{{ form.prefix }}_card"
+                            class="formset-row{% if forloop.counter > handling_request.passengers_count|default:4 and not form.gender.value %} d-none{% endif %}">
+                            <td class="border-0 w-20 p-1 pe-3">
+                                <div>
+                                    <span class="passenger-identifier-value"
+                                          style="min-width: 3px;">{{ form.identifier.value|default:'-' }}</span>
+                                    {{ form.identifier }}
+                                    {{ form.gender }}
+                                </div>
+                            </td>
+                            <td class="border-0 w-15 p-1">
+                                {{ form.weight }}
+                            </td>
+                            <td class="border-0 w-50 p-1">
+                                {{ form.note }}
+                            </td>
+                            <td class="border-0 w-50 text-center">
+                                <span class="align-middle">
+                                    {{ form.is_arrival }}
+                                </span>
+                            </td>
+                            <td class="border-0 w-50 text-center">
+                                <span class="align-middle">
+                                    {{ form.is_departure }}
+                                </span>
+                            </td>
+                            <td class="border-0 p-1">
+                                <span class="d-none">{{ form.DELETE }}</span>
+                                <button data-form-pre="{{ form.prefix }}"
+                                        class="btn btn-sm btn-outline-danger formset-row-del-btn"
+                                        data-persistent="{% if form.gender.value %}true{% else %}false{% endif %}"
+                                        type="button">Remove
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% if pax_payload_formset.errors|is_formset_has_errors:'gender' %}
+                    <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                        <i class="fas fa-exclamation-triangle me-3"></i>
+                        <div>
+                            Please submit values minimum for <b>{{ handling_request.passengers_count }}</b> passengers
+                        </div>
+                    </div>
+                {% elif pax_payload_formset.errors|is_formset_has_errors:'weight,is_arrival,is_departure' %}
+                    <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                        <i class="fas fa-exclamation-triangle me-3"></i>
+                        <div>
+                            Please specify Weight and Arriving/Departing values
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-2">
+                <button class="btn btn-outline-success formset-row-add-btn"
+                        data-add-by="1" type="button">Add More Passengers
+                </button>
+            </div>
+            <div class="row">
+                <div class="col mb-3"></div>
+            </div>
+
+        </div>
+
+    <!-- Cargo Payload Section -->
+    <div id="cargo_payload_section" class="formset-section">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+            Cargo
+        </span>
+            {{ cargo_payload_formset.management_form }}
+            {{ cargo_payload_formset.non_field_errors }}
+            {% for error in cargo_payload_formset.non_form_errors %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        {{ error }}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+                    <thead class="thead-light">
+                    <tr>
+                        <th class="border-0 text-center">Description</th>
+                        <th class="border-0 text-center">Dimensions (inches)</th>
+                        <th class="border-0 text-center">Weight (lbs)</th>
+                        <th class="border-0 text-center">Quantity</th>
+                        <th class="border-0 text-center">DG?</th>
+                        <th class="border-0 text-center">Notes</th>
+                        <th class="border-0 text-center">Arriving</th>
+                        <th class="border-0 text-center">Departing</th>
+                        <th class="border-0"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for form in cargo_payload_formset %}
+                        {{ form.management_form }}
+                        {{ form.non_field_errors }}
+                        {{ form.non_form_errors }}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <tr id="id_{{ form.prefix }}_card"
+                            class="formset-row{% if forloop.counter > 4 and not form.description.value %} d-none{% endif %}">
+                            <td class="border-0 w-30 p-1">
+                                {{ form.description }}
+                            </td>
+                            <td class="border-0 w-20 p-1">
+                                <div class="row g-3">
+                                    <div class="col px-1">{{ form.length }}</div>
+                                    <div class="col px-1">{{ form.width }}</div>
+                                    <div class="col px-1">{{ form.height }}</div>
+                                </div>
+                            </td>
+                            <td class="border-0 w-5 p-1 text-center">
+                                <span class="align-middle">
+                                    {{ form.weight }}
+                                </span>
+                            </td>
+                            <td class="border-0 w-5 p-1 text-center">
+                                <span class="align-middle">
+                                    {{ form.quantity }}
+                                </span>
+                            </td>
+                            <td class="border-0 w-5 text-center">
+                                <span class="align-middle">
+                                    {{ form.is_dg }}
+                                </span>
+                            </td>
+                            <td class="border-0 w-50 p-1 text-center">
+                                <span class="align-middle">
+                                    {{ form.note }}
+                                </span>
+                            </td>
+                            <td class="border-0 w-10 text-center">
+                                <span class="align-middle">
+                                    {{ form.is_arrival }}
+                                </span>
+                            </td>
+                            <td class="border-0 w-10 text-center">
+                                <span class="align-middle">
+                                    {{ form.is_departure }}
+                                </span>
+                            </td>
+                            <td class="border-0 p-1">
+                                <span class="d-none">{{ form.DELETE }}</span>
+                                <button data-form-pre="{{ form.prefix }}"
+                                        data-persistent="{% if form.description.value %}true{% else %}false{% endif %}"
+                                        class="btn btn-sm btn-outline-danger formset-row-del-btn" type="button">Remove
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% if cargo_payload_formset.errors|is_formset_has_errors:'weight,is_arrival,is_departure' %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>
+                        Please specify Dimensions, Weight, Quantity and Arriving/Departing values
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mt-2">
+                <button class="btn btn-outline-success formset-row-add-btn"
+                        data-add-by="1" type="button">Add More Cargo
+                </button>
+            </div>
+            <div class="row">
+                <div class="col mb-3"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <div class="me-auto">
+            <span>Total Payload (Arrival/Departure): </span>
+            <span id="payload_total_value" class="fw-bold"></span>
+        </div>
+
+        <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}"
+                data-bs-dismiss="modal">Close
+        </button>
+        <button class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+                type="submit">Update Payload
+        </button>
+    </div>
+
+</form>
+
+<script type="text/javascript" charset="utf8">
+    var handling_request_passengers = "{{ handling_request.passengers_count }}"
+    var pax_weight_male = "{{ handling_request.customer_organisation.operator_details.pax_weight_male }}"
+    var pax_weight_female = "{{ handling_request.customer_organisation.operator_details.pax_weight_female }}"
+</script>
+
+{{ pax_payload_formset.0.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2_modal_formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/handling_request_payload.js' %}"></script>

@@ -1,0 +1,13 @@
+<tr>
+  <td class="pax_payload_rank"></td>
+  <td>&nbsp;</td>
+  <td class="pax_payload_pax_weight">{{ passenger.weight }}</td>
+  <td>{{ passenger.note|default:'' }}</td>
+  {% for mission_leg in mission.active_legs %}
+    <td class="payload_flight_leg_col">
+      {% if mission_leg in passenger.mission_legs.all %}
+        X
+      {% endif %}
+    </td>
+  {% endfor %}
+</tr>

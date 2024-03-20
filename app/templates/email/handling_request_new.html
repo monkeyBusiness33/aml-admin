@@ -1,0 +1,89 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+{% block content %}
+<p>Dear Military Team,</p>
+
+<p>
+    Please process the following Servicing & Fueling Request:
+</p>
+
+<p>
+<table>
+    <tbody>
+        <tr>
+            <td>Location Identifier:</td>
+            <td><b>{{ handling_request.location_tiny_repr }}</b></td>
+        </tr>
+
+        <tr>
+            <td>ETA:</td>
+            <td><b>{{ handling_request.arrival_movement.date|date:'M-d-Y H:i' }}Z</b></td>
+        </tr>
+
+        <tr>
+            <td>ETD:</td>
+            <td><b>{{ handling_request.departure_movement.date|date:'M-d-Y H:i' }}Z</b></td>
+        </tr>
+
+        <tr>
+            <td>Callsign:</td>
+            <td><b>{{ handling_request.callsign }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Aircraft Type:</td>
+            <td><b>{{ handling_request.aircraft_type }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Fuel Requested:</td>
+            <td><b>{{ handling_request.fuel_required|lower|capfirst }} {{ handling_request.fuel_quantity }} {{ handling_request.fuel_unit }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Unit:</td>
+            <td><b>{{ handling_request.customer_organisation.details.registered_name }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Requested By:</td>
+            <td><b>{{ handling_request.primary_contact.details.first_name }} {{ handling_request.primary_contact.details.last_name }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Arrival Services:</td>
+            <td>
+                {% for service in handling_request.arrival_movement.hr_services.all %}
+                    <b>{{ service }}</b>{% if not forloop.last %}, {% else %}.{% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+
+        <tr>
+            <td>Departure Services:</td>
+            <td>
+                {% for service in handling_request.departure_movement.hr_services.all %}
+                    <b>{{ service }}</b>{% if not forloop.last %}, {% else %}.{% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+
+</p>
+
+<p>
+<center>
+    <a href="http://{{domain}}{{handling_request_url}}" target="_blank">
+        <button class="button">Servicing & Fueling Request Details</button>
+    </a>
+</center>
+</p>
+
+{% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

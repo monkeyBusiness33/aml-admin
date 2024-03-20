@@ -1,0 +1,31 @@
+{% load partition_filters %}
+<div class="table-responsive">
+    <table class="table align-items-center table-flush mb-2">
+        <thead class="thead-light">
+            <tr>
+                <th class="border-bottom" scope="col">Taken</th>
+                <th class="border-bottom" scope="col">Service</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in handling_request.spf.dla_taken_services_list %}
+                <tr class="border-bottom">
+                    <td class="services_table_checkbox">{% if row.taken %}<i class="fas fa-check text-success"></i>{% endif %}</td>
+                    <td>{{ row.service.name }}</td>
+                </tr>
+            {% endfor %}
+            {% for row in handling_request.spf.custom_services_list_api %}
+                <tr class="border-bottom">
+                    <td class="services_table_checkbox">
+                        {% if row.taken %}
+                            <i class="fas fa-check text-success"></i>
+                        {% elif row and not row.taken%}
+                            <i class="fas fa-times text-danger"></i>
+                        {% endif %}
+                    </td>
+                    <td>{{ row.service.name }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,135 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+            {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        {% if metacontext.text %}
+            {% autoescape off %}
+                <p>{{ metacontext.text }}</p>
+            {% endautoescape %}
+        {% endif %}
+
+        {% if metacontext.text_danger %}
+            {% autoescape off %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>
+                        {{ metacontext.text_danger }}
+                    </div>
+                </div>
+            {% endautoescape %}
+        {% endif %}
+
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    {{ error }}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="h5 mt-3 mb-1">First Request in Updated Sequence</div>
+        <div class="row mt-3">
+            <div class="col-xxl-6 col-xl-6 mb-3">
+                {% include 'includes/_form_field.html' with field=form.arrival_date %}
+            </div>
+            <div class="col-xxl-6 col-xl-6 mb-3">
+                {% include 'includes/_form_field.html' with field=form.arrival_time %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xxl-6 col-xl-6 mb-3">
+                {% include 'includes/_form_field.html' with field=form.departure_date %}
+            </div>
+            <div class="col-xxl-6 col-xl-6 mb-3">
+                {% include 'includes/_form_field.html' with field=form.departure_time %}
+            </div>
+        </div>
+        <hr>
+
+        <div class="h5 mt-3 mb-1">Recurring Requests</div>
+        <div id="recurrence_details_section" class="">
+            <div class="row">
+                <div class="col-xxl-12 col-xl-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.specific_recurrence_dates %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xxl-12 col-xl-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.operating_days %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xxl-6 col-xl-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.final_recurrence_date %}
+                </div>
+                <div class="col-xxl-6 col-xl-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.weeks_of_recurrence %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal"
+                class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+            Close
+        </button>
+        <button id="cancel_recurrence_requests_btn" type="button" class="btn btn-danger">
+            Cancel Sequence
+        </button>
+        {% if metacontext.multi_button %}
+            <button id="multi_button_1" type="submit" value="False" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+                {{ metacontext.action_button1_text|default:'Decline' }}
+            </button>
+            <button id="multi_button_2" type="submit" value="True" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+                {{ metacontext.action_button2_text|default:'Confirm' }}
+            </button>
+        {% else %}
+            {% if not metacontext.hide_action_button and not form.hide_action_button %}
+                <button type="submit"
+                        class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+                        {% if action_button_disabled %} disabled {% endif %}>
+                    {{ metacontext.action_button_text|default:'Save' }}
+                </button>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript">
+    is_update_recurrence_modal = true
+
+    $('button[name="multi_button"]').click(function () {
+        $("#id_multi_button").val($(this).val()).trigger('change')
+    });
+</script>
+{% if request.app_mode == 'ops_portal' %}
+    <script type="text/javascript">
+        cancel_recurrence_url = "{% url 'admin:handling_request_cancel_recurrence' form.instance.pk %}"
+    </script>
+{% elif request.app_mode == 'dod_portal' %}
+    <script type="text/javascript">
+        cancel_recurrence_url = "{% url 'dod:handling_request_cancel_recurrence' form.instance.pk %}"
+    </script>
+{% endif %}
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/sfr_recurrence.js' %}"></script>

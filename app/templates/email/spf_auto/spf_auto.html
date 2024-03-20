@@ -1,0 +1,198 @@
+{% extends "email/base.html" %}
+{% load spf_auto_tags %}
+{% load tz %}
+
+{% block stylesheets %}
+    <style>
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        th {
+            background: #b3bdc6;
+        }
+        table td, table th {
+            padding: 5px;
+        }
+        tbody td, th {
+            border-style: solid;
+            border-color: #b3bdc6;
+        }
+        .info-table th {
+            width: 30%;
+            text-align: start;
+        }
+        .info-table td {
+            width: 60%;
+        }
+        .service-taken-bg {
+            background: #9ae3cb;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% autoescape on %}
+    {% block content %}
+        <p>Dear {{ handling_request.handling_agent.details.registered_name }},</p>
+
+        <p>
+        AML Global Limited requests ground handling services for the below DIPLOMATIC flight operating into
+            {{ handling_request.location_short_repr }}.
+        </p>
+
+        <h4>Aircraft & Operator Information</h4>
+        <table class="info-table">
+        <tbody>
+            <tr>
+                <th>Operator</th>
+                <td>US Department of Defense</td>
+            </tr>
+            <tr>
+                <th>Type of Flight</th>
+                <td>Diplomatic</td>
+            </tr>
+            <tr>
+                <th>Callsign</th>
+                <td>{{ handling_request.callsign }}</td>
+            </tr>
+            <tr>
+                <th>Aircraft Registration</th>
+                <td>{{ handling_request.tail_number|default:'TBC' }}</td>
+            </tr>
+            <tr>
+                <th>Aircraft Type</th>
+                <td>{{ handling_request.aircraft_type|default:'' }}</td>
+            </tr>
+            <tr>
+                <th>MTOW</th>
+                <td>
+                {{ handling_request.aircraft_mtow_override_kg_text }} / {{ handling_request.aircraft_mtow_override_lbs_text }}
+                </td>
+            </tr>
+        </tbody>
+        </table>
+
+        <h4>Flight Schedule</h4>
+        <table class="info-table">
+        <tbody>
+            <tr>
+                <th>Location</th>
+                <td>{{ handling_request.location_short_repr }}</td>
+            </tr>
+            <tr>
+                <th>Arrival From</th>
+                <td>
+                    {% if handling_request.arrival_movement.airport %}
+                        {{ handling_request.arrival_movement.airport.short_repr }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>ETA</th>
+                <td>
+                    {% localtime off %}
+                        {{ handling_request.arrival_movement.date_local|date:'M-d-Y H:i' }}
+                    {% endlocaltime %} local /
+                    {{ handling_request.arrival_movement.date|date:'M-d-Y H:i' }} UTC
+                </td>
+            </tr>
+            <tr>
+                <th>ETD</th>
+                <td>
+                    {% localtime off %}
+                        {{ handling_request.departure_movement.date_local|date:'M-d-Y H:i' }}
+                    {% endlocaltime %} local /
+                    {{ handling_request.departure_movement.date|date:'M-d-Y H:i' }} UTC
+                </td>
+            </tr>
+            <tr>
+                <th>Destination</th>
+                <td>
+                    {% if handling_request.departure_movement.airport %}
+                        {{ handling_request.departure_movement.airport.short_repr }}
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+        </table>
+
+        <h4>Services Requested</h4>
+        <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Service</th>
+            <th>Arrival</th>
+            <th>Departure</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Fuel</td>
+            {% include 'email/spf_auto/_fuel_details.html' with direction_code='ARRIVAL' %}
+            {% include 'email/spf_auto/_fuel_details.html' with direction_code='DEPARTURE' %}
+        </tr>
+        {% for service in requested_services %}
+            <tr>
+                <td>
+                    {{ service.name }}
+                </td>
+                {% with handling_request|get_handling_request_service_arrival_details:service as arrival_hr_service %}
+                    {% include 'email/spf_auto/_service_details.html' with hr_service=arrival_hr_service %}
+                {% endwith %}
+                {% with handling_request|get_handling_request_service_departure_details:service as departure_hr_service %}
+                    {% include 'email/spf_auto/_service_details.html' with hr_service=departure_hr_service %}
+                {% endwith %}
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        <p>
+            <strong>Payment:</strong>
+            {% if is_hotel_transportation_requested %}
+                Please place all charges to the AML Global Limited account, with the exception of
+                any "Hotel Transportation" costs;
+                <u><i>
+                    The crew will pay for this with their own credit card, as this item cannot be invoiced in
+                    accordance with US Government AIR Card regulations.
+                </i></u>
+            {% else %}
+                Please place all charges to the AML Global Limited account.
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>Important:</strong> Please have the aircrew sign the attached Services Provided Form (SPF) prior to departure and return this form to AML Global via email, along with a photo of the AIR Card and all invoices for services provided.
+            For further information on this process please see our short <a href="https://vimeo.com/847040816">guidance video</a>.
+        </p>
+
+        <p>Kindly confirm receipt of this request and that all services have been arranged.</p>
+        <p>
+            Very respectfully,<br><br>
+        </p>
+        <p>
+            {{ requester_person.fullname }}
+            {% if requester_position %}
+                <br>{% if requester_position.organisation.trading_or_registered_name %}
+                    {{ requester_position.organisation.trading_or_registered_name }} |
+                {% endif %}
+                {{ requester_position.job_title }}
+                <br>
+                {% if requester_position.contact_phone %}
+                    <br>Mobile / WhatsApp: {{ requester_position.contact_phone }}
+                {% endif %}
+                <br>Ops: +1-786-220-1154 | ops@amlglobal.net
+                {% if requester_position.contact_email %}
+                    <br>Email: {{ requester_position.contact_email }}
+                {% endif %}
+
+
+            {% endif %}
+        </p>
+
+    {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

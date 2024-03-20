@@ -1,0 +1,5 @@
+/* Hide disabled options from the select2 dropdown instead of showing them in grey */
+.select2-results__option[aria-disabled=true][data-select2-id*="pricing_native_unit"],
+.select2-results__option[aria-disabled=true][data-select2-id*="pricing_converted_unit"] {
+    display: none;
+}

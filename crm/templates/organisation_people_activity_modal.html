@@ -1,0 +1,113 @@
+{% load static %}
+{{organisation_people_activity_form.media.css }}
+{{activity_attachment_formset.media.css }}
+
+<form id="crm_activity_form" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas fa-file-invoice"></i> Add Activity</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+
+    <div class="row">
+        <div class="col">
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_people_activity_form.datetime_local %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    {% include 'includes/_form_field.html' with field=organisation_people_activity_form.datetime %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_people_activity_form.crm_activity %}
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_people_activity_form.description %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id='add_activity_attachments'>
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-1 fw-bold">
+            Attachments
+        </span>
+
+        {{ activity_attachment_formset.management_form }}
+        {{ activity_attachment_formset.non_field_errors }}
+        {{ activity_attachment_formset.non_form_errors }}
+
+        <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0 rounded">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="border-0 text-center">File</th>
+                        <th class="border-0 text-center">Description</th>
+                        <th class="border-0"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in activity_attachment_formset %}
+                        {{ form.management_form }}
+                        {{ form.non_field_errors }}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <tr id="id_{{ form.prefix }}_card" class="formset_row{% if forloop.counter > 2 and not form.description.value %} d-none{% endif %}">
+                            <td class="border-0 w-50 p-1">
+                                <div>
+                                    {{ form.file }}
+                                </div>
+                            </td>
+                            <td class="border-0 w-50 p-1">
+                                {{ form.description }}
+                            </td>
+                            <td class="border-0 p-1">
+                                <span class="d-none">{{ form.DELETE }}</span>
+                                <button data-form-pre="{{ form.prefix }}" class="btn btn-sm btn-outline-danger formset_row_del_btn" type="button">Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-2">
+            <button id="formset_row_add_btn" data-add-by="2" type="button" class="btn btn-outline-success">Add More Attachments</button>
+        </div>
+        <div class="row">
+            <div class="col mb-3"></div>
+        </div>
+
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}" data-bs-dismiss="modal">Back</button>
+    <button type="submit" class="submit-btn btn btn-secondary">Save Activity</button>
+  </div>
+
+</form>
+
+{{organisation_people_activity_form.media.js }}
+{{activity_attachment_formset.media.js }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment-with-locales.min.js"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/crm_add_activity_modal.js' %}"></script>

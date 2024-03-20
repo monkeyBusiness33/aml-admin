@@ -1,0 +1,10 @@
+- model: handling.movementdirection
+  pk: 1
+  fields:
+    code: "ARRIVAL"
+    name: "On Arrival"
+- model: handling.movementdirection
+  pk: 2
+  fields:
+    code: "DEPARTURE"
+    name: "On Departure"

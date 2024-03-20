@@ -1,0 +1,9 @@
+
+#daily-schedule-table td, #daily-schedule-table th {
+    min-width: 220px;
+    max-width: 220px;
+}
+
+#daily-schedule-table td {
+    height: 150px;
+}

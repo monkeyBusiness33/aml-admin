@@ -1,0 +1,15 @@
+<div class="row align-items-center mb-3">
+  <div class="col-8">
+    <h2 class="fs-5 fw-bold mb-0">Supplier Fuel Agreement Details
+      {% if agreement.voided_at %}
+        <span class="badge bg-gray-900 align-text-bottom">Voided</span>
+      {% endif %}
+      {% if agreement.superseded_by %}
+        <span class="badge bg-warning align-text-bottom">Superseded</span>
+      {% endif %}
+    </h2>
+    <small>
+      {{ agreement.get_aml_reference|default:'' }}
+    </small>
+  </div>
+</div>

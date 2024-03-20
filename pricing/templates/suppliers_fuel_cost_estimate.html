@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Supplier Fuel Cost Estimate {% endblock %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'assets/vendor/select2/select2.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0">Supplier Fuel Cost Estimate</h2>
+    </div>
+</div>
+
+<div class="fuel-pricing-container details-section">
+    <div class="col-12 col-xl-12">
+        {% include 'pricing_pages_includes/_fuel_pricing_calculation.html' %}
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+  const metacontext = {{ metacontext|safe }};
+  const context = "{{ context }}";
+  const airport = {{ airport|default:'null' }};
+  let results = null;
+</script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/select2/select2.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/fuel_pricing_calculation.js' %}"></script>
+{% endblock javascripts %}

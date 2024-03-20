@@ -1,0 +1,30 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+{% block content %}
+<p>Dear Military Team,</p>
+
+<p>
+    The servicing & fueling request for {{ handling_request.callsign }} on
+    {{ handling_request.arrival_movement.date|date:'M-d-Y H:i' }}Z at
+    {{ handling_request.location_tiny_repr }}
+    {% if auto_cancellation_reason %}
+        has been auto-cancelled due to a {{ auto_cancellation_reason }} by {{ author.fullname }}.
+    {% else %}
+        has been cancelled by {{ author.fullname }}
+    {% endif %}
+</p>
+
+<p>
+    <center>
+        <a href="http://{{domain}}{{handling_request_url}}" target="_blank">
+            <button class="button">Servicing & Fueling Request Details</button>
+        </a>
+    </center>
+</p>
+
+{% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

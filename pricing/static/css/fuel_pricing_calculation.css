@@ -1,0 +1,155 @@
+#fuel-pricing-calculation-form .card,
+#fuel-pricing-calculation-details-modal .card {
+    overflow-x: auto;
+}
+
+#fuel-pricing-calculation-form .card-content,
+#fuel-pricing-calculation-details-modal .card-content {
+    overflow-x: auto;
+}
+
+#fuel-pricing-calculation-form .toggle.btn {
+    min-width: 5rem;
+    min-height: 2.45rem;
+}
+
+/* SUPPLIER FUEL PRICING TABLE */
+
+#supplier_fuel_pricing_header {
+    border-radius: 0.3rem 0.3rem 0 0;
+}
+
+#fuel-pricing-results .expandable-card {
+    margin: 0;
+    border-radius: 0 0 0.3rem 0.3rem;
+}
+
+#fuel-pricing-results tbody tr.results-ok {
+    /*background-color: #9aef9999;*/
+}
+
+#fuel-pricing-results tbody tr.results-warning {
+    /*background-color: #FFEE7E99;*/
+}
+
+#fuel-pricing-results tbody tr.results-error {
+    /*background-color: #ca4d6899;*/
+}
+
+#fuel-pricing-results tbody tr.results-least-expensive {
+    background-color: #9aef9999;
+}
+
+#fuel-pricing-results tr:not(:last-child) {
+    border-bottom: 0.1px solid var(--bs-gray-200);
+}
+
+#fuel-pricing-results th {
+    background-color: #f2f4f6;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+#fuel-pricing-results td:not(:last-child) {
+    font-size: 0.75rem;
+}
+
+
+/* PRICING DETAILS MODAL */
+
+.discount-details {
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.taxes-results-wrapper {
+    min-width: 450px;
+}
+
+#fuel-pricing-calculation-details-modal .tax-name {
+    font-weight: unset !important;
+}
+
+.tax-unit {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.tax-highlight-diff .tax-unit,
+.tax-highlight-match .tax-unit,
+.tax-component-total,
+.tax-component-unit {
+    font-size: smaller;
+}
+
+.tooltip-inner {
+    max-width: min(80vw, 800px);
+}
+
+.tooltip-inner ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+    text-align: left;
+}
+
+.tooltip-inner li {
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+}
+
+.tooltip-inner li:not(:last-child) {
+    padding-bottom: 0.2rem;
+}
+
+.tooltip-issue {
+    position: relative;
+    left: -0.25rem;
+}
+
+#fuel-pricing-calculation-details-modal .fa-info-circle {
+    position: relative;
+    margin-right: -1.2rem;
+    left: -1.4rem;
+}
+
+@media (max-width: 500px) {
+    #calculate_pricing_scenario_btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 992px) {
+    .tax-type-label {
+        height: 4rem;
+        vertical-align: top;
+    }
+
+    .tax-label-long {
+        max-width: 50%;
+    }
+}
+
+.issues-line-item {
+    text-indent: -1.2rem;
+    margin-left: 2rem;
+}
+
+/* Try to accommodate large tooltips on small devices */
+@media (max-device-width: 1024px) {
+    .tooltip-inner ul {
+        max-height: 80vh;
+        overflow-y: scroll;
+    }
+}
+
+.pricing-details-xr-section {
+    display: grid;
+    grid-template-columns: auto minmax(auto, 90%);
+    justify-content: start;
+}
+
+.currency-exchange-rate {
+    text-align: right;
+    padding-right: 0.5rem;
+}

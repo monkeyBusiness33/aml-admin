@@ -1,0 +1,28 @@
+<div class="card border-0 shadow mb-4">
+  <div
+    class="card-header p-1 bg-primary text-white {% if not organisation.agreements_where_supplier.exists %}card-header-empty-section{% endif %}">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 fw-bold mb-0">Fuel Agreements</h2>
+      </div>
+
+    </div>
+  </div>
+  {% if organisation.agreements_where_supplier.exists %}
+    <div>
+
+      <div id="fuel_seller_agreement_list"
+           class="card {{ metacontext.page_css_class }} datatable-clickable compact_datatable
+           datatable_auto_compact_div">
+        <div class="table-responsive ajax-datatable-container pt-0">
+          <table id="fuel_seller_agreement_list_datatable" width="100%"
+                 class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                 data-datatable-url="{% url 'admin:fuel_seller_agreements_ajax' organisation.pk %}">
+          </table>
+        </div>
+      </div>
+
+    </div>
+  {% endif %}
+</div>

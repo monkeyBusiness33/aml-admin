@@ -1,0 +1,35 @@
+{% load static %}
+
+<div class="modal-header">
+  <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>{{ metacontext.title }}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+
+<div class="modal-body p-0">
+  <div class="m-3">
+    {{ metacontext.text|safe }}
+  </div>
+  <div id="sfr_spf_v2_services_list"
+       class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+    <div class="table-responsive ajax-datatable-container pt-0">
+      <table id="sfr_spf_v2_services_list_datatable"
+             class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+             data-datatable-url="{% url 'admin:handling_request_spf_v2_services' spf.handling_request.pk %}">
+      </table>
+      <button
+        class="modal_button_validation bs-modal btn me-2 d-none {% if handling_request.spf_v2.is_reconciled %}btn-outline-success{% else %}btn-outline-primary{% endif %}"
+        data-bs-toggle="tooltip" data-bs-placement="top" title="" type="button"
+        data-form-url="{% url 'admin:handling_request_spf_v2_reconciled' handling_request.pk %}"
+        {% if not perms.handling.p_spf_v2_reconcile or not handling_request.is_spf_v2_editable %} disabled{% endif %}
+        id="spf_reconciled_btn"
+        data-bs-original-title="">
+        <i class="fas fa-clipboard-check"></i>SPF Reconciled
+      </button>
+    </div>
+  </div>
+</div>
+
+{% block javascripts %}
+    <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

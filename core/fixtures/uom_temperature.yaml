@@ -1,0 +1,8 @@
+- model: core.temperatureunit
+  pk: 1
+  fields:
+    name: "Celsius"
+- model: core.temperatureunit
+  pk: 2
+  fields:
+    name: "Fahrenheit"

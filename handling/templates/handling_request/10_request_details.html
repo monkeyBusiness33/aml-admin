@@ -1,0 +1,523 @@
+{% load handling_request_tags %}
+
+<div class="row">
+    {% if request.app_mode == 'ops_portal' and handling_request.assigned_mil_team_member and handling_request.assigned_mil_team_member != user.person %}
+    <span class="badge bg-danger w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+        This servicing & fueling request is assigned to {{ handling_request.assigned_mil_team_member.fullname }}.
+    </span>
+    {% endif %}
+
+    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+        Request Details
+    </span>
+</div>
+
+<div class="row">
+    <div class="col-4 table-1">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Callsign:</td>
+                    <td><span class="fw-bold">
+                        {{ handling_request.callsign }}
+                        {% if request.app_mode == 'ops_portal' and perms.core.ops_handling_update_callsign and handling_request.is_details_editable and handling_request|is_handling_request_editable:user %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Callsign"
+                               data-form-url="{% url 'admin:handling_request_update_mission_callsign' handling_request.id %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                            {% if handling_request.status == 11 %}
+                                <a class="modal_button_novalidation btn-link small align-top" type="button"
+                                   data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                                   title="Acknowledge Callsign Change"
+                                   data-form-url="{% url 'admin:handling_request_confirm_mission_callsign' handling_request.id %}">
+                                <i class="fas fa-check"></i>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if request.app_mode == 'dod_portal' and handling_request.is_details_editable and handling_request in managed_sfr_list and handling_request|is_handling_request_editable:user %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Callsign"
+                               data-form-url="{% url 'dod:handling_request_update_callsign' handling_request.id %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Mission Number:</td>
+                    <td><span class="fw-bold">
+                        {{ handling_request.mission_number|default:'TBC' }}
+                        {% if request.app_mode == 'ops_portal' and perms.core.ops_handling_update_mission_number and handling_request.is_details_editable and handling_request|is_handling_request_editable:user %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Mission Number"
+                               data-form-url="{% url 'admin:handling_request_update_mission_number' handling_request.id %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                            {% elif request.app_mode == 'dod_portal' and handling_request.is_details_editable %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Mission Number"
+                               data-form-url="{% url 'dod:handling_request_update_mission_number' handling_request.id %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Created At:</td>
+                    <td><span class="fw-bold">{{ handling_request.created_at|date:'Y-m-d H:i' }}Z</span></td>
+                </tr>
+                {% if request.app_mode == 'ops_portal' %}
+                <tr>
+                    <td class="pe-3">Assigned To:</td>
+                    <td>
+                      <span class="fw-bold">
+                        {{ handling_request.assigned_mil_team_member.fullname|default:'Not yet assigned' }}
+                        {% if perms.handling.p_update %}
+                        <a class="modal_button_validation btn-link small align-top" type="button"
+                           data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                           title="Update Assigned Mil Team Member"
+                           data-form-url="{% url 'admin:handling_request_assigned_team_member' handling_request.id %}">
+                            <i class="far fa-edit"></i>
+                        </a>
+                        {% endif %}
+                      </span>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-2">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Tail Number:</td>
+                    <td>
+                        <span class="fw-bold">{{ handling_request.tail_number|default:'Not yet assigned' }}</span>
+                        {% if request.app_mode == 'ops_portal' and perms.handling.p_update and handling_request.is_details_editable and handling_request.is_services_editable %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Tail Number"
+                               data-form-url="{% url 'admin:handling_request_update_tail_number' handling_request.id %}">
+                                <i class="far fa-edit"></i>
+                            </a>
+                        {% elif request.app_mode == 'dod_portal' and handling_request.is_details_editable and handling_request.is_services_editable and handling_request in managed_sfr_list %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Tail Number"
+                               data-form-url="{% url 'dod:handling_request_update_tail_number' handling_request.id %}">
+                                <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                        {% if request.app_mode == 'ops_portal' and perms.handling.p_update and not handling_request.tail_number %}
+                          <a class="modal_button_validation btn-link small align-top" type="button"
+                             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                             title="Confirm Tail Number"
+                             data-form-url="{% url 'admin:handling_request_confirm_tail_number' handling_request.id %}">
+                            <i class="fas fa-fighter-jet"></i>
+                          </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Request Type:</td>
+                    <td><span class="fw-bold">
+                        {{ handling_request.type.name }}
+                        {% if request.app_mode == 'ops_portal' and perms.core.p_update and handling_request.is_details_editable and handling_request|is_handling_request_editable:user %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update S&F Request Type"
+                               data-form-url="{% url 'admin:handling_request_update_mission_type' handling_request.id %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Request Reference:</td>
+                    <td>
+                        <span class="fw-bold copy-to-clipboard" data-bs-toggle="tooltip"
+                              data-bs-placement="top" data-bs-html="true"
+                              data-copy-value="{{ handling_request.reference }}"
+                              title="{{ handling_request.reference }}<br><span class='text-secondary'>Click to Copy</span>">
+                            {{ handling_request.reference }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">S&F Request Type:</td>
+                    <td>
+                        <span class="fw-bold">
+                            {% if handling_request.is_standalone %}
+                              Standalone
+                            {% else %}
+                              Mission-Generated
+                            {% endif %}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-3">
+        <table class="w-100">
+            <tbody class="w-100">
+                <tr>
+                    <td class="pe-3">Aircraft Type:</td>
+                    <td>
+                      <span class="fw-bold">{{ handling_request.aircraft_type }}</span>
+                    {% if handling_request.is_details_editable %}
+                      {% if perms.handling.p_update or handling_request in managed_sfr_list %}
+                        <a class="modal_button_validation btn-link small align-top" type="button"
+                           data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                           title="Update S&F Request Aircraft Type"
+                          {% if perms.handling.p_update %}
+                           data-form-url='{% url 'admin:handling_request_update_aircraft_type' handling_request.id %}'
+                          {% elif request.app_mode == 'dod_portal' %}
+                           data-form-url='{% url 'dod:handling_request_update_aircraft_type' handling_request.id %}'
+                          {% endif %}
+                        ><i class="far fa-edit"></i></a>
+                      {% endif %}
+                    {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">
+                        <span data-bs-toggle="tooltip" data-bs-placement="right" title="Diplomatic Clearance">
+                            Diplomatic Clear:
+                        </span>
+                    </td>
+                    <td>
+                        <span class="fw-bold">{{ handling_request.apacs_number|default:'TBC' }}</span>
+                    {% if handling_request.is_details_editable %}
+                        {% if perms.handling.p_update or handling_request in managed_sfr_list %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update S&F Request Diplomatic Clearance"
+                            {% if perms.handling.p_update %}
+                                data-form-url='{% url 'admin:handling_request_update_apacs_number' handling_request.id %}'
+                            {% elif request.app_mode == 'dod_portal' %}
+                                data-form-url='{% url 'dod:handling_request_update_apacs_number' handling_request.id %}'
+                            {% endif %}
+                        ><i class="far fa-edit"></i></a>
+                        {% endif %}
+                    {% endif %}
+                    </td>
+                </tr>
+            <tr>
+                <td class="pe-3">APACS URL:</td>
+                <td>
+                    {% if handling_request.apacs_url %}
+                        <a class="fw-bold link-icon-before" target="_blank" href="{{ handling_request.apacs_url }}"></a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+
+                    {% if handling_request.is_details_editable %}
+                    {% if perms.handling.p_update or handling_request in managed_sfr_list %}
+                        <a class="modal_button_validation btn-link small align-top" type="button"
+                           data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                           title="Update S&F Request APACS URL"
+                                {% if perms.handling.p_update %}
+                           data-form-url='{% url 'admin:handling_request_update_apacs_url' handling_request.id %}'
+                                {% elif request.app_mode == 'dod_portal' %}
+                           data-form-url='{% url 'dod:handling_request_update_apacs_url' handling_request.id %}'
+                                {% endif %}
+                        ><i class="far fa-edit"></i></a>
+                    {% endif %}
+                    {% endif %}
+
+                    <div class="d-inline float-end">
+                        <a class="fw-bold" href="https://apacs.milcloud.mil/">(apacs.milcloud.mil)</a>
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2"></div>
+</div>
+
+<div class="row">
+    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+        Location Details
+    </span>
+</div>
+
+<div class="row">
+    <div class="col-4 table-1">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Location:</td>
+                    <td><span class="fw-bold">{{ handling_request.location_short_repr }}</span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Parking Apron:</td>
+                    <td><span class="fw-bold">{{ handling_request.parking_apron|default:'' }}</span></td>
+                </tr>
+                <tr>
+                  <td class="pe-3">Parking Stand:</td>
+                  <td><span class="fw-bold">{{ handling_request.parking_stand|default:'' }}</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-2">
+        <table>
+            <tbody>
+                <tr>
+                  <td class="pe-3">DAO Notified?:</td>
+                  <td><span class="fw-bold">{{ handling_request.notify_dao|yesno|capfirst }}</span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Ground Handler:</td>
+                    <td>
+                      {% if handling_request.handling_agent %}
+                        {% if request.app_mode == 'ops_portal' %}
+                          <a href="{{ handling_request.handling_agent.get_absolute_url }}">
+                                <span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="top"
+                                      data-bs-html="true"
+                                      title="{{ handling_request.handling_agent.full_repr|default:'' }}">
+                                {{ handling_request.handling_agent.full_repr|default:'TBC'|truncatechars:25 }}
+                                </span>
+                          </a>
+                          {% if perms.handling.p_update and handling_request|is_handling_request_editable:user %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update S&F Request Ground Handler"
+                               data-form-url="{% url 'admin:handling_request_set_handler' handling_request.id %}">
+                              <i class="far fa-edit"></i>
+                            </a>
+                          {% endif %}
+                        {% else %}
+                          <span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="{{ handling_request.handling_agent.full_repr|default:'' }}">
+                                {{ handling_request.handling_agent.details.registered_name|default:'TBC'|truncatechars:25 }}
+                            </span>
+                        {% endif %}
+                      {% else %}
+                        TBC
+                      {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-3">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Handling Status:</td>
+                    <td>
+                        {% if not handling_request.auto_spf %}
+                            <span class="badge bg-gray-400">Not Requested</span>
+                        {% elif handling_request.is_awaiting_departure_update_confirmation %}
+                            <span class="badge hr_status_1">Departure Update On Request</span>
+                        {% elif not handling_request.is_handling_confirmed %}
+                            <span class="badge hr_status_1">On Request</span>
+                        {% elif handling_request.auto_spf and handling_request.opened_gh_amendment_session %}
+                            <span class="badge bg-warning">Needs Amendment</span>
+                        {% elif handling_request.auto_spf and handling_request.is_handling_confirmed %}
+                            <span class="badge bg-success">Confirmed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% if request.app_mode == 'ops_portal' %}
+                  <tr>
+                    <td class="pe-3">Billed By:</td>
+                    <td><span
+                      class="fw-bold">{{ handling_request.handling_agent.details.supplier_organisation.details.registered_name|default:'TBC' }}</span>
+                    </td>
+                  </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2"></div>
+</div>
+
+
+<div class="row">
+    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+        Fuelling Details
+    </span>
+</div>
+
+<div class="row">
+    <div class="col-4 table-1">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Fuel Booking:</td>
+                    <td>
+                        <span class="badge border"
+                              style="color: {{ handling_request.fuel_status.text_color }};background-color: {{ handling_request.fuel_status.background_color }}">
+                          {{ handling_request.fuel_status.detail }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Fuel Release:</td>
+                    <td><span class="fw-bold">
+                        {% if not handling_request.fuel_required %}
+                            --
+                        {% elif handling_request.fuel_booking.fuel_release %}
+                            <a href="{{ handling_request.fuel_booking.fuel_release.url }}">Download</a>
+                            {% if request.user.is_staff %}
+                                / <a class="modal_button_validation btn-link fw-bold" type="button"
+                                     data-form-url="{% url 'admin:handling_request_remove_fuel_release' handling_request.fuel_booking.id %}"
+                                    {% if not perms.handling.p_update or not handling_request.is_services_editable %}
+                                     disabled
+                                    {% endif %}>
+                                    Remove
+                                </a>
+                            {% endif %}
+                        {% elif handling_request.fuel_booking and not handling_request.fuel_booking.fuel_release and request.user.is_staff %}
+                            <a class="modal_button_validation btn-link fw-bold" type="button"
+                            data-form-url="{% url 'admin:handling_request_upload_fuel_release' handling_request.fuel_booking.id %}"
+                            {% if not perms.handling.p_update or not handling_request.is_services_editable %}
+                                   disabled
+                            {% endif %}
+                            >Upload File</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Fuel OR Number:</td>
+                    <td>
+                        <span class="fw-bold">
+                          {{ handling_request.fuel_booking.fuel_order_number|default:'--' }}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-2">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Fuel Uplift Quantity:</td>
+                    <td><span class="fw-bold">
+                        {% if handling_request.fuel_captains_request %}
+                            Captain's Request
+                            {% elif not handling_request.fuel_quantity %}
+                            --
+                        {% else %}
+                            <span data-bs-toggle="tooltip" data-bs-placement="right"
+                            title="{{ handling_request.localised_fuel_details.0|floatformat:0 }} {{ handling_request.localised_fuel_details.1.description_plural }}">
+                                {{ handling_request.fuel_quantity }} {{ handling_request.fuel_unit }}
+                            </span>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Into-Plane Agent:</td>
+                    <td>
+                        <span class="fw-bold">
+                            {% if not handling_request.fuel_required %}
+                                --
+                            {% else %}
+                                {{ handling_request.fuel_booking.ipa.full_repr|default:'TBC' }}
+                            {% endif %}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-3">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Fuel Required On:</td>
+                    <td>
+                        <span class="fw-bold">
+                            {% if not handling_request.fuel_required %}
+                                Fuel not required
+                            {% else %}
+                                {{ handling_request.fuel_required|lower|capfirst }}
+                            {% endif %}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Prist Required:</td>
+                    <td><span class="fw-bold">{{ handling_request.fuel_prist_required|yesno|capfirst }}</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2"></div>
+</div>
+
+<div class="row">
+    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+        Contact Details
+    </span>
+</div>
+
+<div class="row">
+    <div class="col-4 table-1">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Requesting Unit:</td>
+                    <td><span class="fw-bold">
+                        {% if user.is_staff %}
+                            <a href="{{ handling_request.customer_organisation.get_absolute_url }}">
+                                {{ handling_request.customer_organisation.details.registered_name }}
+                            </a>
+                        {% else %}
+                            {{ handling_request.customer_organisation.details.registered_name }}
+                        {% endif %}
+                    </span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-2">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Requesting Contact:</td>
+                    <td><span class="fw-bold">
+                        {% if user.is_staff %}
+                        <a href="{{ handling_request.primary_contact.get_absolute_url }}">
+                            {{ handling_request.primary_contact.fullname }}
+                        </a>
+                        {% else %}
+                            {{ handling_request.primary_contact.fullname }}
+                        {% endif %}
+                    </span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-3">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Contact Email:</td>
+                    <td>
+                        {% with handling_request.primary_contact|person_position_in:handling_request.customer_organisation as position %}
+                        <span class="fw-bold copy-to-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-copy-value="{{ position.contact_email|default:'' }}"
+                                title="{{ position.contact_email|default:'' }}<br><span class='text-secondary'>Click to Copy</span>"
+                                >{{ position.contact_email|default:''|truncatechars:20 }}</span>
+                        {% endwith %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2"></div>
+</div>

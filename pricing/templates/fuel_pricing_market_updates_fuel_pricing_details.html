@@ -1,0 +1,486 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %} Fuel Pricing Details for {{ entry.supplier_pld_location.pld.pld_name }} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row align-items-center mb-3">
+    <div class="col-8">
+      <h2 class="fs-5 fw-bold mb-0">
+        {{ entry.price_active|yesno:'Active, Historical' }}
+        Pricing for <span
+        class="header-entity">{{ entry.supplier_pld_location.pld.supplier.trading_or_registered_name }}</span> at
+        <span class="header-entity">{{ entry.supplier_pld_location.location.airport_details.fullname }}</span>
+      </h2>
+
+    </div>
+
+    <div class="col text-end">
+      <a href="{% url 'admin:fuel_pricing_market_document_details' entry.supplier_pld_location.pld.id %}"
+         class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Data Management Details</h2>
+        </div>
+
+        <div class="col text-end">
+          <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+                        {% if not perms.pricing.p_update or not entry.price_active %} disabled {% endif %}"
+             type="button" name="button"
+             href="{% url 'admin:fuel_pricing_market_documents_pricing_edit' pk=entry.pk pld=entry.supplier_pld_location.pld.id %}">
+            Edit</a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Price List Document:</td>
+                <td>
+                  <a href="{% url 'admin:fuel_pricing_market_document_details' entry.supplier_pld_location.pld.id %}"
+                     class="fw-bold">{{ entry.supplier_pld_location.pld.pld_name }}</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Reviewed:</td>
+                <td>
+                  <span class="fw-bold"> {{ entry.is_reviewed|yesno:"Yes,No" }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Latest:</td>
+                <td><span class="fw-bold">{{ entry.is_latest|yesno:"Yes,No" }}</span>
+                </td>
+              </tr>
+              {% if entry.is_reviewed %}
+                <tr>
+                  <td class="pe-3">Reviewed by:</td>
+                  <td>
+                    <span class="fw-bold"> {{ entry.review.reviewed_by.fullname }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Published:</td>
+                <td><span class="fw-bold">{{ entry.is_published|yesno:'Yes,No' }}</span>
+                </td>
+              </tr>
+              {% if entry.is_reviewed %}
+                <tr>
+                  <td class="pe-3">Reviewed at:</td>
+                  <td>
+                    <span class="fw-bold"> {{ entry.review.reviewed_at|date:'Y-m-d' }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Entry Details</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Into-Plane Agent:</td>
+                <td>
+                  {% if entry.ipa %}
+                    <a class="fw-bold" href="{% url 'admin:ipa' entry.ipa %}">
+                      {{ entry.ipa.trading_or_registered_name }}</a>
+                  {% else %}
+                    TBC / Confirmed on Order
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Delivery Method(s):</td>
+                <td><span class="fw-bold">{{ entry.delivery_methods.all|join:", "|default:'All' }}</span>
+                </td>
+              </tr>
+              {% if not entry.band_uom %}
+                <tr>
+                  <td class="pe-3">Native Price:</td>
+                  <td>
+                    <span
+                      class="fw-bold">{{ entry.pricing_native_amount|normalize }} {{ entry.pricing_native_unit.description }}</span>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td class="pe-3">Native Unit:</td>
+                  <td><span class="fw-bold">{{ entry.pricing_native_unit.description }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              <tr>
+                <td class="pe-3">Inclusive Taxes:</td>
+                <td><span class="fw-bold">{{ entry.inclusive_taxes_str|default:'No' }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Inclusive Fees:</td>
+                <td><span class="fw-bold">{{ entry.cascade_to_fees|yesno:'Yes,No' }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Specific Client:</td>
+                <td>
+                  {% if entry.client %}
+                    <a href="{{ entry.client.get_absolute_url }}"
+                       class="fw-bold">{{ entry.client.trading_and_registered_name }}</a>
+                  {% else %}
+                    <span>--</span>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Flight Type:</td>
+                <td><span class="fw-bold">{{ entry.flight_type }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Fuel Type:</td>
+                <td><span class="fw-bold">{{ entry.fuel.name }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Specific Handler:</td>
+                <td><span class="fw-bold">{{ entry.specific_handler_link|default:'--'|safe }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Specific Apron:</td>
+                <td><span class="fw-bold">{{ entry.specific_apron|default:'--' }}</span>
+                </td>
+              </tr>
+              {% if entry.supplier_exchange_rate %}
+                <tr>
+                  <td class="pe-3">Exchange Rate:</td>
+                  <td><span class="fw-bold">{{ entry.supplier_exchange_rate|normalize }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              <tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Billable Org.:</td>
+                <td>
+                  <span class="fw-bold">
+                    {{ entry.supplier_pld_location.billable_organisation.trading_and_registered_name|default:entry.supplier.trading_and_registered_name }}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Destination Type:</td>
+                <td><span class="fw-bold">{{ entry.destination_type }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Posted Airport Pricing?:</td>
+                <td><span class="fw-bold">{{ entry.is_pap|yesno:'Yes,No' }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Hookup Method:</td>
+                <td><span class="fw-bold">{{ entry.specific_hookup_method.name|default:'All' }}</span>
+                </td>
+              </tr>
+              {% if not entry.band_uom %}
+                {% if entry.pricing_converted_amount %}
+                  <tr>
+                    <td class="pe-3">Converted Price:</td>
+                    <td><span class="fw-bold">
+                                {{ entry.pricing_converted_amount|normalize }}
+                      {{ entry.pricing_converted_unit.description|default_if_none:"-" }}</span>
+                    </td>
+                  </tr>
+                {% endif %}
+              {% elif entry.pricing_converted_unit %}
+                <tr>
+                  <td class="pe-3">Converted to:</td>
+                  <td><span class="fw-bold">
+                                {{ entry.pricing_converted_unit.description|default_if_none:"-" }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Operated as:</td>
+                {% if entry.applies_to_private and entry.applies_to_commercial %}
+                  <td><span class="fw-bold">Commercial, Private</span>
+                    {% else %}
+                  <td><span class="fw-bold">{{ entry.applies_to_private|yesno:"Private,Commercial" }}</span>
+                {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Validity:</td>
+                <td><span
+                  class="fw-bold">{{ entry.valid_from_date|date:'Y-m-d' }} - {{ entry.valid_to_date|date:'Y-m-d' }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not entry.band_uom %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Band Details</h2>
+        </div>
+
+      </div>
+    </div>
+
+    {% if entry.band_uom %}
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">Band Type:</td>
+                  <td>
+                    <span class="fw-bold">{{ entry.band_uom }}</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col pt-2">
+              <table class="borderless">
+                <tbody>
+                <td class="pe-3">Band:</td>
+                <td>
+                  <span
+                    class="fw-bold">{{ entry.band_start|floatformat:"0" }} - {{ entry.band_end|floatformat:"0" }}</span>
+                </td>
+                </tr>
+                </tbody>
+              </table>
+              {% for related_entry in related_entries %}
+                <table class="borderless">
+                  <tbody>
+                  <td class="pe-3">Band:</td>
+                  <td>
+                    <span
+                      class="fw-bold">{{ related_entry.band_start|floatformat:"0" }} - {{ related_entry.band_end|floatformat:"0" }}</span>
+                  </td>
+                  </tr>
+                  </tbody>
+                </table>
+              {% endfor %}
+            </div>
+            <div class="col pt-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">Native Price:</td>
+                  <td>
+                    <span
+                      class="fw-bold">{{ entry.pricing_native_amount|normalize }} {{ entry.pricing_native_unit.description }}</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              {% for related_entry in related_entries %}
+                <table class="borderless">
+                  <tbody>
+                  <tr>
+                    <td class="pe-3">Native Price:</td>
+                    <td>
+                      <span
+                        class="fw-bold">{{ related_entry.pricing_native_amount|normalize }} {{ entry.pricing_native_unit.description }}</span>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              {% endfor %}
+            </div>
+            {% if entry.pricing_converted_amount %}
+              <div class="col pt-2">
+                <table class="borderless">
+                  <tbody>
+                  <tr>
+                    <td class="pe-3">Converted Price:</td>
+                    <td>
+                      <span
+                        class="fw-bold">{{ entry.pricing_converted_amount|normalize }} {{ entry.pricing_converted_unit.description }}</span>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+                {% for related_entry in related_entries %}
+                  <table class="borderless">
+                    <tbody>
+                    <tr>
+                      <td class="pe-3">Converted Price:</td>
+                      <td>
+                        <span
+                          class="fw-bold">{{ related_entry.pricing_converted_amount|normalize }} {{ entry.pricing_converted_unit.description }}</span>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not False %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Comment</h2>
+        </div>
+
+      </div>
+    </div>
+    {% if entry.comments %}
+      <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td>
+                  <span class="fw-bold">{{ entry.comments }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    {% endif %}
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not False %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Latest Update</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Date:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.updated_at|date:'Y-m-d H:i' }}</span>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">User:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.updated_by.details.fullname }}</span>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}

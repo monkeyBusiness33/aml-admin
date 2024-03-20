@@ -1,0 +1,68 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Supplier Details</h2>
+            </div>
+
+        </div>
+    </div>
+    <div class="row {{ document.supplier.details.operational_status.text_color }}">
+        <div class="col">
+            <div class="row">
+                <div class="col pt-2 ps-4 mb-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Registered Name:</td>
+                                <td><a href="{{document.supplier.get_absolute_url}}" class="fw-bold">{{ document.supplier.details.registered_name }}</a>
+                                </td>
+                            </tr>
+                            {% if document.supplier.details.trading_name and document.supplier.details.department_of %}
+                            <tr>
+                                <td class="pe-3">Trading Name:</td>
+                                <td><a href="{{document.supplier.get_absolute_url}}" class="fw-bold">{{ document.supplier.details.trading_name }}</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col pt-2">
+                    <table class="borderless">
+                        <tbody>
+                            {% if document.supplier.details.department_of %}
+                            <tr>
+                                <td class="pe-3">Department of:</td>
+                                <td><span class="fw-bold">{{ document.supplier.details.department_of.trading_or_registered_name|default:'' }}</span>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td class="pe-3">Trading Name:</td>
+                                <td><a href="{{document.supplier.get_absolute_url}}" class="fw-bold">{{ document.supplier.details.trading_name|default:'' }}</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col pt-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Country:</td>
+                                <td><span class="fw-bold">{{ document.supplier.details.country|default:'' }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

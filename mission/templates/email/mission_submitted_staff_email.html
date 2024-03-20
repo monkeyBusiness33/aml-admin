@@ -1,0 +1,61 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+  {% block content %}
+    <p>Dear Military Team,</p>
+
+    <p>
+      Please process the following Mission:
+    </p>
+
+    <table>
+      <tbody>
+
+      <tr>
+        <td>Start Date:</td>
+        <td><b>{{ mission.start_date|date:'M-d-Y H:i' }}Z</b></td>
+      </tr>
+
+      <tr>
+        <td>End Date:</td>
+        <td><b>{{ mission.end_date|date:'M-d-Y H:i' }}Z</b></td>
+      </tr>
+
+      <tr>
+        <td>Callsign:</td>
+        <td><b>{{ mission.callsign }}</b></td>
+      </tr>
+
+      <tr>
+        <td>Mission Number:</td>
+        <td><b>{{ mission.mission_number_repr }}</b></td>
+      </tr>
+
+      <tr>
+        <td>Aircraft Type:</td>
+        <td><b>{{ mission.aircraft_type }}</b></td>
+      </tr>
+
+      <tr>
+        <td>Unit:</td>
+        <td><b>{{ mission.organisation.details.registered_name }}</b></td>
+      </tr>
+
+      <tr>
+        <td>Requested By:</td>
+        <td><b>{{ mission.requesting_person.fullname }}</b></td>
+      </tr>
+
+      </tbody>
+    </table>
+
+    <div style="text-align: center;margin-top: 20px;">
+      <a href="http://{{ domain }}{{ mission_url }}" target="_blank">
+        <button class="button">Mission Details</button>
+      </a>
+    </div>
+
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+{% endblock under_footer %}

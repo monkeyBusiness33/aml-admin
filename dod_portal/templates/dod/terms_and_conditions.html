@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% load solo_tags %}
+
+
+{% block title %} {{ metacontext.title }} {% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    {% get_solo 'core.GlobalConfiguration' as global_config %}
+
+    <div id="amendments" class="card mb-2">
+        <div class="card-header border-bottom">
+            <h2 class="fs-5 fw-bold mb-0">AML DoD Terms & Conditions</h2>
+        </div>
+
+        <div class="card-body p-3">
+            {{ global_config.dod_cs_ts|safe }}
+        </div>
+
+    </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

@@ -1,0 +1,36 @@
+{% extends "email/base.html" %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% autoescape on %}
+  {% block content %}
+    <p>Dear {{ handling_request.handling_agent.details.registered_name }},</p>
+
+    <p>
+      We kindly request that you send us a copy of the signed SPF form for
+      <b>{{ handling_request.callsign }} ({{ aircraft_type_designator }})</b>, which you handled on behalf of
+      AML Global at <b>{{ handling_request.airport.short_repr }}</b> between <b>{{ arrival_date }}
+      / {{ departure_date }}</b>.
+    </p>
+
+    <p>
+      A copy of the SPF document is attached for your convenience.
+      You can return the completed and signed copy to us by reply to this email,
+      or alternatively through upload in our web form which can be accessed through the action button below.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="http://{{ domain }}{{ url }}" target="_blank">
+        <button class="button">Submit Signed SPF Document</button>
+      </a>
+    </div>
+
+    {% include 'email/footer.html' %}
+
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

@@ -1,0 +1,60 @@
+{% extends "layouts/base.html" %}
+{% block title %} {% if organisation.sells_fuel %}Edit Fuel Reseller Details
+{% else %}Create Fuel Reseller Details{% endif %}: {{ organisation.details.registered_name }} {% endblock %}
+
+{% block stylesheets %}
+  {{ fuel_reseller_details_form.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form id="" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card border-0 shadow mb-4">
+
+          <div class="card-header p-3">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="fs-5 fw-bold mb-0">{% if organisation.sells_fuel %}Edit Fuel Reseller Details
+                {% else %}Create Fuel Reseller Details{% endif %}:
+                  {{ organisation.details.registered_name }}</h2>
+              </div>
+
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+              Fuel Reseller Details
+            </span>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=fuel_reseller_details_form.is_fuel_agent %}
+              </div>
+
+              <span class="mb-3"></span>
+            </div>
+
+            <hr>
+            <div class="mt-3">
+              <button class="btn btn-primary mt-2 animate-up-2" type="submit">Save</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ fuel_reseller_details_form.media.js }}
+
+{% endblock javascripts %}

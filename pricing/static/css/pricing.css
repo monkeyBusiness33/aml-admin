@@ -1,0 +1,8 @@
+.form-control+span span {
+    font-size: 0.875rem!important;
+}
+
+.form-control:disabled {
+    color: #6b7280 !important;
+    background-color: #eee !important;
+}

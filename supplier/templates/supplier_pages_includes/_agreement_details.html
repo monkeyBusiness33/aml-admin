@@ -1,0 +1,77 @@
+{% load currency_uom_tags %}
+
+<div class="card border-0 shadow mb-4">
+  <div class="card-header p-1 bg-primary text-white">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 fw-bold mb-0">Agreement Details</h2>
+      </div>
+
+    </div>
+  </div>
+  <div>
+    <div class="grid-3-col pt-1 pb-1">
+      <div class="grid-label">Supplier Name:</div>
+      <div class="grid-value">{{ agreement.supplier_name }}</div>
+      <div class="grid-label">Supplier Reference:</div>
+      <div class="grid-value">{{ agreement.supplier_agreement_reference|default:'--' }}</div>
+      <div class="grid-label">AML Group Company:</div>
+      <div class="grid-value">{{ agreement.aml_group_company.details.registered_and_trading_name }}</div>
+      <div class="grid-label">Start Date:</div>
+      <div class="grid-value nowrap">{{ agreement.start_date|date:'Y-m-d' }}</div>
+      <div class="grid-label">End Date:</div>
+      <div class="grid-value nowrap">{{ agreement.end_date_str|default:'Until Further Notice' }}</div>
+      <div class="grid-label">Currently Active?:</div>
+      <div class="grid-value">{{ agreement.is_active|yesno:'Yes,No' }}</div>
+      <div class="grid-label">Payment Terms:</div>
+      <div class="grid-value">{{ agreement.payment_terms }}</div>
+      <div class="grid-label">AML Role:</div>
+      <div class="grid-value">{{ agreement.aml_role }}</div>
+      <div class="grid-label">Source Document:</div>
+      <div class="grid-value">
+        {% if agreement.document %}
+          {{ agreement.document_link|safe }}
+          {{ agreement.document_description_icon|default:''|safe }}
+          <a class="modal_button_novalidation btn-link small align-top ms-1" type="button"
+             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+             title="Delete Document"
+             data-form-url="{% url 'admin:fuel_agreement_delete_document' agreement.document.pk %}">
+            <i class="fas fa-trash"></i>
+          </a>
+        {% else %}
+          --
+        {% endif %}
+      </div>
+      <div class="grid-label">Priority:</div>
+      <div class="grid-value">{{ agreement.get_priority_display }}</div>
+      {% if agreement.superseded_agreement %}
+        <div class="grid-label">Supersedes:</div>
+        <div class="grid-value">
+          <a class="modal_button_novalidation btn-link align-top ms-1"
+             data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+             href="{% url 'admin:fuel_agreement' agreement.superseded_agreement.pk %}">
+            {{ agreement.superseded_agreement }}
+          </a>
+        </div>
+      {% endif %}
+      {% if agreement.superseded_by %}
+        <div class="grid-label">Superseded By:</div>
+        <div class="grid-value">
+          <a class="btn-link align-top ms-1" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+             href="{% url 'admin:fuel_agreement' agreement.superseded_by.pk %}">
+            {{ agreement.superseded_by }}
+          </a>
+        </div>
+      {% endif %}
+      <div class="grid-label">Deposit:</div>
+      <div class="grid-value">
+        {% if agreement.deposit_required %}
+          {% as_currency agreement.deposit_amount agreement.deposit_currency_dict False 2 %}
+        {% else %}
+          Not Required
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

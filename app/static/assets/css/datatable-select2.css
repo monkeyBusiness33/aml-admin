@@ -1,0 +1,42 @@
+.ajax-datatable thead .multiple-select-filter-col .select2-search__field {
+    
+}
+
+.ajax-datatable thead .multiple-select-filter-col .select2-search--inline {
+    height: 17px !important;
+    position: relative;
+    top: -5px !important;
+}
+
+.ajax-datatable thead .select2-container {
+    display: inline !important;
+}
+
+.ajax-datatable thead .select2-container .select2-search--inline .select2-search__field {
+    margin-top: 0 !important;
+}
+
+.ajax-datatable thead .select2-container .select2-selection--multiple .select2-selection__rendered {
+    padding-left: 1px !important;
+
+    display: table;
+
+    min-height: 22px !important;
+    overflow: revert;
+}
+
+.ajax-datatable thead .select2-selection__choice {
+    border-radius: 2px !important;
+    padding: 0 3px !important;
+    margin: 0.1rem !important;
+    font-size: .9em!important;
+    background-color: unset !important;
+    color: black !important;
+}
+
+.multiple-select-filter-col .select2-search--inline {
+    height: unset !important;
+}
+
+
+

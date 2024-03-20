@@ -1,0 +1,98 @@
+{% load currency_uom_tags %}
+
+<div class="border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+          <h2 class="fs-6 fw-bold mx-auto my-0">Total Cost</h2>
+        </div>
+        <div class="col px-4 d-flex justify-content-between">
+          {% if results_row.fuel_price or results_row.fees or results_row.taxes %}
+            {% if results_row.taxes.comparison %}
+              <div class="w-50 pt-2 pe-3 pb-2 border-right-black ">
+                <table class="w-100 mb-0">
+                  <tbody>
+                  <tr class="fst-italic fs-6 text-center">
+                    <td class="tax-type-label pb-2">With Official Taxes</td>
+                  </tr>
+                  <tr class="d-flex justify-content-between">
+                    <td>Fuel</td>
+                    {% if results_row.fuel_price %}
+                      <td class="fw-bolder">{% as_currency results_row.fuel_price.amount results_row.currency %}</td>
+                    {% endif %}
+                  </tr>
+                  <tr class="d-flex justify-content-between">
+                    <td>Fees</td>
+                    <td class="fw-bolder">{% as_currency results_row.fees.total results_row.currency %}</td>
+                  </tr>
+                  <tr class="d-flex justify-content-between pb-2">
+                    <td>Taxes</td>
+                    <td class="fw-bolder">{% as_currency results_row.taxes.official_total results_row.currency %}</td>
+                  </tr>
+                  <tr class="d-flex justify-content-between fs-6 border-top pt-2">
+                    <td class="fw-bolder">Total Uplift Cost</td>
+                    <td class="fw-bolder">{% as_currency results_row.total_official_taxes results_row.currency %}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="border-left w-50 pt-2 pb-2 ps-3">
+                <table class="w-100 mb-auto me-0">
+                  <tbody>
+                  <tr class="fst-italic fs-6 text-center">
+                    <td class="tax-type-label pb-2">With Supplier-Defined Taxes</td>
+                  </tr>
+                  <tr class="d-flex justify-content-between">
+                    <td>Fuel</td>
+                    {% if results_row.fuel_price %}
+                      <td class="fw-bolder">{% as_currency results_row.fuel_price.amount results_row.currency %}</td>
+                    {% endif %}
+                  </tr>
+                  <tr class="d-flex justify-content-between">
+                    <td>Fees</td>
+                    <td class="fw-bolder">{% as_currency results_row.fees.total results_row.currency %}</td>
+                  </tr>
+                  <tr class="d-flex justify-content-between pb-2">
+                    <td>Taxes</td>
+                    <td class="fw-bolder">{% as_currency results_row.taxes.supplier_total results_row.currency %}</td>
+                  </tr>
+                  <tr class="d-flex justify-content-between fs-6 border-top pt-2">
+                    <td class="fw-bolder">Total Uplift Cost</td>
+                    <td class="fw-bolder">{% as_currency results_row.total results_row.currency %}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <table class="w-100 my-2">
+                <tbody>
+                <tr class="d-flex justify-content-between">
+                  <td>Fuel</td>
+                  {% if results_row.fuel_price %}
+                    <td class="fw-bolder">{% as_currency results_row.fuel_price.amount results_row.currency %}</td>
+                  {% endif %}
+                </tr>
+                <tr class="d-flex justify-content-between">
+                  <td>Fees</td>
+                  <td class="fw-bolder">{% as_currency results_row.fees.total results_row.currency %}</td>
+                </tr>
+                <tr class="d-flex justify-content-between pb-2">
+                  <td>Taxes</td>
+                  <td class="fw-bolder">{% as_currency results_row.taxes.total results_row.currency %}</td>
+                </tr>
+                <tr class="d-flex justify-content-between fs-6 border-top pt-2">
+                  <td class="fw-bolder">Total Uplift Cost</td>
+                  <td class="fw-bolder">{% as_currency results_row.total results_row.currency %}</td>
+                </tr>
+                </tbody>
+              </table>
+            {% endif %}
+          {% else %}
+            No applicable costs found.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

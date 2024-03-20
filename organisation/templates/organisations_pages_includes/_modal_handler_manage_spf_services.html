@@ -1,0 +1,74 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+            {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        {% include 'modal_form/body-top.html' %}
+        <div id="handler_spf_services_form">
+            {{ form.management_form }}
+            {{ form.non_field_errors }}
+        {% include 'modal_form/non_field_errors.html' with errors=form.non_form_errors %}
+
+            <div class="table-responsive">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+                    <thead class="thead-light">
+                    <tr>
+                        <th class="border-0 text-center">DLA Service</th>
+                        <th class="border-0 text-center">Applies After Minutes</th>
+                        <th class="border-0 text-center">Only Applies if Pax Onboard</th>
+                        <th class="border-0 text-center">Only Applies if Cargo Onboard</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for form in form %}
+                        {{ form.management_form }}
+                        {{ form.non_field_errors }}
+                        {{ form.non_form_errors }}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                        <tr id="id_{{ form.prefix }}_card"
+                            class="formset_row{% if forloop.counter > 5 and not form.dla_service.value %} d-none{% endif %}">
+                            <td class="border-0 w-50 p-1">
+                              {% include 'includes/_form_field_raw.html' with field=form.dla_service %}
+                            </td>
+                            <td class="border-0 p-1">
+                              {% include 'includes/_form_field_raw.html' with field=form.applies_after_minutes %}
+                            </td>
+                            <td class="border-0 text-center">
+                                <span class="align-middle">
+                                    {% include 'includes/_form_field_raw.html' with field=form.applies_if_pax_onboard %}
+                                </span>
+                            </td>
+                            <td class="border-0 text-center">
+                                <span class="align-middle">
+                                    {% include 'includes/_form_field_raw.html' with field=form.applies_if_cargo_onboard %}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-2">
+                <button id="formset_row_add_btn" data-add-by="1" type="button" class="btn btn-outline-success">Add Row
+                </button>
+            </div>
+
+        </div>
+    </div>
+    {% include 'modal_form/footer.html' %}
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2_modal_formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>

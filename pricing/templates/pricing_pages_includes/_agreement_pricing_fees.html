@@ -1,0 +1,62 @@
+<div class="card border-0 mb-3">
+    <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+            <h2 class="fs-5 fw-bold mb-0 me-auto">Fees</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                {% if fuel_fees %}
+                {% for fee, rates in fuel_fees.items %}
+                <div class="card expandable-card">
+                    <div class="expandable-section-header bg-primary d-flex align-items-center justify-content-between px-2 py-1"
+                            data-bs-toggle="collapse" data-bs-target="#section-{{ rates.0.supplier_fuel_fee.pk }}">
+                        <span class="fs-6 fw-bold mb-0 me-auto">{{ rates.0.supplier_fuel_fee.local_name|default:rates.0.supplier_fuel_fee.fuel_fee_category }}</span>
+                        <span class="link-arrow">
+                            <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        </span>
+                    </div>
+                    <div class="expandable-section collapse" role="list" id="section-{{ rates.0.supplier_fuel_fee.pk }}" aria-expanded="false">
+                        <table class="borderless w-100 p-2">
+                            <thead>
+                                <tr class="bg-gray-300">
+                                    <td class="w-20 px-1 py-3">Flight Type</td>
+                                    <td class="w-15 px-1 py-3">Destination</td>
+                                    <td class="w-20 px-1 py-3">Quantity Band</td>
+                                    <td class="w-20 px-1 py-3">Weight Band</td>
+                                    <td class="w-25 px-1 py-3">Unit Rate</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for rate in rates %}
+                                <tr>
+                                    <td class="px-1 py-2">
+                                        <span class="fw-bold">{{ rate.flight_type }}</span>
+                                    </td>
+                                    <td class="px-1 py-2">
+                                        <span class="fw-bold">{{ rate.destination_type }}</span>
+                                    </td>
+                                    <td class="px-1 py-2">
+                                        <span class="fw-bold">{{ rate.quantity_band|default:'--' }}</span>
+                                    </td>
+                                    <td class="px-1 py-2">
+                                        <span class="fw-bold">{{ rate.weight_band_string|default:'--' }}</span>
+                                    </td>
+                                    <td class="px-1 py-2">
+                                        <span class="fw-bold">{{ rate.unit_rate_string }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="col mx-4 my-3">
+            No applicable fees found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

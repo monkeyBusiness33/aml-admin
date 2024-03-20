@@ -1,0 +1,34 @@
+<div class="card border-0 shadow mb-4">
+  <div
+    class="card-header p-1 bg-primary text-white {% if not agreement.pricing_manual.exists %}card-header-empty-section{% endif %}">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 fw-bold mb-0">Discount Pricing</h2>
+      </div>
+
+      <div class="col text-end">
+        <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+          {% if not perms.pricing.p_create %} disabled {% endif %}"
+           href="{% url 'admin:agreement_discount_pricing_create' agreement.pk %}">
+          Add Pricing</a>
+      </div>
+
+    </div>
+  </div>
+
+  {% if agreement.pricing_manual.exists %}
+    <div id="agreement_discount_pricing_list" class="card {{ metacontext.page_css_class }} compact_datatable
+            datatable_auto_div">
+      <div class="table-responsive ajax-datatable-container pt-0">
+        <table id="agreement_discount_pricing_list_datatable" width="100%" class="table table-flush table-hover
+                ajax-datatable align-middle nowrap datatable_auto"
+               data-datatable-uri="{% url 'admin:agreement_discount_pricing' agreement.pk %}">
+        </table>
+      </div>
+    </div>
+    </div>
+  {% endif %}
+<script language="javascript">
+  var agreement_discount_pricing_list_datatable_uri = "{% url 'admin:agreement_discount_pricing' agreement.pk %}"
+</script>

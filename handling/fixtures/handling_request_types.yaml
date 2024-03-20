@@ -1,0 +1,8 @@
+- model: handling.handlingrequesttype
+  pk: 1
+  fields:
+    name: "Mission"
+- model: handling.handlingrequesttype
+  pk: 2
+  fields:
+    name: "Training"

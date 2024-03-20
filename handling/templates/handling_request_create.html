@@ -1,0 +1,357 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% if handling_request %}Update Servicing & Fueling Request {% else %}Create Servicing & Fueling Request{% endif %} {% endblock %}
+
+{% block stylesheets %}
+{{form.media.css }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<form id="create_handling_reqeust" method="post">
+    {% csrf_token %}
+
+<div class="card card-body p-0">
+    <div class="card-header border-bottom d-flex align-items-center justify-content-between">
+        <h2 class="fs-5 fw-bold mb-0 me-auto">{% if handling_request %}Update Servicing & Fueling Request{% else %}Create Servicing & Fueling Request{% endif %}</h2>
+    </div>
+
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger d-flex align-items-center m-3" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    {{ error|safe }}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="row px-4 mt-3">
+
+            <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.customer_organisation %}
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="{% if form.crew.field.required %}required{% endif %}"
+                    for="{{ form.crew.id_for_label }}">{{form.crew.label}}</label>
+                <div class="">
+                    <div class="{% if user.is_staff or 'dod_planners' in request.dod_selected_position_perms %}col-md-9{%else%}col-md-12{%endif%} pe-1 d-inline-block">
+
+                        {{ form.crew }}
+                        {% if form.crew.help_text %}
+                        <small class="form-text text-muted">{{ form.crew.help_text|safe }}</small>
+                        {% endif %}
+                        {% if form.crew.errors %}
+                        {% for error in form.crew.errors %}
+                        <div class="invalid-feedback">
+                            {{ error|escape }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if user.is_staff or 'dod_planners' in request.dod_selected_position_perms %}
+                    <div class="col-md-3 d-inline-block float-end text-end me-0 ps-0  bbb">
+                        <button id="create_person_btn" class="modal_button_async btn btn-primary" type="button" name="button"
+                            data-form-url="">Create</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if perms.core.p_contacts_create %}
+                <div class="col-md-4 mb-3">
+                    <label class="{% if form.airport.field.required %}required{% endif %}"
+                           for="{{ form.airport.id_for_label }}">{{ form.airport.label }}</label>
+                    <div class="">
+                        <div class="col-md-9 pe-1 d-inline-block">
+
+                            {{ form.airport }}
+                            {% if form.airport.help_text %}
+                                <small class="form-text text-muted">{{ form.airport.help_text|safe }}</small>
+                            {% endif %}
+                            {% if form.airport.errors %}
+                                {% for error in form.airport.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error|escape }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                            <div class="col-md-3 d-inline-block float-end text-end me-0 ps-0  bbb">
+                                <button class="modal_button_async organisation_create_btn btn btn-primary"
+                                        type="button" name="button"
+                                        data-form-url="">Create
+                                </button>
+                            </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.airport %}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="row px-4">
+            <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.callsign %}
+            </div>
+
+            <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.aircraft_type %}
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="{% if form.tail_number.field.required %}required{% endif %}"
+                    for="{{ form.tail_number.id_for_label }}">{{form.tail_number.label}}</label>
+                <div class="">
+                    <div class="{% if user.is_staff or 'dod_planners' in request.dod_selected_position_perms %}col-md-9{%else%}col-md-12{%endif%} pe-1 d-inline-block">
+                        {{ form.tail_number }}
+                        {% if form.tail_number.help_text %}
+                        <small class="form-text text-muted">{{ form.tail_number.help_text|safe }}</small>
+                        {% endif %}
+                        {% if form.tail_number.errors %}
+                        {% for error in form.tail_number.errors %}
+                        <div class="invalid-feedback">
+                            {{ error|escape }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if user.is_staff or 'dod_planners' in request.dod_selected_position_perms %}
+                    <div class="col-md-3 d-inline-block float-end text-end me-0 ps-0  bbb">
+                        <button id="tail_number_create_btn" class="modal_button_async btn btn-primary" type="button" name="button"
+                            data-form-url="">Create</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row px-4">
+            <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.fuel_quantity %}
+            </div>
+            <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.fuel_unit %}
+            </div>
+
+            <div class="col-4 mb-3">
+                <div class="row">
+                    <div class="col-8">
+                        {% include 'includes/_form_field.html' with field=form.fuel_required %}
+                    </div>
+                    <div class="col-4">
+                        <label for="{{ form.fuel_prist_required.id_for_label }}">
+                            {{ form.fuel_prist_required.label }}
+                        </label>
+                            {{ form.fuel_prist_required }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row px-4">
+            <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.mission_number %}
+            </div>
+            <div class="col-md-4 mb-4">
+                {% include 'includes/_form_field.html' with field=form.type %}
+            </div>
+            <div class="col-md-4 mb-4">
+                {% include 'includes/_form_field.html' with field=form.apacs_number %}
+            </div>
+        </div>
+
+    {% if request.app_mode == 'dod_portal' %}
+        <div class="row px-4">
+            <div class="col-md-4 mb-4">
+                {% include 'includes/_form_field.html' with field=form.apacs_url %}
+            </div>
+            {#            Temporary disabled https://aviation-data-solutions.monday.com/boards/1132439395/pulses/1138470256/posts/22226178#}
+{#            <div class="col-md-4 mb-3">#}
+{#                {% include 'includes/_form_field.html' with field=form.handling_agent %}#}
+{#            </div>#}
+        </div>
+    {% endif %}
+
+</div>
+
+<div class="card my-3">
+    <div class="card-header border-bottom d-flex align-items-center justify-content-between">
+        <h2 class="fs-5 fw-bold mb-0 me-auto">Itinerary</h2>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+                <thead class="thead-light"></thead>
+                    <tr>
+                        <td colspan="5" class="p-3">
+                            <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-1 fw-bold">
+                                Arrival Movement
+                            </span>
+                            <div class="row">
+                                <div class="col-xxl-2 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.arrival_date %}
+                                </div>
+                                <div class="col-xxl-2 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.arrival_time %}
+                                </div>
+                                <div class="col-xxl-1 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.arrival_is_local_timezone %}
+                                </div>
+                                <div class="col-xxl-3 col-xl-3 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.arrival_airport %}
+                                </div>
+                                <div class="col-xxl-1 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.arrival_crew %}
+                                </div>
+
+                                <div class="col-xxl-1 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.arrival_is_passengers_onboard %}
+                                </div>
+
+                                <div class="col-xxl-2 col-xl-3 mt-2">
+                                    <label class="{% if form.arrival_passengers.field.required %}required{% endif %}"
+                                           for="{{ form.arrival_passengers.id_for_label }}">
+                                        {{ form.arrival_passengers.label }}
+                                    </label>
+                                    <div class="input-group mb-3">
+
+                                        <div class="input-group-text"><span class="me-1">TBC</span>
+                                            {{ form.arrival_is_passengers_tbc }}
+                                        </div>
+                                        {{ form.arrival_passengers }}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% if handling_request %}
+                        {% include 'handling_request/32_itinerary_table.html' with movement=arrival_movement handling_request=handling_request %}
+                    {% endif %}
+                    <tr>
+                        <td colspan="5" class="p-3">
+                            <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-1 fw-bold">
+                                Departure Movement
+                            </span>
+                            <div class="row mb-3">
+                                <div class="col-xxl-2 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.departure_date %}
+                                </div>
+                                <div class="col-xxl-2 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.departure_time %}
+                                </div>
+                                <div class="col-xxl-1 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.departure_is_local_timezone %}
+                                </div>
+                                <div class="col-xxl-3 col-xl-3 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.departure_airport %}
+                                </div>
+                                <div class="col-xxl-1 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.departure_crew %}
+                                </div>
+
+                                <div class="col-xxl-1 col-xl-2 mt-2">
+                                    {% include 'includes/_form_field.html' with field=form.departure_is_passengers_onboard %}
+                                </div>
+
+                                <div class="col-xxl-2 col-xl-3 mt-2">
+                                    <label class="{% if form.departure_passengers.field.required %}required{% endif %}"
+                                           for="{{ form.departure_passengers.id_for_label }}">
+                                        {{ form.departure_passengers.label }}
+                                    </label>
+                                    <div class="input-group">
+
+                                        <div class="input-group-text"><span class="me-1">TBC</span>
+                                            {{ form.departure_is_passengers_tbc }}
+                                        </div>
+                                        {{ form.departure_passengers }}
+                                    </div>
+                                {% if form.departure_passengers.errors %}
+                                    {% for error in form.departure_passengers.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ error|escape }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if form.departure_is_passengers_tbc.errors %}
+                                    {% for error in form.departure_is_passengers_tbc.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ error|escape }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% if handling_request %}
+                        {% include 'handling_request/32_itinerary_table.html' with movement=departure_movement handling_request=handling_request %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="p-3">
+                            <div class="alert alert-warning mb-0" role="alert">
+                                Services can be added after Servicing & Fueling Request being saved
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% if not handling_request.pk %}
+    {% include 'handling_request_create/20_recurrence.html' %}
+{% endif %}
+
+<div class="m-3">
+    <button class="btn btn-primary mt-2 animate-up-2" type="submit">{% if not handling_request %}Submit Servicing & Fueling Request {% else %}Update Servicing & Fueling Request{% endif %}</button>
+    {% if handling_request %}
+        {% if user.is_staff %}
+        <a class="btn btn-outline-primary mt-2 animate-up-2" href="{% url 'admin:handling_request' handling_request.id %}">Open Servicing & Fueling Request Details Page</a>
+        {% else %}
+        <a class="btn btn-outline-primary mt-2 animate-up-2" href="{% url 'dod:request' handling_request.id %}">Open Servicing & Fueling Request Details Page</a>
+        {% endif %}
+    {% endif %}
+</div>
+</form>
+{% endblock content %}
+
+{% block javascripts %}
+{{form.media.js }}
+
+{% if user.is_staff %}
+<script type="text/javascript">
+client_url = "{% if perms.user.add_person %}{% url 'admin:organisation_people_create' '000' %}{% endif %}"
+fleet_create_url = "{% if perms.handling.p_update %}{% url 'admin:handling_request_create_aircraft' '000' %}{% endif %}"
+
+organisation_create_url = "{% url 'admin:create_for_person_position' %}"
+created_organisation_callback_url = "{% url 'admin:created_organisation_callback' %}"
+organisation_create_preselect_type_id = '1002'
+
+ping_url = "{% url 'admin:ping' %}"
+person_callback_url = "{% url 'admin:created_person_callback' 000 %}"
+
+</script>
+{% else %}
+<script type="text/javascript">
+client_url = "{% url 'dod:organisation_people_create' '000' %}"
+fleet_create_url = "{% url 'dod:handling_request_create_aircraft' '000' %}"
+ping_url = "{% url 'dod:ping' %}"
+person_callback_url = "{% url 'dod:created_person_callback' 000 %}"
+
+let get_preferred_handler_url = "{% url 'dod:get_preferred_handler' request.dod_selected_position.organisation.pk 000 %}"
+</script>
+{% endif %}
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/sfr_create.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/sfr_recurrence.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/modal_with_callback.js' %}"></script>
+{% endblock javascripts %}

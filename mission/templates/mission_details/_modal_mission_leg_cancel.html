@@ -1,0 +1,115 @@
+{% load static %}
+{{ form.media.css }}
+
+<style>
+  .col_sequence_id {
+    width: 50px !important;
+  }
+
+  .col_default {
+    width: 120px !important;
+  }
+
+  .delete-bg {
+    background: #ca4d6878 !important;
+  }
+
+  .update-bg {
+    background: #f3c78e !important;
+  }
+
+  #flight_legs_table tbody > tr:last-child > td {
+    border-bottom: .0625rem solid #e5e7eb !important;
+  }
+
+
+</style>
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="table-responsive">
+    <table id="flight_legs_table" class="table table-centered table-nowrap mb-0 rounded">
+      <thead class="thead-light">
+      <tr>
+        <th class="border-0 text-center"></th>
+        <th class="text-center border-start " colspan="2">Departure</th>
+        <th class="text-center border-start " colspan="2">Arrival</th>
+      </tr>
+      <tr>
+        <th class="text-center col_sequence_id" rowspan="2">#</th>
+        <th class="text-center col_default border-start">Airport</th>
+        <th class="text-center col_default">Date</th>
+        <th class="text-center col_default border-start">Airport</th>
+        <th class="text-center col_default">Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for flight_leg in mission.active_legs %}
+        <tr class="{% if flight_leg.pk == mission_leg.pk %}delete-bg{% endif %}">
+          <td class="border-0 w-50 text-center col_sequence_id">{{ flight_leg.sequence_id }}</td>
+          <td
+            class="border-0 w-50 text-center col_default border-start {% if flight_leg.pk == leg_next.pk %}update-bg{% endif %}">
+            {% if flight_leg.pk == leg_next.pk %}
+              <del>{{ flight_leg.departure_location.tiny_repr }}</del> > ?
+            {% else %}
+              {{ flight_leg.departure_location.tiny_repr }}
+            {% endif %}
+          </td>
+          <td
+            class="border-0 w-50 text-center col_default border-start {% if flight_leg.pk == leg_next.pk %}update-bg{% endif %}">
+            {{ flight_leg.departure_datetime|date:'M-d-Y H:i' }}
+          </td>
+          <td
+            class="border-0 w-50 text-center col_default border-start {% if flight_leg.pk == leg_prev.pk %}update-bg{% endif %}">
+            {% if flight_leg.pk == leg_prev.pk %}
+              <del>{{ flight_leg.arrival_location.tiny_repr }}</del> > ?
+            {% else %}
+              {{ flight_leg.arrival_location.tiny_repr }}
+            {% endif %}
+          </td>
+          <td
+            class="border-0 w-50 text-center col_default border-start {% if flight_leg.pk == leg_prev.pk %}update-bg{% endif %}">
+            {{ flight_leg.arrival_datetime|date:'M-d-Y H:i' }}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal-body">
+    <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+      <i class="fas fa-exclamation-triangle me-3"></i>
+      <div>
+        Cancelling <b>Flight Leg {{ mission_leg.sequence_id }} {{ mission_leg }}</b> - you need to update details of the
+        Adjacent Flight Legs
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col">{% include 'includes/_form_field.html' with field=form.prev_arrival_datetime %}</div>
+      <div class="col">{% include 'includes/_form_field.html' with field=form.next_departure_datetime %}</div>
+    </div>
+    <div class="row mt-2">
+      <div class="col">{% include 'includes/_form_field.html' with field=form.new_location %}</div>
+    </div>
+
+  </div>
+
+  {% include 'modal_form/footer.html' %}
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2_modal_formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/flatpickr_bootstrap_modal.js' %}"></script>
+{% endblock javascripts %}

@@ -1,0 +1,58 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}
+        {{ metacontext.title }}
+      {% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% if metacontext.text %}
+      {% autoescape off %}
+        <p>{{ metacontext.text }}</p>
+      {% endautoescape %}
+    {% endif %}
+
+    {% for error in form.non_field_errors %}
+      <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+          {{ error|safe }}
+        </div>
+      </div>
+    {% endfor %}
+
+  {% if form.instance.logo %}
+    <div class="row">
+      <div class="col">
+        <img src="{{ form.instance.logo.url }}" class="rounded mx-auto d-block" alt="Logo">
+      </div>
+    </div>
+  {% endif %}
+
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.logo %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.motto %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.cascade_to_departments checkbox_left=True %}
+    </div>
+
+
+  </div>
+
+  {% include 'modal_form/footer.html' with metacontext=metacontext %}
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>

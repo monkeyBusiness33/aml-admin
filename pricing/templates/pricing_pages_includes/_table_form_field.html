@@ -1,0 +1,21 @@
+<div class="{% if field.errors %}is-invalid{% endif %}">
+    {% if field.widget_type == 'checkbox' and checkbox_type == 'form-switch' %}
+        <div class="form-check form-switch pt-1">
+            {{ field }}
+        </div>
+
+    {% else %}
+
+        {{ field }}
+
+        {% if field.errors %}
+
+        {% for error in field.errors %}
+        <div class="invalid-feedback form-field-error">
+            {{ error|escape }}
+        </div>
+        {% endfor %}
+
+        {% endif %}
+    {% endif %}
+</div>

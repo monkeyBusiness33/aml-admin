@@ -1,0 +1,23 @@
+.tooltip-inner {
+    max-width: min(80vw, 800px);
+}
+
+.tooltip-inner ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+    text-align: left;
+}
+
+.tooltip-inner li {
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+}
+
+.tooltip-inner li:not(:last-child) {
+    padding-bottom: 0.2rem;
+}
+
+.tooltip-issue {
+    position: relative;
+    left: -0.25rem;
+}

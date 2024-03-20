@@ -1,0 +1,33 @@
+<div class="row align-items-center justify-content-center">
+  <div class="col-md-4 mb-3 text-center">
+    <small>Location</small>
+  </div>
+  <div class="col-md-4 mb-3 text-center">
+    <small>Name in File</small>
+  </div>
+  <div class="col-md-4 mb-3 text-center">
+    <small>IPA Organisation (Similarity Score)</small>
+  </div>
+</div>
+{% for row in ipa_form_rows %}
+  <div class="row align-items-top justify-content-center">
+    {% for name, field in row.items %}
+
+      {% if 'ipa_org_csv_name_hidden' in name %}
+        {{ field }}
+      {% elif 'errors' not in name %}
+        <div class="col-md-4 form-group">
+          <div class="mb-3">
+            {% include 'includes/_form_field.html' with field=field hide_label=True %}
+            {% if name == 'ipa_org_obj' %}
+              {% for error in row.ipa_org_obj_errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+{% endfor %}

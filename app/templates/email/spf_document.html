@@ -1,0 +1,23 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+{% block content %}
+<p>Dear, {{ handling_request.primary_contact.fullname }}</p>
+
+<p>
+    Thank you for submitting the service provision form for services taken at {{ handling_request.location_short_repr }} on flight {{ handling_request.callsign }}. This has been received by AML Global, and a copy is attached for your records.
+</p>
+
+<p>
+Very Respectfully,
+</p>
+
+<p>
+The AML Global Team
+</p>
+
+{% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

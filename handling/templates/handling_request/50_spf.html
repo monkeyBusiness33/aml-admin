@@ -1,0 +1,43 @@
+{% if handling_request.customer_organisation.is_military %}
+    <div class="card mb-2">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="fs-5 fw-bold mb-0">Services Provided Form
+                        <span class="badge bg-secondary fc-daygrid-event
+                        {% if handling_request.spf_status.code == 1 %}
+                        bg-danger text-white
+                        {% elif handling_request.spf_status.code == 2 %}
+                        bg-success text-white
+                        {% else %}
+                        bg-warning text-white
+                        {% endif %}
+                        ">{{ handling_request.spf_status.detail }} {{ handling_request.spf.created_at|date:'Y-m-d H:i' }}
+                    </span>
+                    </h2>
+                </div>
+                <div class="col text-end">
+                    <a class="btn btn-sm btn-outline-primary d-inline-flex align-items-center{% if not handling_request.spf.spf_document %} disabled{% endif %}"
+                            {% if handling_request.spf.spf_document %}
+                       href="{{ handling_request.spf.spf_document.url }}"{% endif %}>
+                        Download SPF
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+
+            <div class="d-xxl-flex flex-wrap justify-content-start m-2 mx-3">
+                {% if handling_request.spf.customer_comment %}
+                    <div class="alert alert-info w-100 mt-3" role="alert">
+                        <h5 class="alert-heading">Client Comments</h5>
+                        {{ handling_request.spf.customer_comment }}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% include 'handling_request/52_spf_services.html' with handling_request=handling_request %}
+
+        </div>
+    </div>
+{% endif %}

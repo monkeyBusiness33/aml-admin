@@ -1,0 +1,102 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+    {% block content %}
+        <p>Dear Fuel Team,</p>
+
+        <p>
+            Please process the following {% if amendment %}<b>UPDATE </b> for {% endif %} US DoD fuel order:
+        </p>
+
+        {% if handling_request.fuel_dla_contract and handling_request.fuel_dla_contract.supplier %}
+            <p style="color: red; font-weight: bold">
+            ** Please note that fuel at this location is contracted to {{ handling_request.fuel_dla_contract.supplier.details.registered_name }} **
+            </p>
+        {% endif %}
+
+        <p>
+        <table>
+            <tbody>
+            <tr>
+                <td>Request Reference:</td>
+                <td><b>{{ handling_request.reference }}</b></td>
+            </tr>
+            <tr>
+                <td>Location of Uplift:</td>
+                <td><b>{{ handling_request.location_short_repr }}</b></td>
+            </tr>
+            <tr>
+                <td>Tail Number:</td>
+                <td><b>{{ handling_request.tail_number.registration|default:'Not yet assigned' }}</b></td>
+            </tr>
+            <tr>
+                <td>Aircraft Type:</td>
+                <td><b>{{ handling_request.aircraft_type }}</b></td>
+            </tr>
+            <tr>
+                <td>Callsign:</td>
+                <td><b>{{ handling_request.callsign }}</b></td>
+            </tr>
+            <tr>
+                <td>Unit:</td>
+                <td><b>{{ handling_request.customer_organisation.details.registered_name }}</b></td>
+            </tr>
+            <tr>
+                <td>ETA:</td>
+                {% filter upper %}
+                    <td><b>{{ handling_request.arrival_movement.date|date:'M d / H:i'|title }}Z</b></td>
+                {% endfilter %}
+            </tr>
+
+            <tr>
+                <td>ETD:</td>
+                {% filter upper %}
+                    <td><b>{{ handling_request.departure_movement.date|date:'M d / H:i'|title }}Z</b></td>
+                {% endfilter %}
+            </tr>
+            <tr>
+                <td>Destination of Flight:</td>
+                <td><b>{{ handling_request.departure_movement.airport.short_repr }}</b></td>
+            </tr>
+            <tr>
+                <td>Fuel Required On:</td>
+                <td><b>{{ handling_request.fuel_required.code|capfirst }}</b></td>
+            </tr>
+            <tr>
+                <td>Fuel Quantity Requested:</td>
+                <td><b>{{ handling_request.fuel_quantity }} {{ handling_request.fuel_unit.code }}</b></td>
+            </tr>
+            <tr>
+                <td>Prist Required?:</td>
+                <td><b>{{ handling_request.fuel_prist_required|yesno|capfirst }}</b></td>
+            </tr>
+            <tr>
+                <td>Requested By:</td>
+                <td>
+                    <b>{{ handling_request.primary_contact.details.first_name }} {{ handling_request.primary_contact.details.last_name }}</b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        {% if handling_request.enforce_fuel_order_note %}
+          <br/><span style="color: red">{{ handling_request.enforce_fuel_order_note }}</span><br/>
+        {% endif %}
+
+        <br/>
+        Once the fuel order is confirmed, please click on the button below to submit the details to the client:
+        </p>
+
+        <p>
+        <center>
+            <a href="http://{{ domain }}{{ fuel_booking_confirmation_url }}" target="_blank">
+                <button class="button">FUEL ORDER CONFIRMED</button>
+            </a>
+        </center>
+        </p>
+
+    {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

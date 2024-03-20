@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>
+        {% block title %}{% endblock %} | AML Admin
+    </title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="title" content="AML Admin">
+
+    {% include 'layouts/_head_static.html' %}
+    <link type="text/css" href="{% static 'assets/css/grid.css' %}" rel="stylesheet">
+
+    {% block stylesheets %}{% endblock stylesheets %}
+    <link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'assets/css/datatable-select2.css' %}" rel="stylesheet">
+
+</head>
+<body>
+
+    <nav class="navbar navbar-dark navbar-theme-primary px-4 col-12 d-lg-none">
+        <a class="navbar-brand me-lg-5" href="/">
+            <img class="navbar-brand-dark" src="{% static 'assets/img/aml_logo.png' %}" alt="AML Global" />
+            <img class="navbar-brand-light" src="{% static 'assets/img/aml_logo.png' %}" alt="AML Global" />
+        </a>
+        <div class="d-flex align-items-center">
+            <button class="navbar-toggler d-lg-none collapsed" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
+                    aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+    {% if request.app_mode == 'ops_portal' %}
+        {% include 'includes/sidebar.html' %}
+    {% elif request.app_mode == 'dod_portal' %}
+        {% include 'dod/_dod_portal_sidebar.html' %}
+    {% endif %}
+
+    <main class="content">
+
+        {% if request.app_mode == 'ops_portal' %}
+            {% include 'includes/navigation.html' with title=title %}
+        {% elif request.app_mode == 'dod_portal' %}
+            {% include 'dod/_dod_portal_navigation.html' %}
+        {% endif %}
+
+        {% block content %}{% endblock content %}
+
+        {% include 'includes/footer.html' %}
+
+        {# data-bs-focus="false" is added to fix issue with flatpickr time input #}
+
+        <!-- Modal HTML -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal" data-bs-focus="false">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content"></div>
+        </div>
+        </div>
+
+        <!-- Modal XL HTML -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal-lg" data-bs-focus="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content"></div>
+        </div>
+        </div>
+
+        <!-- Modal XL HTML -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal-xl" data-bs-focus="false">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content"></div>
+        </div>
+        </div>
+
+        <!-- Modal XXL HTML -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal-xxl" data-bs-focus="false">
+            <div class="modal-dialog modal-dialog-centered modal-xxl" role="document">
+                <div class="modal-content"></div>
+            </div>
+        </div>
+
+    </main>
+
+    {% include 'includes/scripts.html' %}
+    {% include 'includes/notifications.html' %}
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}{% endblock javascripts %}
+
+</body>
+</html>

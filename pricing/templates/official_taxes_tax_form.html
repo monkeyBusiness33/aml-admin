@@ -1,0 +1,498 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %}
+    {% if tax_rule.pk %}Edit {{tax_type}} Tax {% else %} Define New {{tax_type}} Tax{% endif %} {% endblock %}
+
+{% block stylesheets %}
+{{ tax_form.media.css }}
+{{ tax_rule_form.media.css }}
+{{ tax_source_form.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-xl-12">
+            <div class="card border-0 shadow mb-4">
+
+                <div class="card-header p-3">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h2 class="fs-5 fw-bold mb-0 form-title">
+                                {{country}} -
+                                {% if tax_rule.pk %}
+                                    Edit
+                                {% else %}
+                                    Define New
+                                {% endif %}
+                                    {{tax_type}} Tax
+                            </h2>
+                        </div>
+                        <div class="col text-end">
+                            <a href="{% url 'admin:specific_country_tax_list' country.id %}" class = "datatable-buttons btn btn-outline-primary ms-1">Back</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body pt-3">
+                    <form id="tax_form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{tax_rule_form.0.id}}
+                    {{ tax_rule_form.management_form }}
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Applicable Tax
+                    </span>
+                    {% if not has_tax %}
+                    <div class="tax-form row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_form.category field_title='Category' %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_form.local_name field_title='Local Name' %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_form.short_name field_title='Short Name' %}
+                        </div>
+                    {% else %}
+                    <div class="tax-form row">
+                        <div class="col-md-4 mb-3 existing-tax">
+                            {% include 'includes/_form_field.html' with field=tax_form.tax_instance field_title='Selected Tax' %}
+                        </div>
+                        <div class="mb-3 add-new-tax">
+                            <div class="new-tax-text">Add New Tax</div><button class="new-tax-button" type='button'><i class='fas fa-plus new-tax-icon text-success'></i></button>
+                        </div>
+                        <div class="col-md-4 mb-3 d-none">
+                            {% include 'includes/_form_field.html' with field=tax_form.category field_title='Category' %}
+                        </div>
+                        <div class="col-md-4 mb-3 d-none">
+                            {% include 'includes/_form_field.html' with field=tax_form.local_name field_title='Local Name' %}
+                        </div>
+                        <div class="col-md-4 mb-3 d-none">
+                            {% include 'includes/_form_field.html' with field=tax_form.short_name field_title='Short Name' %}
+                        </div>
+
+                        {% for error in tax_rule_form.0.non_field_errors %}
+                        <p class="text-danger">{{error}}</p>
+                        {% endfor %}
+
+                        {% for error in tax_rule_form.0.non_form_errors %}
+                        <p class="text-danger">{{error}}</p>
+                        {% endfor %}
+
+                    {% endif %}
+                        <span class="mb-3"></span>
+                    </div>
+
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Application
+                    </span>
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col-md-3 ps-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.applies_to_fuel field_title='Applies to Fuel?' %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.applies_to_fees field_title='Applies to Fees?' %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.applies_to_private field_title='Applies to Private Flights?' %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.applies_to_commercial field_title='Applies to Commercial Flights?' %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col-md-3 ps-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.pax_must_stay_aboard %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.waived_for_tech_stop %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.valid_ufn field_title='Valid Until Further Notice'%}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.taxed_by_vat field_title='VAT Applicable?'%}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col-md-3 ps-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=tax_rule_form.0.exemption_available_with_cert %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.applicable_flight_type %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.geographic_flight_type  %}
+                        </div>
+                        {% if tax_type == 'Airport' %}
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.specific_airport  %}
+                        </div>
+                        {% elif tax_type == 'Regional' %}
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_form.applicable_region field_title='Region' %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.specific_fuel_cat %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.specific_fuel %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.specific_fee_category %}
+                        </div>
+                    </div>
+
+                    <div class="row charging-methods">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.tax_rule_charging_method field_title='Charging Method' %}
+                        </div>
+                        <div class="col-md-4 mb-3 percent-rate d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.tax_percentage_rate_application_method field_title='Method' %}
+                        </div>
+                        <div class="col-md-4 mb-3 fixed-rate-fuel d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.fuel_pricing_unit field_title='Method'  %}
+                        </div>
+                        <div class="col-md-4 mb-3 fixed-rate d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.tax_unit_rate_application_method  %}
+                        </div>
+                        <div class="col-md-4 mb-3 default-pricing fixed-rate-amount d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.tax_unit_rate  %}
+                        </div>
+                        <div class="col-md-4 mb-3 default-pricing percentage-rate-amount d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.tax_percentage_rate %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.valid_from %}
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.valid_to %}
+                        </div>
+                    </div>
+
+                    <div class="taxable-taxes d-none">
+                        <div class="col-md-12 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.taxable_tax field_title='Taxed By'%}
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Conditions
+                        <span class="mb-3"></span>
+                    </span>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_1_type field_title='Condition One Type' %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_2_type field_title='Condition Two Type' %}
+                        </div>
+                    </div>
+
+
+                    <div class="band-row row">
+                        <div class="col-md-2 mb-3 band-1 band-1-start">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_1_start field_title='Condition One Band Start' %}
+                        </div>
+                        <div class="col-md-2 mb-3 band-1 band-1-end">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_1_end field_title='Condition One Band End' %}
+                        </div>
+                        <div class="col-md-2 mb-3 band-2 band-2-start">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_2_start field_title='Condition Two Band Start' %}
+                         </div>
+                         <div class="col-md-2 mb-3 band-2 band-2-end">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_2_end field_title='Condition Two Band End' %}
+                        </div>
+                        <div class="col-md-1 mb-3 band-pricing d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_pricing_amount field_title='Tax Unit Rate' %}
+                        </div>
+                        <div class="col-md-2 mb-3 band-method d-none">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.band_method field_title='Method' %}
+                        </div>
+                    </div>
+
+                    {% for field_name, field in tax_rule_form.0.fields.items %}
+                    {% if "band_1_start-additional" in field_name %}
+                    <div class="row band-row">
+                        <div class="col-md-2 mb-3 band-1 band-1-start">
+                            <div>
+                                {{ tax_rule_form.0|get_form_field:field_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if "band_1_end-additional" in field_name %}
+                        <div class="col-md-2 mb-3 band-1 band-1-end">
+                            <div>
+                                {{ tax_rule_form.0|get_form_field:field_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if "band_2_start-additional" in field_name %}
+                        <div class="col-md-2 mb-3 band-2 band-2-start">
+                            <div>
+                                {{ tax_rule_form.0|get_form_field:field_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if "band_2_end-additional" in field_name %}
+                        <div class="col-md-2 mb-3 band-2 band-2-end">
+                            <div>
+                                {{ tax_rule_form.0|get_form_field:field_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if "band_pricing_amount-additional" in field_name %}
+                        <div class="col-md-2 mb-3 band-pricing">
+                            <div>
+                                {{ tax_rule_form.0|get_form_field:field_name }}
+                            </div>
+                        </div>
+                    {% endif %}
+                        {% if "band_method-additional" in field_name %}
+                            <div class="col-md-2 mb-3 band-method">
+                                <div>
+                                    {{ tax_rule_form.0|get_form_field:field_name }}
+                                </div>
+                            </div>
+                            <div class="col md-4 mb-3 deletion-col">
+                                <button class="fas fa-minus text-danger delete-row" type="button"></button>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+
+
+                    <hr class="insert-before-band">
+                    <button class="btn btn-primary mt-2 animate-up-2 new-band-button" type='button'>Add New Band</button>
+                    <button class="btn btn-primary mt-2 animate-up-2 revert-button" type='button'>Revert to Default</button>
+                    <div class="mb-3"></div>
+
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Comments
+                        <span class="mb-3"></span>
+                    </span>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_rule_form.0.comments %}
+                        </div>
+                        <span class="mb-3"></span>
+                    </div>
+
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Source
+                        <span class="mb-3"></span>
+                    </span>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_source_form.name %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_source_form.web_url %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=tax_source_form.file_url %}
+                        </div>
+                        <span class="mb-3"></span>
+                    </div>
+
+                    <hr>
+                    <div class="mt-3">
+                        <button class="btn btn-primary mt-2 animate-up-2 submit" type="submit">Save</button>
+                    </div>
+
+                    {% if show_modal %}
+                    <div class="modal fade" id="notificationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="notificationModalLabel">
+                                Changes in Taxed Taxes due to modified entry
+                              </h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="modal-text">
+                                    {% if reassign_taxes %}
+                                        {% if reassign_taxes|length > 1 %}
+                                            <p>The following active 'Official Taxes' will be reassigned to the newly created tax.</p>
+                                        {% else %}
+                                            <p>The following active 'Official Tax' will be reassigned to the newly created tax.</p>
+                                        {% endif %}
+
+                                        <ul>
+                                        {% for entry in reassign_taxes %}
+                                            <li><a class = "text-danger underline"
+                                                href="{% url 'admin:tax_rule_details' country=entry.get_tax_country type=entry.get_tax_type pk=entry.id %}"
+                                                target="_blank">
+                                                {{entry.get_tax_representation}}</a>
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    <p></p>
+                                    {% endif %}
+
+                                    {% if reassign_exceptions %}
+                                        {% if reassign_exceptions|length > 1 %}
+                                            <p>The following active 'Supplier-Defined Taxes' will be reassigned to the newly created tax.</p>
+                                        {% else %}
+                                            <p>The following active 'Supplier-Defined Tax' will be reassigned to the newly created tax.</p>
+                                        {% endif %}
+
+                                        <ul>
+                                        {% for entry in reassign_exceptions %}
+                                            <li><a class="text-danger underline"
+                                                href="{{ entry.details_url }}"
+                                                target="_blank">
+                                                {{entry.source_doc_name}} - {{entry.get_tax_representation}}</a>
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    <p></p>
+                                    {% endif %}
+
+                                    {% if conflicting_official_taxes %}
+                                        {% if conflicting_official_taxes|length > 1 %}
+                                        <p>The following active 'Official Taxes' will no longer be taxed after saving this tax.</p>
+                                        {% else %}
+                                        <p>The following active 'Official Tax' will no longer be taxed after saving this tax.</p>
+                                        {% endif %}
+                                        <ul>
+                                        {% for entry in conflicting_official_taxes %}
+                                            <li><a class = "text-danger underline"
+                                                href="{% url 'admin:tax_rule_details' country=entry.get_tax_country type=entry.get_tax_type pk=entry.id %}"
+                                                target="_blank">
+                                                {{entry.get_tax_representation}}</a>
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    <p></p>
+                                    {% endif %}
+
+                                    {% if conflicting_exception_taxes %}
+                                        {% if conflicting_exception_taxes|length > 1 %}
+                                        <p>The following active 'Supplier-Defined Taxes' will no longer be taxed after saving this tax.</p>
+                                        {% else %}
+                                        <p>The following active 'Supplier-Defined Tax' will no longer be taxed after saving this tax.</p>
+                                        {% endif %}
+
+                                        <ul>
+                                        {% for entry in conflicting_exception_taxes %}
+                                            <li><a class="text-danger underline"
+                                                href="{{ entry.details_url }}"
+                                                target="_blank">
+                                                {{entry.source_doc_name}} - {{entry.get_tax_representation}}</a>
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    <p></p>
+                                    {% endif %}
+
+                                    {% if conflicting_official_taxes or conflicting_exception_taxes %}
+                                        <p>You need to edit these tax(es) to conform with the current tax if they are still taxed by the current tax.</p>
+                                    {% endif %}
+
+                                    {% if conflicting_past_exception_taxes or conflicting_past_official_taxes %}
+                                        <p>The current tax is going to be duplicated, to allow historical accuracy of the following:</p>
+                                    {% endif %}
+
+                                    {% if conflicting_past_official_taxes %}
+                                        {% if conflicting_past_official_taxes|length > 1 %}
+                                        <p>Official Taxes:</p>
+                                        {% else %}
+                                        <p>Official Tax:</p>
+                                        {% endif %}
+
+                                    <ul>
+                                        {% for entry in conflicting_past_official_taxes %}
+                                            <li><a class = "text-danger underline"
+                                                href="{% url 'admin:tax_rule_details' country=entry.get_tax_country type=entry.get_tax_type pk=entry.id %}"
+                                                target="_blank">
+                                                {{entry.get_tax_representation}}</a>
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+                                    {% if conflicting_past_exception_taxes %}
+                                        {% if conflicting_past_exception_taxes|length > 1 %}
+                                        <p>Supplier Defined Taxes:</p>
+                                        {% else %}
+                                        <p>Supplier Defined Tax:</p>
+                                        {% endif %}
+                                    <ul>
+                                        {% for entry in conflicting_past_exception_taxes %}
+                                            <li><a class="text-danger underline"
+                                                href="{{ entry.details_url }}"
+                                                target="_blank">
+                                                {{entry.source_doc_name}} - {{entry.get_tax_representation}}</a>
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+                                    {% if display_date_field %}
+                                        <p>Please specify a new date for the newly created tax</p>
+                                        {% include 'includes/_form_field.html' with field=tax_rule_form.0.new_valid_to_date field_title='New Valid To Date' %}
+                                    {% endif %}
+
+                                </p>
+
+                              <div class="d-none">
+                                {{tax_rule_form.0.confirm_checkbox}}
+                              </div>
+
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-primary add-new-row" data-bs-dismiss="modal">Go Back</button>
+                              <button type="submit" class="btn btn-secondary confirm-deletion" form="tax_form">Confirm</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endif %}
+
+
+                </form>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+{{ tax_form.media.js }}
+{{ tax_rule_form.media.js }}
+{{ tax_source_form.media.js }}
+
+<script type="text/javascript" charset="utf8" src="{% static 'js/official_taxes_tax_form.js' %}"></script>
+{% endblock javascripts %}

@@ -1,0 +1,77 @@
+{% load static %}
+
+<div id="airport-details-container" class="details-section d-none">
+  <div class="col-12 col-xl-12">
+    <div class="card border-0 shadow mb-4">
+      <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+          <div class="col">
+            <h2 class="fs-6 ps-2 fw-bold mb-0">Airport Details</h2>
+          </div>
+
+        </div>
+      </div>
+      <div class="row {{ organisation.operational_status.text_color }}">
+        <div class="col">
+          <div class="row">
+            <div class="col-5 pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">ICAO Code:</td>
+                  <td><span class="fw-bold">{{ organisation.airport_details.icao_code }}</span></td>
+                </tr>
+                <tr>
+                  <td class="pe-3">IATA Code:</td>
+                  <td>
+                    {{ organisation.airport_details.iata_code }}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-7 pt-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">Maximum Weight:</td>
+                  <td><span
+                    class="fw-bold">{{ organisation.airport_details.maximum_weight }} - {{ organisation.airport_details.maximum_weight_unit.name }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="pe-3">Airport Website:</td>
+                  <td>
+                    {% if organisation.airport_details.website_url %}
+                      <a href="{{ organisation.airport_details.website_url }}">Open</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col"></div>
+            <div class="col"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_ground_handlers.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_into_plane_agents.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_airport_based_organisations.html' with organisation=organisation %}
+  </div>
+
+</div>

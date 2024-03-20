@@ -1,0 +1,35 @@
+{% load static %}
+
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+        {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    <ul>
+        {% for document_file in document.files.all %}
+            <li>
+                <b>{{ document_file.uploaded_at|date:'Y-m-d H:i' }}</b> by {{ document_file.uploaded_by.fullname }}
+                -
+                <a data-bs-toggle="modal-tooltip" data-bs-placement="left" title="{{ document_file.file.name }}"
+                   href="{{ document_file.file.url }}">Download</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="modal-footer">
+    <button type="button" data-bs-dismiss="modal"
+            class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+        Close
+    </button>
+</div>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script>
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="modal-tooltip"]'))
+    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>

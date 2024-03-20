@@ -1,0 +1,44 @@
+{% if request.app_mode == 'ops_portal' %}
+  {% if handling_request.tail_number_changed %}
+    <span class="badge bg-danger me-2">Tail number has been updated, services should be reconfirmed</span>
+  {% endif %}
+
+  {% if perms.handling.p_admin_edit %}
+    <button class="modal_button_validation btn btn-sm btn-outline-primary me-1"
+            type="button" name="button"
+            {% if not handling_request.is_admin_edit_available %}disabled{% endif %}
+            data-form-url="{% url 'admin:handling_request_admin_editing' handling_request.pk %}">
+      <i class="fas fa-screwdriver-wrench"></i>Admin Editing
+    </button>
+  {% endif %}
+
+    {% if perms.core.x_super_admin %}
+      <button class="modal_button_validation btn btn-sm btn-outline-primary me-1"
+              type="button" name="button"
+              data-form-url="{% url 'admin:handling_request_purge_cache' handling_request.pk %}">
+        <i class="fas fa-hdd"></i>Purge Cache
+      </button>
+    {% endif %}
+
+    <a class="btn btn-sm btn-outline-primary generation-button {% if not handling_request.is_pdf_available %}disabled{% endif %}"
+       href="{% url 'admin:handling_request_get_as_pdf' handling_request.pk %}">
+        <i class="fas fa-file-pdf"></i>Get PDF
+    </a>
+    <a class="btn btn-sm btn-outline-primary ms-1 generation-button {% if not handling_request.is_auto_spf_available %}disabled{% endif %}"
+       href="{% url 'admin:handling_request_get_auto_spf' handling_request.pk %}">
+      <i class="fas fa-file-pdf"></i>Get SPF
+    </a>
+
+    {% if handling_request.amended %}
+        <a href="#amendments">
+            <i class="fas fa-exclamation-triangle text-danger ms-2" data-bs-toggle="tooltip" data-bs-placement="top"
+               title="S&F Request has been amended, please check activity log."></i>
+        </a>
+    {% endif %}
+
+{% elif request.app_mode == 'dod_portal' %}
+    <a class="btn btn-sm btn-outline-primary generation-button {% if not handling_request.is_pdf_available %}disabled{% endif %}"
+       href="{% url 'dod:handling_request_get_as_pdf' handling_request.pk %}">
+        <i class="fas fa-file-pdf"></i>Get PDF
+    </a>
+{% endif %}

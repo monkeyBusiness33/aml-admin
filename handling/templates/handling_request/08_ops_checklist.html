@@ -1,0 +1,44 @@
+{% load static %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'assets/css/notes_dashboard.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% with entity.sfr_ops_checklist_items.exists as checklist_items_exist %}
+  <div class="card border-0 shadow mb-3">
+    <div class="card-header p-2 {% if not checklist_items_exist %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-5 ps-2 fw-bold mb-0">
+            Mil Team Ops Checklist {{ entity.ops_checklist_status_badge|safe }}
+          </h2>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation bs-modal btn btn-sm btn-outline-primary"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:handling_request_ops_checklist_create_item' entity.pk %}"
+            {% if not perms.handling.p_manage_sfr_ops_checklist_settings %} disabled {% endif %}>Add Checklist Item
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% if checklist_items_exist %}
+      <div>
+
+        <div id="handling_request_ops_checklist"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+          <div class="table-responsive ajax-datatable-container pt-0">
+            <table id="handling_request_ops_checklist_datatable" width="100%"
+                   class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                   data-datatable-url="{% url 'admin:handling_request_ops_checklist' entity.pk %}">
+            </table>
+          </div>
+        </div>
+
+      </div>
+    {% endif %}
+  </div>
+{% endwith %}

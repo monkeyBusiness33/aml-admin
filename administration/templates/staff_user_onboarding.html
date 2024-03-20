@@ -1,0 +1,69 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load i18n static %}
+
+{% block title %} DoD Flight Servicing Portal {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <!-- Section -->
+  <section class="vh-100 bg-soft d-flex align-items-center bg-primary">
+    <div class="container">
+      <div class="row justify-content-center form-bg-image">
+        <div class="col-10">
+
+          <form method="post" action="">
+            {% csrf_token %}
+            <div class="card">
+              <h5 class="card-header text-center ">
+                <img class="mb-3 mt-2 d-block mx-auto" src="{% static 'assets/img/aml_logo_v3_cut.png' %}" alt="Logo" width="250px">
+                Please verify your account details</h5>
+              <div class="card-body">
+
+                <div class="row">
+                  <div class="col">
+                    <div class="col-md-12 mb-3">
+                      {% include 'includes/_form_field.html' with field=person_details_form.first_name %}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                      {% include 'includes/_form_field.html' with field=person_details_form.last_name %}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                      {% include 'includes/_form_field.html' with field=person_details_form.abbreviated_name %}
+                    </div>
+
+                  </div>
+                  <div class="col">
+                    <div class="col-md-12 mb-3">
+                      {% include 'includes/_form_field.html' with field=person_details_form.contact_email %}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                      {% include 'includes/_form_field.html' with field=person_details_form.contact_phone %}
+                    </div>
+                    <div class="col-md-12 mb-3">
+                      {% include 'includes/_form_field.html' with field=person_position_form.job_title %}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="card-footer text-end">
+                <button type="submit"
+                class="submit-btn btn btn-success">Submit</button>
+              </div>
+
+            </div>
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

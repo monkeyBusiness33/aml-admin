@@ -1,0 +1,42 @@
+<td class="{% if hr_service %}service-taken-bg{% endif %}">
+    {% if hr_service %}
+        ✔
+        {% if hr_service.service.is_allowed_quantity_selection %}
+            -
+            {% if hr_service.booking_quantity %}
+                {{ hr_service.booking_quantity }} {{ hr_service.booking_quantity_uom.description_plural }}
+            {% else %}
+                "TBC"
+            {% endif %}
+
+        {% elif hr_service.service.is_allowed_free_text %}
+            - {{ hr_service.booking_text|default:"TBC" }}
+            {% if hr_service.service.codename == 'transportation_hotel' %}
+                for {{ hr_service.movement.crew }} crew
+            {% endif %}
+        {% else %}
+            {% if hr_service.note %}
+                - {{ hr_service.note|default:"" }}
+            {% endif %}
+        {% endif %}
+
+        {% if hr_service.service.codename == 'passengers_handling' %}
+            ({{ hr_service.movement.passengers_full_repr }})
+        {% endif %}
+
+        {% if hr_service.service.codename == 'crew_transportation' %}
+            {% if hr_service.movement.crew %}
+                ({{ hr_service.movement.crew_full_repr }})
+            {% endif %}
+          <div> <small>
+            - Please place all charges to the AML Global Limited account, except for any crew hotel transportation charges;
+            the crew will pay for this with their own credit card,
+            as this item cannot be invoiced in accordance with US Government AIR Card regulations.
+            </small>
+          </div>
+        {% endif %}
+
+    {% else %}
+        --
+    {% endif %}
+</td>

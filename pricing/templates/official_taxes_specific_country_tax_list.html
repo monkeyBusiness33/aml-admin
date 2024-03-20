@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Taxes in {{country}} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0">Official Taxes in {{ country.name }}</h2>
+    </div>
+
+    <div class="col text-end">
+        <a href="{% url 'admin:official_taxes' %}" class = "datatable-buttons btn btn-outline-primary ms-1">Back</a>
+    </div>
+</div>
+
+<div class="row">
+
+     <div class="col-12 col-xl-12">
+        {% include 'pricing_pages_includes/_official_taxes_country_tax_list.html' with country=country  %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'pricing_pages_includes/_official_taxes_airport_tax_list.html' with country=country  %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'pricing_pages_includes/_official_taxes_regional_tax_list.html' with country=country  %}
+    </div>
+</div> 
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

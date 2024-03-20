@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Mission Packet PDF {% endblock %}
+
+{% block stylesheets %}
+  {{ form.media.css }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12 col-xl-12">
+      <div class="card border-0 shadow mb-4">
+        <form id="get_mission_packet_pdf_form" method="post" action="" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="card-header p-3 ps-3 pe-3">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="fs-5 fw-bold mb-0">Get Mission Packet PDF - {{ mission.mission_number_repr|upper }} / {{ mission.start_date|date:'M-d-Y'|upper }} - {{ mission.end_date|date:'M-d-Y'|upper }}</h2>
+              </div>
+            </div>
+          </div>
+
+          {# Body #}
+          <div class="card-body p-0">
+            <div id="mission_itinerary_section" class="table-responsive">
+              <table class="table table-centered table-nowrap mb-0 rounded">
+                <thead class="thead-light">
+                <tr>
+                  <th class="text-center">Mission Documents</th>
+                  <th class="text-center border-start">Flight Leg Documents</th>
+                  <th class="text-center border-start">Turnaround Documents</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr>
+                  <td class="border-start">
+                    {% include 'includes/_form_field.html' with field=form.mission_documents disable_label=True checkbox_multiple_newline=True %}
+                  </td>
+                  <td class="border-start">
+                    {% include 'includes/_form_field.html' with field=form.flight_legs_documents disable_label=True checkbox_multiple_newline=True %}
+                  </td>
+                  <td class="border-start">
+                    {% include 'includes/_form_field.html' with field=form.turnaround_documents disable_label=True checkbox_multiple_newline=True %}
+                  </td>
+                </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {# Footer #}
+          <div class="card-footer p-3 ps-3 pe-3 row">
+            <div class="col">
+              {% if request.app_mode == 'ops_portal' %}
+                <button class="modal_button_validation btn btn-outline-primary"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:missions_documents_create' mission.pk %}"
+                  {% if not perms.handling.p_create %} disabled {% endif %}>
+                  <i class="fas fa-file-upload"></i>Upload Additional Document
+                </button>
+              {% elif request.app_mode == 'dod_portal' %}
+                <button class="modal_button_validation btn btn-outline-primary"
+                        type="button" name="button"
+                        data-form-url="{% url 'dod:missions_documents_create' mission.pk %}">
+                  <i class="fas fa-file-upload"></i>Upload Additional Document
+                </button>
+              {% endif %}
+            </div>
+            <div class="col text-end justify-content-end d-flex">
+              <button type="button" data-bs-dismiss="modal"
+                      class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">Close
+              </button>
+              <button type="submit"
+                      class="submit-btn btn ms-2 btn-secondary generation-button">
+                <i class="fas fa-file-pdf"></i>
+                Generate Mission Packet
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ form.media.js }}
+{% endblock javascripts %}
+

@@ -1,0 +1,11 @@
+{% for tag in organisation.tags.all %}
+<span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ tag.description|default:'' }}"
+    class="badge bg-primary p-2">{{ tag.name }}</span>
+{% endfor %}
+
+{% if perms.core.p_contacts_update %}
+  <button class="modal_button_validation bs-modal btn btn-sm btn-link d-inline-flex align-items-center" type="button"
+          name="button" data-form-url="{% url 'admin:organisation_tags' organisation.id %}">
+    <i class="fas fa-tags"></i> Edit Tags
+  </button>
+{% endif %}

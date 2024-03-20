@@ -1,0 +1,35 @@
+{% load currency_uom_tags %}
+
+<div class="border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+          <h2 class="fs-6 fw-bold mx-auto my-0">Exchange Rates</h2>
+        </div>
+        <div class="col px-4 d-flex justify-content-between">
+          {% if currency_rates %}
+            <div class="w-100 my-2 pricing-details-xr-section">
+              {% for curr_codes, rate in currency_rates.items %}
+                <div class="currency-exchange-rate">
+                  {{ rate.rate }}
+                </div>
+                <div>
+                  {{ curr_codes.0 }} -> {{ curr_codes.1 }}
+                  {% if rate.src == 'MAN' %}
+                    <small>(user-defined)</small>
+                  {% elif rate.src == 'OXR' %}
+                    <small>(via Open Exchange Rates, valid at {{ rate.timestamp }})</small>
+                  {% endif %}
+                </div>
+              {% endfor %}
+              </tbody>
+            </div>
+          {% else %}
+            <div class="col pt-2 mb-2">No exchange rates used.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+{% load static %}
+<div class="card border-0 shadow mb-4">
+  <div class="card-header p-1 bg-primary text-white {% if False %}card-header-empty-section{% endif %}">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 fw-bold mb-0">Operations Portal Settings</h2>
+      </div>
+
+    </div>
+  </div>
+  {% if True %}
+    <div class="card-body pt-3 {{ organisation.operational_status.text_color }}">
+
+      <form id="ops_portal_settings_form" method="post">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-4 mb-0">
+            {% include 'includes/_form_field.html' with field=ops_portal_settings_form.receives_parking_chase_email checkbox_type='form-switch' %}
+          </div>
+          <div class="col-md-4 mb-0">
+            {% include 'includes/_form_field.html' with field=ops_portal_settings_form.spf_use_aml_logo checkbox_type='form-switch' %}
+          </div>
+          <div class="col-md-4 mb-0">
+            <button class="modal_button_validation bs-modal btn btn-sm btn-link "
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:organisation_logo_motto' organisation.pk %}"
+              {% if not perms.organisation.change_handler %} disabled {% endif %}>
+              {% if not organisation.logo_motto.logo %}
+                Upload
+              {% else %}
+                Replace
+              {% endif %}
+              Logo
+            </button>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  {% endif %}
+</div>
+<script>
+  let csrf_token = "{{ csrf_token }}"
+  let ops_settings_form_url = "{% url 'admin:update_ops_settings' organisation.pk %}"
+</script>

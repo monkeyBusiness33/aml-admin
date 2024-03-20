@@ -1,0 +1,35 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.modal_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.modal_icon }}"></i>
+      {% autoescape off %}{{ metacontext.modal_title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% if metacontext.modal_text %}
+      {% autoescape off %}
+        <p>{{ metacontext.modal_text }}</p>
+      {% endautoescape %}
+    {% endif %}
+
+    <div class="modal-choice-flex">
+      <button type="button" id="{{ metacontext.modal_cancel_btn_id }}"
+              class="btn {{ metacontext.modal_cancel_btn_class|default:'btn-gray-200' }}"
+              data-bs-dismiss="modal">{{ metacontext.modal_cancel_btn_text }}</button>
+      <a href="{{ metacontext.modal_action_btn_0_url }}" type="submit" id="{{ metacontext.modal_action_btn_0_id }}"
+              class="btn {{ metacontext.modal_action_btn_0_class|default:'btn-primary' }}">
+        {{ metacontext.modal_action_btn_0_text }}</a>
+      <a href="{{ metacontext.modal_action_btn_1_url }}" type="submit" id="{{ metacontext.modal_action_btn_1_id }}"
+              class="btn {{ metacontext.modal_action_btn_1_class|default:'btn-primary' }}">
+        {{ metacontext.modal_action_btn_1_text }}</a>
+    </div>
+  </div>
+
+</form>
+
+{{ form.media.js }}

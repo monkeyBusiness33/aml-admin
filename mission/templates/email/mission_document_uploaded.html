@@ -1,0 +1,20 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+  {% block content %}
+    <p>Dear Military Team,</p>
+
+    <p>
+      Please find attached the <b>{{ document.type.name }}</b> that has been uploaded for {{ applicability }}
+      of mission <b>{{ mission.mission_number_repr }}</b> / <b>{{ mission.callsign}}</b> by <b>{{ document.created_by.full_repr }}</b>.
+      The user has added the following description:
+    </p>
+
+    <blockquote>
+    {{ document.description|default:'-- No description --' }}
+    </blockquote>
+
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+{% endblock under_footer %}

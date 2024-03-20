@@ -1,0 +1,481 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %} Fuel Fee Details {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="row align-items-center mb-3">
+    <div class="col-8">
+      <h2 class="fs-5 fw-bold mb-0">
+        {% if document_type == 'agreement' %}
+          {{ entry.is_historical|yesno:'Historical, Active' }}
+        {% else %}
+          {{ entry.price_active|yesno:'Active, Historical' }}
+        {% endif %}
+        <span class="header-entity">Fuel Fee</span>
+        for <span class="header-entity">{{ entry.supplier_fuel_fee.supplier.trading_or_registered_name }}</span> at
+        <span class="header-entity">{{ entry.supplier_fuel_fee.location.airport_details.fullname }}</span>
+      </h2>
+
+    </div>
+
+    <div class="col text-end">
+      <a href="{{ metacontext.back_url }}" class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Data Management Details</h2>
+        </div>
+
+        <div class="col text-end">
+          {% if not entry.deleted_at %}
+            <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+               {% if not perms.pricing.p_create %} disabled {% endif %}"
+               type="button" name="button"
+               href="{{ metacontext.supersede_url }}">
+              Supersede</a>
+            <span class="card-header-text-action-button-separator">/</span>
+            <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+               {% if not perms.pricing.p_update %} disabled {% endif %}"
+               type="button" name="button"
+               href="{{ metacontext.edit_url }}">
+              Edit</a>
+            <span class="card-header-text-action-button-separator">/</span>
+            <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:fuel_pricing_market_documents_associated_fee_archive' entry.pk %}"
+                    data-modal="#modal"
+              {% if not perms.pricing.p_update %} disabled {% endif %}>Archive
+            </button>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">
+                  {% if document_type == 'agreement' %}
+                    Source Agreement:
+                  {% else %}
+                    Price List Document:
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="{{ metacontext.source_doc_url }}"
+                     class="fw-bold">{% firstof document.pld_name document %}</a>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not False %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Entry Details</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Into-Plane Agent:</td>
+                <td>
+                  {% if entry.supplier_fuel_fee.ipa %}
+                    <a class="fw-bold" href="{% url 'admin:ipa' entry.supplier_fuel_fee.ipa %}">
+                      {{ entry.supplier_fuel_fee.ipa.trading_or_registered_name }}</a>
+                  {% else %}
+                    TBC / Confirmed on Order
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Delivery Method:</td>
+                <td><span class="fw-bold">{{ entry.delivery_method|default:'All' }}</span>
+                </td>
+              </tr>
+              {% if not entry.quantity_band_uom and not entry.weight_band %}
+                <tr>
+                  <td class="pe-3">Native Price:</td>
+                  <td>
+                                    <span class="fw-bold">{{ entry.pricing_native_amount|normalize }}
+                                      {{ entry.pricing_native_unit.description }}</span>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td class="pe-3">Native Pricing Unit:</td>
+                  <td><span class="fw-bold">{{ entry.pricing_native_unit.description|default_if_none:"" }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Supplier:</td>
+                <td>
+                  <a href="{{ entry.supplier_fuel_fee.supplier.get_absolute_url }}" class="fw-bold">
+                    {{ entry.supplier_fuel_fee.supplier.trading_or_registered_name }}</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Fuel Type:</td>
+                <td><span class="fw-bold">{{ entry.specific_fuel.name|default:'All' }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Hookup Method:</td>
+                <td><span class="fw-bold">{{ entry.specific_hookup_method.name|default:'All' }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Specific Handler:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.specific_handler_link|default:'--'|safe }}</span>
+                </td>
+              </tr>
+              {% if not entry.quantity_band_uom and not entry.weight_band %}
+                {% if entry.supplier_exchange_rate %}
+                  <tr>
+                    <td class="pe-3">Exchange Rate:</td>
+                    <td><span class="fw-bold">{{ entry.supplier_exchange_rate|normalize }}</span>
+                    </td>
+                  </tr>
+                {% endif %}
+              {% elif entry.supplier_exchange_rate %}
+                <tr>
+                  <td class="pe-3">Exchange Rate:</td>
+                  <td><span class="fw-bold">{{ entry.supplier_exchange_rate|normalize }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Destination Type:</td>
+                <td><span class="fw-bold">{{ entry.destination_type }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Flight Type:</td>
+                <td><span class="fw-bold">{{ entry.flight_type }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Specific Apron:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.specific_apron.name|default:'--' }}</span>
+                </td>
+              </tr>
+              {% if not entry.quantity_band_uom and not entry.weight_band %}
+                <tr>
+                  {% if entry.pricing_converted_amount %}
+                    <td class="pe-3">Converted Price:</td>
+                    <td><span class="fw-bold">
+                                {{ entry.pricing_converted_amount|normalize }}
+                    {{ entry.pricing_converted_unit.description|default_if_none:"" }}</span>
+                  {% endif %}
+
+                  </td>
+                </tr>
+              {% elif entry.pricing_converted_unit %}
+                <tr>
+                  <td class="pe-3">Converted Pricing Unit:</td>
+                  <td><span class="fw-bold">{{ entry.pricing_converted_unit.description|default_if_none:"" }}</span>
+                  </td>
+                </tr>
+              {% endif %}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="card border-0 shadow mb-4">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not entry.quantity_band_uom or entry.weight_band %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Band Details</h2>
+        </div>
+
+      </div>
+    </div>
+    {% if entry.quantity_band_uom or entry.weight_band %}
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            {% if entry.quantity_band_uom and entry.weight_band %}
+              <div class="col pt-2 ps-4 mb-2">
+                <table class="borderless">
+                  <tbody>
+                  <tr>
+                    <td class="pe-3">Quantity Band Type:</td>
+                    <td>
+                      <span class="fw-bold">{{ entry.quantity_band_uom }}</span>
+                    </td>
+                  </tr>
+                  {% for related_entry in related_entries %}
+                    <tr>
+                      <td class="pe-3">Quantity Band:</td>
+                      <td>
+                        <span
+                          class="fw-bold">{{ related_entry.quantity_band_start|floatformat:"0" }} - {{ related_entry.quantity_band_end|floatformat:"0" }}</span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </table>
+              </div>
+
+              <div class="col pt-2">
+                <table class="borderless">
+                  <tbody>
+                  <tr>
+                    <td class="pe-3">Weight Band Type:</td>
+                    <td>
+                      <span class="fw-bold">{{ entry.weight_band }}</span>
+                    </td>
+                  </tr>
+                  {% for related_entry in related_entries %}
+                    <tr>
+                      <td class="pe-3">Weight Band:</td>
+                      <td>
+                        <span
+                          class="fw-bold">{{ related_entry.weight_band_start|floatformat:"0" }} - {{ related_entry.weight_band_end|floatformat:"0" }}</span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+            {% elif not entry.quantity_band_uom or not entry.weight_band %}
+              <div class="col pt-2 ps-4 mb-2">
+                <table class="borderless">
+                  <tbody>
+                  <tr>
+                    {% if entry.quantity_band_uom %}
+                      <td class="pe-3">Quantity Band:</td>
+                      <td>
+                        <span class="fw-bold">{{ entry.quantity_band_uom }}</span>
+                      </td>
+                    {% elif entry.weight_band %}
+                      <td class="pe-3">Weight Band:</td>
+                      <td>
+                        <span class="fw-bold">{{ entry.weight_band }}</span>
+                      </td>
+                    {% endif %}
+                  </tr>
+                </table>
+              </div>
+
+              <div class="col pt-2 ps-4 mb-2">
+                {% if entry.quantity_band_uom %}
+                  {% for related_entry in related_entries %}
+                    <table class="borderless">
+                      <tbody>
+                      <tr>
+                        <td class="pe-3">Band:</td>
+                        <td>
+                                    <span class="fw-bold">{{ related_entry.quantity_band_start|floatformat:"0" }} -
+                                      {{ related_entry.quantity_band_end|floatformat:"0" }}</span>
+                        </td>
+                      </tbody>
+                    </table>
+                  {% endfor %}
+                {% elif entry.weight_band %}
+                  {% for related_entry in related_entries %}
+                    <table class="borderless">
+                      <tbody>
+                      <tr>
+                        <td class="pe-3">Band:</td>
+                        <td>
+                                    <span class="fw-bold">{{ related_entry.weight_band_start|floatformat:"0" }} -
+                                      {{ related_entry.weight_band_end|floatformat:"0" }}</span>
+                        </td>
+                      </tbody>
+                    </table>
+                  {% endfor %}
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {% if entry.quantity_band_uom or entry.weight_band %}
+              <div class="col pt-2 ps-4 mb-2">
+                <table class="borderless">
+                  <tbody>
+                  {% if entry.quantity_band_uom and entry.weight_band %}
+                    <tr class="empty-tr"></tr>
+                  {% endif %}
+                  {% for related_entry in related_entries %}
+                    <tr>
+                      <td class="pe-3">Native Price:</td>
+                      <td>
+                        <span class="fw-bold">{{ related_entry.pricing_native_amount|normalize }}</span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+              {% if entry.pricing_converted_amount %}
+                <div class="col pt-2 ps-4 mb-2">
+                  <table class="borderless">
+                    <tbody>
+                    {% if entry.quantity_band_uom and entry.weight_band %}
+                      <tr class="empty-tr"></tr>
+                    {% endif %}
+                    {% for related_entry in related_entries %}
+                      <tr>
+                        <td class="pe-3">Converted Price:</td>
+                        <td>
+                                    <span class="fw-bold">{{ related_entry.pricing_converted_amount|normalize }}
+
+                                    </span>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+
+  <div class="card border-0 shadow mb-4">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not entry.validity_periods_display %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Validity Period Details
+            {% if entry.validity_periods_sorted.0.is_local %}
+              (Local Times)
+            {% elif entry.validity_periods_sorted.0.is_local == False %}
+              (UTC)
+            {% endif %}</h2>
+        </div>
+
+      </div>
+    </div>
+    {% if entry.validity_periods_display %}
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                {% for days, times in entry.validity_periods_display.items %}
+                  <tr>
+                    <td class="pe-3">{{ days }}:</td>
+                    <td>
+                        <span
+                          class="fw-bold">{{ times }}</span>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not False %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Latest Update</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Date:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.updated_at|date:'Y-m-d H:i' }}</span>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">User:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.updated_by.details.fullname }}</span>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}

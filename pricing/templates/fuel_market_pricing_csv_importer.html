@@ -1,0 +1,112 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %}
+  Fuel Pricing Import {% endblock %}
+
+{% block stylesheets %}
+
+  {{ form.media.css }}
+  <link type="text/css" href="{% static 'css/fuel_market_pricing_csv_importer.css' %}" rel="stylesheet">
+
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-12 col-xl-12">
+      <div class="card border-0 shadow mb-4">
+
+        <div class="card-header p-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <h2 class="fs-5 fw-bold mb-0 form-title">
+                Fuel Pricing Import
+              </h2>
+            </div>
+          </div>
+        </div>
+
+
+        <form id="fuel_market_pricing_csv_importer_form" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.id }}
+          <div class="card-body pt-3">
+
+            <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+              Import a CSV Pricing File
+            </span>
+
+            <div class="row form-body">
+              <div class="col-12">
+                {% for field in form %}
+                  <div class="row">
+                    <div class="col-md-6 ps-4 mb-3 form-group">
+                      {% include 'includes/_form_field.html' with field=field %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div id="fuel_market_pricing_csv_importer_form_errors" class="col-md-6 ps-4 mb-3">
+              {% for error in form.non_field_errors %}
+                <p class="text-danger">{{ error|safe }}</p>
+              {% endfor %}
+            </div>
+
+            <div class="ms-2 mb-4">
+              <button id="fuel-pricing-market-import-main-form-btn"
+                      class="btn btn-primary mt-2 animate-up-2 fuel-pricing-market-import-btn" type="submit">
+                Import
+              </button>
+            </div>
+          </div>
+
+          <div class='form-modal'>
+            <div class="modal fade" id="reconcile-ipas-modal" aria-labelledby="modalLabel"
+                 aria-hidden="true" data-bs-backdrop="static">
+              <div class="modal-dialog modal-dialog-centered modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel"><i class="fas fa-link"></i>
+                      Reconcile New IPA Names</h5>
+                    <div><i class="ms-1 fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-original-title="Some IPA names could not be matched automatically, and need
+                             to be reconciled manually.<br>These choices will be remembered for future imports."
+                            data-bs-html="true"></i>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" id="cancel-btn" class="btn btn-danger" data-bs-dismiss="modal">
+                      Cancel
+                    </button>
+                    <button type="submit" id="ipa-modal-save-btn" class="btn btn-primary fuel-pricing-market-import-btn">
+                      Import
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+  <script>
+    let needsIpaReconciliation = "{{ needs_ipa_reconciliation }}";
+  </script>
+  {{ form.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'js/fuel_pricing_market_import.js' %}"></script>
+
+{% endblock javascripts %}

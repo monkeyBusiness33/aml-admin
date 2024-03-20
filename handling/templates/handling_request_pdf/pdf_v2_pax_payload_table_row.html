@@ -1,0 +1,13 @@
+<tr>
+  <td class="pax_payload_pax_num">{{ row.identifier|default:'&nbsp;' }}</td>
+  <td class="pax_payload_rank"></td>
+  <td class="pax_payload_pax_name"></td>
+  <td class="pax_payload_pax_weight">{% if row.weight %}{{ row.weight }} (lbs){% endif %}</td>
+  <td class="pax_payload_pax_arr">{{ row.is_arrival|yesno:'X, ' }}</td>
+  <td class="pax_payload_pax_dep">{{ row.is_departure|yesno:'X, ' }}</td>
+  <td class="pax_payload_pax_note">
+    <div class="pax_payload_pax_note_div">
+      {{ row.note|default:'' }}
+    </div>
+  </td>
+</tr>

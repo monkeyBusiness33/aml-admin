@@ -1,0 +1,50 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.modal_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.dla_name_id.as_hidden }}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% if metacontext.text %}
+    {% autoescape off %}
+    <p>{{ metacontext.text }}</p>
+    {% endautoescape %}
+    {% endif %}
+
+    <div class="row">
+      <div class="col">
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.type %}
+        </div>
+      </div>
+    </div>
+</div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">{% if metacontext.action_button_text %}{{ metacontext.action_button_text }}{% else %}Save{% endif %}</button>
+  </div>
+
+</form>
+
+{{form.media.js }}
+<script type="text/javascript">
+
+$('#modal').ready(function() {
+  setTimeout(() => {
+    $('.modal-body .django-select2').djangoSelect2({
+        dropdownParent: $('.modal-body'),
+        width: '100%'
+    });
+
+     }, 150);
+
+});
+
+</script>

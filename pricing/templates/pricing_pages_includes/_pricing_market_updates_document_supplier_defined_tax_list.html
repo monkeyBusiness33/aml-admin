@@ -1,0 +1,30 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not metacontext.supplier_defined_taxes %} card-header-empty-section {% endif %}">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Supplier-Defined Taxes</h2>
+            </div>
+
+            <div class="col text-end">
+                <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+                {% if not perms.pricing.p_create %} disabled {% endif %}"
+                   href="{% url 'admin:fuel_pricing_market_documents_supplier_defined_tax_create_page' document.id %}">
+                    Add Tax</a>
+            </div>
+
+        </div>
+    </div>
+    {% if metacontext.supplier_defined_taxes %}
+    <div class="{{ document.supplier.details.operational_status.text_color }}">
+        <div id="supplier_defined_taxes" class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_div">
+            <div class="table-responsive ajax-datatable-container">
+                <table id="supplier_defined_taxes_datatable" width="100%" class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto"
+                data-datatable-uri="{% url 'admin:fuel_pricing_market_documents_supplier_defined_tax_list_ajax' document.pk %}">
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+

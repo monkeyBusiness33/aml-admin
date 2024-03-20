@@ -1,0 +1,335 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %}{{ metacontext.title }}{% endblock %}
+
+{% block stylesheets %}
+  {{ fuel_pricing_formset.media.css }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12 col-xl-12">
+      <div class="card border-0 shadow mb-4">
+
+        <div class="card-header p-3 formset-page">
+          <div class="row align-items-center">
+            <div class="col">
+              <h2 class="fs-5 fw-bold mb-0 page-title {{ metacontext.title_class }}">{{ metacontext.title }} for
+                Agreement {{ agreement }}</h2>
+            </div>
+            {% if metacontext.mode == 'edit' %}
+              <div class="col text-end">
+                <a href="{{ metacontext.back_url }}" class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <form id="fuel_pricing_form" method="post" enctype="multipart/form-data">
+          {{ fuel_pricing_formset.management_form }}
+          {{ fuel_pricing_formset.non_field_errors }}
+          {{ fuel_pricing_formset.non_form_errors }}
+          {% csrf_token %}
+          {% for form in fuel_pricing_formset %}
+            {% if metacontext.mode == 'create' %}
+              {% if forloop.counter0 != 0 and not form.errors and form.location.value is None %}
+                <div class="d-none form-section form-{{ forloop.counter0 }}">
+              {% else %}
+                <div class="form-section form-{{ forloop.counter0 }}">
+              {% endif %}
+              <div class="d-none">
+                {{ form.DELETE }}
+              </div>
+            {% elif metacontext.mode == 'edit' %}
+              {{ form.id }}
+            {% endif %}
+            <hr class="header-start-line">
+            <div class="card-body pt-3 fuel-form-body">
+            {% if metacontext.mode == 'create' %}
+              <div class="pld-form-header flex-space-between mb-2">
+                <h2 class="fs-5 fw-bold mb-0 form-section-title">Pricing #{{ forloop.counter }}</h2>
+                <button class="btn btn-sm btn-outline-danger delete-form-section" type="button">Delete</button>
+              </div>
+            {% endif %}
+
+            <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Core Details
+                    </span>
+
+            {% for error in form.non_field_errors %}
+              <div class="text-danger mb-2">{{ error|safe }}</div>
+            {% endfor %}
+
+            {% for error in fuel_pricing_formset.non_form_errors %}
+              <div class="text-danger mb-2">{{ error }}</div>
+            {% endfor %}
+
+            <div class="row">
+              <div class="col-10">
+                <div class="row">
+                  <div class="col-md-3 ps-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.applies_to_private field_title='Applies to Private?' %}
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.applies_to_commercial field_title='Applies to Commercial?' %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.location field_title='Location' %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.fuel field_title='Fuel' %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.delivery_methods field_title='Delivery Method' %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.flight_type field_title='Flight Type' %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.destination_type field_title='Destination Type' %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.ipa field_title='IPA' %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.is_percentage %}
+              </div>
+              <div class="col-md-4 mb-3 {% if form.is_percentage.value %}d-none{% endif %}">
+                {% include 'includes/_form_field.html' with field=form.pricing_discount_unit %}
+              </div>
+              <div
+                class="col-md-4 mb-3 {% if form.is_percentage.value or not pricing_discount_amount in form.errors and band_discount_amount in form.errors %} d-none {% endif %}">
+                {% include 'includes/_form_field.html' with field=form.pricing_discount_amount %}
+              </div>
+              <div
+                class="col-md-4 mb-3 {% if not form.is_percentage.value or not pricing_discount_percentage in form.errors and band_discount_percentage in form.errors %} d-none {% endif %}">
+                {% include 'includes/_form_field.html' with field=form.pricing_discount_percentage %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.client %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.inclusive_taxes %}
+              </div>
+              <div
+                class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.cascade_to_fees %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.specific_handler %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.specific_apron %}
+              </div>
+              <div class="col-md-4 mb-3">
+                {% include 'includes/_form_field.html' with field=form.specific_hookup_method %}
+              </div>
+              <span class="mb-3"></span>
+            </div>
+
+            <div class="accordion" id="bandAccordion-{{ forloop.counter0 }}">
+              <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#collapseBandAccordion-{{ forloop.counter0 }}"
+                      aria-expanded="true" aria-controls="collapseOne">
+                <div class="flex-space-between">
+                  <span>Band Details</span>
+                  <span class="accordion-arrow">&#x25BC;</span>
+                </div>
+              </button>
+
+              {% if 'band_start' in form.errors or 'band_end' in form.errors or 'band_discount_amount' in form.errors or form.band_discount_amount.initial != None or form.band_discount_percentage.initial != None or 'band_uom' in form.errors %}
+                <div id="collapseBandAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse show"
+                     data-bs-parent="#bandAccordion-{{ forloop.counter0 }}">
+              {% else %}
+                <div id="collapseBandAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse"
+                     data-bs-parent="#bandAccordion-{{ forloop.counter0 }}">
+              {% endif %}
+
+              <div class="row">
+                <div class="col-md-4 mb-3 band-uom">
+                  {% include 'includes/_form_field.html' with field=form.band_uom %}
+                </div>
+              </div>
+              <div class="row band-row {% if metacontext.mode == 'edit' %}existing{% endif %}">
+                <div class="col-md-3 mb-3 band band-start {% if metacontext.mode == 'edit' %}existing{% endif %}">
+                  {% include 'includes/_form_field.html' with field=form.band_start %}
+                </div>
+                <div class="col-md-3 mb-3 band band-end {% if metacontext.mode == 'edit' %}existing{% endif %}">
+                  {% include 'includes/_form_field.html' with field=form.band_end %}
+                </div>
+                <div
+                  class="col-md-4 mb-3 band band-discount-amount {% if form.is_percentage.value or not 'band_discount_amount' in form.errors %} d-none {% endif %}
+                      {% if metacontext.mode == 'edit' %}existing{% endif %}">
+                  {% include 'includes/_form_field.html' with field=form.band_discount_amount %}
+                </div>
+                <div
+                  class="col-md-4 mb-3 band band-discount-percentage {% if not form.is_percentage.value or not 'band_discount_percentage' in form.errors %} d-none {% endif %}
+                      {% if metacontext.mode == 'edit' %}existing{% endif %}">
+                  {% include 'includes/_form_field.html' with field=form.band_discount_percentage %}
+                </div>
+              </div>
+
+              {% for field_name, field in form.fields.items %}
+                {% if "band_start-additional" in field_name %}
+                  <div class="row band-row">
+                  <div class="col-md-3 mb-3 band band-start">
+                    <div>
+                      {{ form|get_form_field:field_name }}
+                    </div>
+                  </div>
+                {% endif %}
+              {% if "band_end-additional" in field_name %}
+                <div class="col-md-3 mb-3 band band-end">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+              {% endif %}
+              {% if "band_discount_amount-additional" in field_name %}
+                <div class="col-md-4 mb-3 band band-discount-amount">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+              {% endif %}
+              {% if "band_discount_percentage-additional" in field_name %}
+                <div class="col-md-4 mb-3 band band-discount-percentage">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+
+                <div class="col md-4 mb-3 deletion-col">
+                  <button class="fas fa-minus text-danger delete-row" type="button"></button>
+                </div>
+                </div>
+              {% endif %}
+              {% endfor %}
+
+              {% for error in fuel_pricing_formset.non_form_errors %}
+                <p class="text-danger">{{ error }}</p>
+              {% endfor %}
+
+              <hr class="insert-before-band">
+              <button class="btn btn-primary mt-2 animate-up-2 new-band-button" type='button'>Add New Band</button>
+              <button class="btn btn-primary mt-2 animate-up-2 revert-button" type='button'>Revert to Default Pricing
+              </button>
+              <div class="mb-3"></div>
+              </div>
+              </div>
+
+              <div class="accordion" id="optionalAccordion-{{ forloop.counter0 }}">
+                <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseOptional-{{ forloop.counter0 }}"
+                        aria-expanded="true" aria-controls="collapseOne">
+                  <div class="flex-space-between">
+                    <span>Optional Details</span>
+                    <span class="accordion-arrow">&#x25BC;</span>
+                  </div>
+                </button>
+
+                {% if 'comment' in form.errors %}
+                  <div id="collapseOptional-{{ forloop.counter0 }}" class="accordion-collapse collapse show"
+                       data-bs-parent="#optionalAccordion-{{ forloop.counter0 }}">
+                {% else %}
+                  <div id="collapseOptional-{{ forloop.counter0 }}" class="accordion-collapse collapse"
+                       data-bs-parent="#optionalAccordion-{{ forloop.counter0 }}">
+                {% endif %}
+
+                <div class="row">
+                  <div class="col-md-8 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.comment %}
+                  </div>
+                  <span class="mb-3"></span>
+                </div>
+                </div>
+                </div>
+              </div>
+
+              {% if metacontext.mode == 'create' %}
+                </div>
+              {% elif metacontext.mode == 'edit' %}
+                <div class="insert-before"></div>
+              {% endif %}
+          {% endfor %}
+        </form>
+        <hr class="footer-start-line">
+        {% if metacontext.mode == 'create' %}
+          <div class="pld-form-footer flex-space-between">
+            <button class="btn btn-primary mt-2 animate-up-2 add-form-section" type="button">+1</button>
+            {% if doc_is_new %}
+              <button class="btn btn-primary mt-2 animate-up-2 post-button" form="fuel_pricing_form" type="submit">
+                Continue
+              </button>
+            {% else %}
+              <button class="btn btn-primary mt-2 animate-up-2 post-button" form="fuel_pricing_form" type="submit">Save
+              </button>
+            {% endif %}
+          </div>
+        {% elif metacontext.mode == 'edit' %}
+          <div class="pld-form-footer text-end">
+            <button class="btn btn-primary mt-2 animate-up-2" form="fuel_pricing_form" type="submit">Save</button>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="notificationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+       aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="notificationModalLabel"></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-text"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-secondary" form="fuel_pricing_form">No</button>
+          <button type="button" class="btn btn-primary add-new-row" data-bs-dismiss="modal">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ fuel_pricing_formset.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script>
+    let default_volume_conversion_ratio_url = '{{ metacontext.default_volume_conversion_ratio_url }}'
+  </script>
+  {% if metacontext.mode == 'create' %}
+    <script type="text/javascript" charset="utf8"
+            src="{% static 'js/fuel_pricing_agreement_discount_create.js' %}"></script>
+  {% elif metacontext.mode == 'edit' %}
+    <script type="text/javascript" charset="utf8"
+            src="{% static 'js/fuel_pricing_agreement_discount_edit.js' %}"></script>
+  {% endif %}
+{% endblock javascripts %}

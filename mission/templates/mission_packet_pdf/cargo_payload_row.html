@@ -1,0 +1,23 @@
+<tr>
+  <td>
+    <div class="cargo_payload_description_div">
+      {{ row.description|default:'&nbsp;' }}
+    </div>
+  </td>
+  <td class="cargo_payload_weight">{{ row.weight }}</td>
+  <td class="cargo_payload_dimensions">
+    {% if row.length or row.width or row.height %}
+    	{{ row.length }}x{{ row.width }}x{{ row.height }}
+    {% endif %}
+  </td>
+  <td>{{ row.quantity }}</td>
+  <td>{{ row.is_dg|yesno:'X,' }}</td>
+  <td>{{ row.note|default:'' }}</td>
+  {% for mission_leg in mission.active_legs %}
+    <td class="payload_flight_leg_col">
+      {% if mission_leg in row.mission_legs.all %}
+        X
+      {% endif %}
+    </td>
+  {% endfor %}
+</tr>

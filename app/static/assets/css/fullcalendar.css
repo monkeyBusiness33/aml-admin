@@ -1,0 +1,43 @@
+.fc .fc-daygrid-day-frame {
+    height: auto;
+}
+
+.fc-h-event .fc-event-main {
+    color: unset;
+    word-wrap: break-word;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.fc .fc-event:hover {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 1px rgba(17,24,39,.075);
+}
+
+/* timeGridWeek styles start */
+
+.fc-event-main {
+      height: min-content !important;
+    }
+
+.fc-event {
+  position: static !important;
+}
+
+.fc .fc-timegrid-slot {
+    border: 0.0625rem solid #E5E7EB;
+    border-bottom: 0;
+}
+
+.fc .fc-timegrid-slot-minor {
+    border-top: 0.0625rem solid #F2F4F6 !important;
+}
+
+.fc .fc-timegrid-event {
+    padding: 5px;
+    border: none;
+
+    font-weight: 500;
+    border-radius: 0.35rem;
+}
+
+/* timeGridWeek styles end */

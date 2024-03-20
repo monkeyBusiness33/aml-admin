@@ -1,0 +1,151 @@
+{% load static %}
+{% load filters %}
+{{ form.media.css }}
+
+<style>
+  .options_col {
+    width: 150px !important;
+    white-space: normal !important;
+  }
+</style>
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+
+    <div id="passengers_payload_section" class="formset-section">
+      {{ form.management_form }}
+      {% include 'modal_form/body-top.html' %}
+      {% for error in form.non_form_errors %}
+        <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>
+            {{ error }}
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="table-responsive">
+        <table class="table table-centered table-nowrap mb-0 rounded">
+          <thead class="thead-light">
+          <tr>
+            <th class="border-0 text-center" rowspan="2">Male/Female</th>
+            <th class="border-0 text-center" rowspan="2">Weight (lbs)</th>
+            <th class="border-0 text-center" rowspan="2">Notes</th>
+            <th class="border-0 text-center" colspan="{{ mission.active_legs.count }}">Operational Flight Legs</th>
+            <th class="border-0" rowspan="2"></th>
+          </tr>
+          <tr>
+            {% for mission_leg in mission.active_legs.all %}
+              <th class="border-0 text-center">{{ mission_leg.sequence_id }}</th>
+            {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+          {% for form in form %}
+            {{ form.management_form }}
+            {{ form.non_field_errors }}
+            {{ form.non_form_errors }}
+            {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+            {% endfor %}
+            <tr id="id_{{ form.prefix }}_card"
+                class="formset-row{% if forloop.counter > mission_leg.pob_pax|default:4 and not form.gender.value %} d-none{% endif %}">
+              <td class="border-0 w-20 p-1 pe-3">
+                <div>
+                  <span class="passenger-identifier-value" style="min-width: 3px;">{{ form.identifier.value|default:'-' }}</span>
+                  {{ form.identifier }}
+                  {{ form.gender }}
+                </div>
+              </td>
+              <td class="border-0 w-15 p-1">
+                {{ form.weight }}
+              </td>
+              <td class="border-0 w-50 p-1">
+                {{ form.note }}
+              </td>
+              {% for checkbox in form.mission_legs %}
+                <td class="border-0 w-50 text-center options_col">
+                  <label class="form-check-label">
+                    {{ checkbox.tag }}
+                  </label>
+                  {% if form.mission_legs.errors %}
+                    {% for error in form.mission_legs.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ error|escape }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                </td>
+              {% endfor %}
+              <td class="border-0 p-1 text-end">
+                <span class="d-none">{{ form.DELETE }}</span>
+                <button data-form-pre="{{ form.prefix }}"
+                        class="btn btn-sm btn-outline-danger formset-row-del-btn"
+                        data-persistent="{% if form.gender.value %}true{% else %}false{% endif %}"
+                        type="button">Remove
+                </button>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% if form.errors|is_formset_has_errors:'gender' %}
+          <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+            <i class="fas fa-exclamation-triangle me-3"></i>
+            <div>
+              Please submit values minimum for <b>{{ mission.passengers_max }}</b> passengers
+            </div>
+          </div>
+        {% elif form.errors|is_formset_has_errors:'weight,is_arrival,is_departure' %}
+          <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+            <i class="fas fa-exclamation-triangle me-3"></i>
+            <div>
+              Please specify Weight and Arriving/Departing values
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mt-2">
+        <button class="btn btn-outline-success formset-row-add-btn"
+                data-add-by="1" type="button">Add More Cargo
+        </button>
+      </div>
+      <div class="row">
+        <div class="col mb-3"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}"
+            data-bs-dismiss="modal">Close
+    </button>
+    <button type="submit"
+            class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">Update Passengers
+    </button>
+  </div>
+
+</form>
+
+<script type="text/javascript" charset="utf8">
+  var min_pax = "{{ mission.passengers_max|default:0 }}"
+  var pax_weight_male = "{{ mission.organisation.operator_details.pax_weight_male|default:'' }}"
+  var pax_weight_female = "{{ mission.organisation.operator_details.pax_weight_female|default:'' }}"
+</script>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2_modal_formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/mission_passengers.js' %}"></script>

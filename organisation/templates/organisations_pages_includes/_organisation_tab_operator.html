@@ -1,0 +1,13 @@
+{% load static %}
+
+<div id="operator-details-container" class="details-section d-none">
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_aircraft_fleet.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_preferred_handlers.html' with organisation=organisation %}
+  </div>
+
+</div>

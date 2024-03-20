@@ -1,0 +1,5 @@
+- model: core.aircardprefix
+  pk: 1
+  fields:
+    number_prefix: 78968200
+    valid_from: '2021-01-01'

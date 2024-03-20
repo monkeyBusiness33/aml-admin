@@ -1,0 +1,283 @@
+{% load handling_request_tags %}
+
+<div class="row">
+  {% if request.app_mode == 'ops_portal' and mission.assigned_mil_team_member and mission.assigned_mil_team_member != user.person %}
+    <span class="badge bg-danger w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+      This Mission is assigned to {{ mission.assigned_mil_team_member.fullname }}.
+    </span>
+  {% endif %}
+
+  <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">Mission Details</span>
+</div>
+
+<div class="row">
+    <div class="col-4 table-1">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Callsign:</td>
+                    <td><span class="fw-bold">
+                        {{ mission.callsign }}
+                        {% if request.app_mode == 'ops_portal' and mission.is_editable %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Callsign"
+                               {% if not perms.core.ops_handling_update_callsign %} disabled {% endif %}
+                               data-form-url="{% url 'admin:missions_update_callsign' mission.pk %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                            {% if mission.is_amended_callsign %}
+                                <a class="modal_button_novalidation btn-link small align-top" type="button"
+                                   data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                                   title="Acknowledge Callsign Change"
+                                   data-form-url="{% url 'admin:missions_confirm_callsign' mission.pk %}">
+                                <i class="fas fa-check"></i>
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                        {% if request.app_mode == 'dod_portal' and mission.is_editable and mission in managed_missions_list %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Callsign"
+                               data-form-url="{% url 'dod:missions_update_callsign' mission.pk %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Mission Number:</td>
+                    <td><span class="fw-bold">
+                        {{ mission.mission_number_repr|default:'TBC' }}
+                        {% if request.app_mode == 'ops_portal' and mission.is_editable %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Mission Number"
+                               {% if not perms.core.ops_handling_update_callsign %} disabled {% endif %}
+                               data-form-url="{% url 'admin:missions_update_mission_number' mission.pk %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                            {% elif request.app_mode == 'dod_portal' and mission.is_editable and mission in managed_missions_list %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Mission Number"
+                               data-form-url="{% url 'dod:missions_update_mission_number' mission.pk %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Created At:</td>
+                    <td><span class="fw-bold">{{ mission.created_at|date:'Y-m-d H:i' }}Z</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-2">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Tail Number:</td>
+                    <td>
+                        <span class="fw-bold">{{ mission.aircraft|default:'Not yet assigned' }}</span>
+                        {% if request.app_mode == 'ops_portal' and mission.is_editable %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Tail Number"
+                               {% if not perms.handling.p_update %} disabled {% endif %}
+                               data-form-url="{% url 'admin:missions_update_tail_number' mission.pk %}">
+                                <i class="far fa-edit"></i>
+                            </a>
+                        {% elif request.app_mode == 'dod_portal' and mission.is_editable and mission in managed_missions_list %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Assigned Mil Team Member"
+                               data-form-url="{% url 'dod:missions_update_tail_number' mission.pk %}">
+                                <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">Mission Type:</td>
+                    <td><span class="fw-bold">
+                        {{ mission.type.name }}
+                        {% if request.app_mode == 'ops_portal' and mission.is_editable %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Mission Type"
+                               data-form-url="{% url 'admin:missions_update_mission_type' mission.pk %}">
+                            <i class="far fa-edit"></i>
+                            </a>
+                        {% endif %}
+                    </span></td>
+                </tr>
+                {% if request.app_mode == 'ops_portal' %}
+                <tr>
+                    <td class="pe-3">Assigned To:</td>
+                    <td><span class="fw-bold">
+                        {{ mission.assigned_mil_team_member.fullname|default:'Not yet assigned' }}
+                        <a class="modal_button_validation btn-link small align-top" type="button"
+                           data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                           title="Update Assigned Mil Team Member"
+                           data-form-url="{% url 'admin:missions_update_assigned_mil_team_member' mission.pk %}">
+                            <i class="far fa-edit"></i>
+                        </a>
+                    </span></td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-3">
+        <table class="w-100">
+            <tbody class="w-100">
+                <tr>
+                    <td class="pe-3">Aircraft Type:</td>
+                    <td>
+                      <span class="fw-bold">{{ mission.aircraft_type }}</span>
+                    {% if mission.is_editable %}
+                      {% if perms.handling.p_update or mission in managed_missions_list %}
+                        <a class="modal_button_validation btn-link small align-top" type="button"
+                           data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                           title="Update S&F Request Aircraft Type"
+                          {% if request.app_mode == 'ops_portal' %}
+                           data-form-url='{% url 'admin:missions_update_aircraft_type' mission.pk %}'
+                          {% elif request.app_mode == 'dod_portal' %}
+                           data-form-url='{% url 'dod:missions_update_aircraft_type' mission.pk %}'
+                          {% endif %}
+                        ><i class="far fa-edit"></i></a>
+                      {% endif %}
+                    {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pe-3">
+                        <span data-bs-toggle="tooltip" data-bs-placement="right" title="Diplomatic Clearance">
+                            APACS Number:
+                        </span>
+                    </td>
+                    <td>
+                        <span class="fw-bold">{{ mission.apacs_number|default:'TBC' }}</span>
+                        {% if mission.is_editable %}
+                          {% if perms.handling.p_update or mission in managed_missions_list %}
+                            <a class="modal_button_validation btn-link small align-top" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Update Mission Diplomatic Clearance"
+                              {% if request.app_mode == 'ops_portal' %}
+                               data-form-url='{% url 'admin:missions_update_apacs_number' mission.pk %}'
+                              {% elif request.app_mode == 'dod_portal' %}
+                               data-form-url='{% url 'dod:missions_update_apacs_number' mission.pk %}'
+                              {% endif %}
+                            ><i class="far fa-edit"></i></a>
+                          {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            <tr>
+                <td class="pe-3">APACS URL:</td>
+                <td>
+                    {% if mission.apacs_url %}
+                        <a class="fw-bold link-icon-before" target="_blank" href="{{ mission.apacs_url }}"></a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                    {% if mission.is_editable %}
+                      {% if perms.handling.p_update or mission in managed_missions_list %}
+                        <a class="modal_button_validation btn-link small align-top" type="button"
+                           data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                           title="Update Mission APACS URL"
+                          {% if request.app_mode == 'ops_portal' %}
+                           data-form-url='{% url 'admin:missions_update_apacs_url' mission.pk %}'
+                          {% elif request.app_mode == 'dod_portal' %}
+                           data-form-url='{% url 'dod:missions_update_apacs_url' mission.pk %}'
+                          {% endif %}
+                        ><i class="far fa-edit"></i></a>
+                      {% endif %}
+                    {% endif %}
+
+                    <div class="d-inline float-end">
+                        <a class="fw-bold" href="https://apacs.milcloud.mil/">(apacs.milcloud.mil)</a>
+                    </div>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2"></div>
+</div>
+
+<div class="row">
+    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+        Contact Details
+    </span>
+</div>
+
+<div class="row">
+    <div class="col-4 table-1">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Requesting Unit:</td>
+                    <td><span class="fw-bold">
+                        {% if user.is_staff %}
+                            <a href="{{ mission.organisation.get_absolute_url }}">
+                                {{ mission.organisation.details.registered_name }}
+                            </a>
+                        {% else %}
+                            {{ mission.organisation.details.registered_name }}
+                        {% endif %}
+                    </span></td>
+                </tr>
+                <tr>
+                  <td class="pe-3">Mission Planner:</td>
+                  <td><span class="fw-bold">
+                        {% if user.is_staff %}
+                          <a href="{{ mission.mission_planner.get_absolute_url }}">
+                                {{ mission.mission_planner.fullname }}
+                            </a>
+                        {% else %}
+                          {{ mission.mission_planner.fullname }}
+                        {% endif %}
+                    </span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-2">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Req. Contact:</td>
+                    <td><span class="fw-bold">
+                        {% if user.is_staff %}
+                        <a href="{{ mission.requesting_person.get_absolute_url }}">
+                            {{ mission.requesting_person.fullname }}
+                        </a>
+                        {% else %}
+                            {{ mission.requesting_person.fullname }}
+                        {% endif %}
+                    </span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 table-3">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="pe-3">Contact Email:</td>
+                    <td>
+                        <span class="fw-bold copy-to-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-copy-value="{{ mission.requesting_person_position.contact_email|default:'' }}"
+                              title="{{ mission.requesting_person_position.contact_email|default:'' }}<br><span class='text-secondary'>Click to Copy</span>">
+                          {{ mission.requesting_person_position.contact_email|default:''|truncatechars:20 }}
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="mb-2"></div>
+</div>

@@ -1,0 +1,32 @@
+<div class="card border-0 shadow mb-4">
+  <div class="card-header p-1 bg-primary text-white">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 fw-bold mb-0">Addresses</h2>
+      </div>
+
+      <div class="col text-end">
+        <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                type="button" name="button"
+                data-form-url="{% url 'admin:email_distribution_control_addresses_create' %}"
+          {% if not perms.administration.p_email_distribution_control %} disabled {% endif %}>Add Address
+        </button>
+      </div>
+
+    </div>
+  </div>
+  <div>
+
+    <div id="email_distribution_control_addresses_list"
+         class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+      <div class="table-responsive ajax-datatable-container pt-0">
+        <table id="email_distribution_control_addresses_list_datatable"
+               class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact datatable-clickable"
+               data-datatable-url="{% url 'admin:email_distribution_control_addresses_ajax' %}">
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

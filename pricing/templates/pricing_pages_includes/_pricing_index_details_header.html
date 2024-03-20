@@ -1,0 +1,13 @@
+<div class="row align-items-center mb-3">
+  <div class="col-8">
+    <h2 class="fs-5 fw-bold mb-0">{{ index|default:'' }}
+      {% if index.is_active %}
+        <span class="badge bg-success align-text-bottom">Active</span>
+      {% else %}
+        <span class="badge bg-warning align-text-bottom">Inactive</span>
+      {% endif %}</h2>
+    <small>
+      {{ metacontext.title }}
+    </small>
+  </div>
+</div>

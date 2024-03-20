@@ -1,0 +1,32 @@
+{% with entity.activity_log.exists as activity_log_exists %}
+  {% if perms.core.p_activity_log_view or entity_slug == 'handling_request' and perms.handling.p_activity_log_view or entity_slug == 'mission' and perms.handling.p_activity_log_view %}
+    <div class="card border-0 shadow mb-4">
+      <div
+        class="card-header p-1 bg-primary text-white {% if not activity_log_exists %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+          <div class="col">
+            <h2 class="fs-6 ps-2 fw-bold mb-0">Activity Log</h2>
+          </div>
+
+        </div>
+      </div>
+
+      {% if activity_log_exists %}
+        <div class="">
+
+          <div id="activity_log_list"
+               class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+            <div class="table-responsive ajax-datatable-container pt-0">
+              <table id="activity_log_list_datatable"
+                     class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                     data-datatable-url="{% url 'admin:activity_log_ajax' entity_slug entity.pk %}">
+              </table>
+            </div>
+          </div>
+
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endwith %}

@@ -1,0 +1,66 @@
+{% load static %}
+{{ form.media.css }}
+<link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% include 'modal_form/info-text.html' with position='top' %}
+    {% include 'modal_form/body-top.html' %}
+
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.dla_contracted_fuel checkbox_left=True %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.reference %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.fuel_order_number %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.ipa %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.processed_by %}
+    </div>
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.fuel_release %}
+    </div>
+
+    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+            Amend Fuel
+        </span>
+
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.fuel_required %}
+    </div>
+    <div class="row">
+      <div class="col">
+        {% include 'includes/_form_field.html' with field=form.fuel_quantity %}
+      </div>
+      <div class="col">
+        {% include 'includes/_form_field.html' with field=form.fuel_unit %}
+      </div>
+    </div>
+    <div class="col mt-2">
+      {% include 'includes/_form_field.html' with field=form.fuel_prist_required checkbox_left=True %}
+    </div>
+
+    {% include 'modal_form/info-text.html' with position='bottom' %}
+  </div>
+
+  {% include 'modal_form/footer.html' %}
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/fuel_booking_confirmation.js' %}"></script>

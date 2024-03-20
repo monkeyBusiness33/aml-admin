@@ -1,0 +1,13 @@
+{% load static %}
+
+<div id="nasdl-details-container" class="details-section d-none">
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_nasdl_details.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_nasdl_location_map.html' with organisation=organisation %}
+  </div>
+
+</div>

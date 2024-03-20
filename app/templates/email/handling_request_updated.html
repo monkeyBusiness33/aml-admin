@@ -1,0 +1,175 @@
+{% extends "email/base.html" %}
+{% load whitespace_remover %}
+{% autoescape on %}
+{% block content %}
+<p>Dear Military Team,</p>
+
+<p>
+    Please process the following <b>UPDATE</b> for Servicing & Fueling Request:
+</p>
+
+<p>
+<table>
+    <tbody>
+        <tr>
+            <td>Location Identifier:</td>
+            <td>
+                <span class="{% if diff_obj.airport.is_different %}value-updated{% endif %}">
+                    <b>
+                        {{ diff_obj.airport.value.tiny_repr }}
+                    </b>
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+          <td>ETA:</td>
+          <td>
+            {% whitespace_remover %}
+              <span class="{% if diff_obj.arrival_movement.date.is_different %}value-updated{% endif %}">
+                <b>{{ diff_obj.arrival_movement.date.value|date:'M-d-Y H:i' }}Z</b>
+              </span>
+              {% if diff_obj.arrival_movement.airport.value %}, from {% endif %}
+            {% end_whitespace_remover %}
+            {% if diff_obj.arrival_movement.airport %}
+              <span class="{% if diff_obj.arrival_movement.airport.is_different %}value-updated{% endif %}">
+                  <b>{{ diff_obj.arrival_movement.airport.value.tiny_repr }}</b>
+                </span>
+            {% endif %}
+          </td>
+        </tr>
+
+        <tr>
+          <td>ETD:</td>
+          <td>
+            {% whitespace_remover %}
+              <span class="{% if diff_obj.departure_movement.date.is_different %}value-updated{% endif %}">
+                <b>{{ diff_obj.departure_movement.date.value|date:'M-d-Y H:i' }}Z</b>
+              </span>
+              {% if diff_obj.departure_movement.airport.value %}, to {% endif %}
+            {% end_whitespace_remover %}
+            {% if diff_obj.departure_movement.airport %}
+              <span class="{% if diff_obj.departure_movement.airport.is_different %}value-updated{% endif %}">
+                  <b>{{ diff_obj.departure_movement.airport.value.tiny_repr }}</b>
+                </span>
+            {% endif %}
+          </td>
+        </tr>
+
+        <tr>
+            <td>Callsign:</td>
+            <td>
+                <span class="{% if diff_obj.callsign.is_different %}value-updated{% endif %}">
+                    <b>
+                        {{ diff_obj.callsign.value }}
+                    </b>
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Aircraft Type:</td>
+            <td>
+                <span class="{% if diff_obj.aircraft_type.is_different %}value-updated{% endif %}">
+                    <b>
+                        {{ diff_obj.aircraft_type.value }}
+                    </b>
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Fuel Requested:</td>
+            <td>
+              <b>
+                <span class="{% if diff_obj.fuel_required.is_different %}value-updated{% endif %}">
+                    {{ diff_obj.fuel_required.value|lower|capfirst }}
+                </span>
+                <span class="{% if diff_obj.fuel_quantity.is_different %}value-updated{% endif %}">
+                    {{ diff_obj.fuel_quantity.value }}
+                </span>
+                <span class="{% if diff_obj.fuel_unit.is_different %}value-updated{% endif %}">
+                    {{ diff_obj.fuel_unit.value }}
+                </span>
+              </b>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Unit:</td>
+            <td><b>{{ handling_request.customer_organisation.details.registered_name }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Requested By:</td>
+            <td>
+                <span>
+                    <b>
+                        {{ handling_request.primary_contact.fullname }}
+                    </b>
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+          <td>Passengers:</td>
+          <td>
+              <span class="{% if diff_obj.arrival_movement.passengers.is_different %}value-updated{% endif %}">
+                    <b>{{ diff_obj.arrival_movement.passengers.value }}</b>
+                </span>/
+            <span class="{% if diff_obj.departure_movement.passengers.is_different %}value-updated{% endif %}">
+                    <b>{{ diff_obj.departure_movement.passengers.value }}</b>
+                </span>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Crew:</td>
+          <td>
+              <span class="{% if diff_obj.arrival_movement.crew.is_different %}value-updated{% endif %}">
+                    <b>{{ diff_obj.arrival_movement.crew.value }}</b>
+                </span>/
+            <span class="{% if diff_obj.departure_movement.crew.is_different %}value-updated{% endif %}">
+                    <b>{{ diff_obj.departure_movement.crew.value }}</b>
+                </span>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Arrival Services:</td>
+          <td>
+            {% if diff_obj.arrival_movement.services %}
+              {% for service in diff_obj.arrival_movement.services %}
+                {{ service.html_repr|safe }}{% if not forloop.last %}, {% else %}.{% endif %}
+              {% endfor %}
+            {% endif %}
+          </td>
+        </tr>
+
+        <tr>
+            <td>Departure Services:</td>
+            <td>
+                {% if diff_obj.departure_movement.services %}
+                    {% for service in diff_obj.departure_movement.services %}
+                        {{ service.html_repr|safe }}{% if not forloop.last %}, {% else %}.{% endif %}
+                    {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+
+<p>
+<div style="text-align: center;">
+    <a href="http://{{domain}}{{handling_request_url}}" target="_blank">
+        <button class="button">Servicing & Fueling Request Details</button>
+    </a>
+</div>
+
+{% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

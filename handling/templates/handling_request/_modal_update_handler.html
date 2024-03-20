@@ -1,0 +1,112 @@
+{% load static %}
+{{ form.media.css }}
+<link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+            {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        {% if metacontext.text %}
+            {% autoescape off %}
+                <p>{{ metacontext.text }}</p>
+            {% endautoescape %}
+        {% endif %}
+
+        {% if metacontext.text_danger %}
+            {% autoescape off %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>
+                        {{ metacontext.text_danger }}
+                    </div>
+                </div>
+            {% endautoescape %}
+        {% endif %}
+
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    {{ error }}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.handling_agent %}
+        </div>
+
+        <div id="gh_cancellation_form" class="d-none">
+            {% if form.instance.auto_spf %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mb-2" role="alert">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>
+                        Automatic ground handling cancellation email will be sent to
+                        <b>{{ form.instance.auto_spf.sent_to.full_repr }}</b>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.mark_as_sent_manually checkbox_left=True %}
+                </div>
+            {% endif %}
+        </div>
+
+    <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.contact_email %}
+        </div>
+    <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.contact_phone %}
+        </div>
+    <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.ops_frequency %}
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal"
+                class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+            Close
+        </button>
+        {% if metacontext.multi_button %}
+            <button id="multi_button_1" type="submit" value="False" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+                {{ metacontext.action_button1_text|default:'Decline' }}
+            </button>
+            <button id="multi_button_2" type="submit" value="True" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+                {{ metacontext.action_button2_text|default:'Confirm' }}
+            </button>
+        {% else %}
+            {% if not metacontext.hide_action_button and not form.hide_action_button %}
+                <button type="submit"
+                        class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+                        {% if action_button_disabled %} disabled {% endif %}>
+                    {{ metacontext.action_button_text|default:'Save' }}
+                </button>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript">
+    ground_handler_confirmed_for = "{{ form.instance.auto_spf.sent_to.pk }}"
+
+    $('button[name="multi_button"]').click(function () {
+        $("#id_multi_button").val($(this).val()).trigger('change')
+    });
+</script>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/sfr_update_handler_modal.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/sfr_handler_quick_create.js' %}"></script>
+

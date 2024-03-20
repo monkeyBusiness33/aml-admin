@@ -1,0 +1,6 @@
+<span class="badge w-100 fs-3 text-uppercase text-start px-3 mb-3"
+    style="background:{{ mission.status.background_color }}; color:{{ mission.status.text_color }}">
+  <span class="align-middle">
+    {{ mission.mission_number_repr }} - {{ mission.callsign }} - {{ mission.start_date_val|date:'M-d-Y' }} / {{ mission.end_date_val|date:'M-d-Y' }} - {{ mission.status.detail }}
+  </span>
+</span>

@@ -1,0 +1,36 @@
+{% with entity.comments.exists as comments_exists %}
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not comments_exists %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">{{ title|default:'Comments' }}</h2>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:comment_add' entity_slug entity.pk %}"
+            {% if not perms.core.p_comments_create %} disabled {% endif %}>Add Comment
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% if comments_exists %}
+      <div class="">
+
+        <div id="comments_list"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+          <div class="table-responsive ajax-datatable-container pt-0">
+            <table id="comments_list_datatable"
+                   class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                   data-datatable-url="{% url 'admin:comments' entity_slug entity.pk %}">
+            </table>
+          </div>
+        </div>
+
+      </div>
+    {% endif %}
+  </div>
+{% endwith %}

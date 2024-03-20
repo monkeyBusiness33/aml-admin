@@ -1,0 +1,13 @@
+{% load static %}
+
+<div id="fuel-seller-details-container" class="details-section d-none">
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_fuel_seller_agreements.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12">
+    {% include 'organisations_pages_includes/_fuel_seller_market_pricing.html' with organisation=organisation %}
+  </div>
+
+</div>

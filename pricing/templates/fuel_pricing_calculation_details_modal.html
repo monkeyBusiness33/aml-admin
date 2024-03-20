@@ -1,0 +1,50 @@
+{% load static %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'css/fuel_pricing_calculation.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+<div class="modal-header">
+  <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+    {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div id="fuel-pricing-calculation-details-modal" class="modal-body">
+  <div class="row">
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_details.html' with results_row=results_row %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_fuel_pricing.html' with fuel_price=results_row.fuel_price %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_fees.html' with fees=results_row.fees %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_taxes.html' with taxes=results_row.taxes %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_totals.html' with results_row=results_row %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_exchange_rates.html' with currency_rates=results_row.currency_rates_display %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'pricing_pages_includes/_pricing_calculation_issues.html' with issues=results_row.issues %}
+    </div>
+
+  </div>
+</div>
+
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8"
+          src="{% static 'js/fuel_pricing_calculation_details_modal.js' %}"></script>
+{% endblock %}

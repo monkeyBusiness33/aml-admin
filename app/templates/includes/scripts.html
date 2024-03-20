@@ -1,0 +1,43 @@
+{% load static %}
+{% load notifications_tags %}
+<!-- Core Libs -->
+<script src="{% static 'assets/vendor/@popperjs/core/dist/umd/popper.min.js' %}"></script>
+<script src="{% static 'assets/vendor/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+<!-- Plugins -->
+<script src="{% static 'assets/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js' %}"></script>
+<script src="{% static 'assets/vendor/sweetalert2/dist/sweetalert2.min.js' %}"></script>
+<script src="{% static 'assets/vendor/moment.min.js' %}"></script>
+<script src="{% static 'assets/vendor/vanillajs-datepicker/dist/js/datepicker.min.js' %}"></script>
+<script src="{% static 'assets/vendor/fullcalendar/main.min.js' %}"></script>
+<script src="{% static 'assets/vendor/notyf/notyf.min.js' %}"></script>
+<script src="{% static 'assets/vendor/decimal/decimal.min.js' %}"></script>
+
+<script src="{% static 'assets/js/volt.js' %}"></script>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/jquery/jq.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'ajax_datatable/js/utils.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/datatables/dataTables.bootstrap5.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/custom.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/jquery-ui/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/tagify/tagify.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/tagify/tagify.polyfills.min.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/jquery-clock-timepicker-2.6.2/jquery-clock-timepicker.min.js' %}"></script>
+<script type="text/javascript" charset="utf8"
+        src="{% static 'assets/vendor/bootstrap5-toggle/bootstrap5-toggle.min.js' %}"></script>
+
+{% if user.is_authenticated %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/ops_portal_notifications.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'notifications/notify.js' %}"></script>
+  {% register_notify_callbacks refresh_period='30' callbacks='fill_notification_list2, fill_notification_badge2' %}
+
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/metapooler.js' %}"></script>
+{% endif %}
+
+{% if request.app_mode == 'dod_portal' %}
+	<script type="text/javascript" charset="utf8" src="{% static 'dod_portal/js/planners_portal.js' %}"></script>
+{% endif %}

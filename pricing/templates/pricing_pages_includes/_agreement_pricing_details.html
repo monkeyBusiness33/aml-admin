@@ -1,0 +1,91 @@
+<div class="card border-0 mb-3">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col pt-2 ps-4 pe-4 mb-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2 nowrap">Specific Client:</td>
+                                <td>
+                                    {% if pricing.client %}
+                                    <a href="{{ pricing.client.get_absolute_url }}" class="fw-bold">{{ pricing.client.trading_and_registered_name }}</a>
+                                    {% else %}
+                                    <span>--</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2 nowrap">Into-Plane Agent:</td>
+                                <td><span class="fw-bold">{{ pricing.ipa.details.registered_and_trading_name|default:'--' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Flight Type:</td>
+                                <td><span class="fw-bold">{{ pricing.flight_type }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Operated As:</td>
+                                <td><span class="fw-bold">{{ pricing.operated_as }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Inclusive Taxes:</td>
+                                <td><span class="fw-bold">{{ pricing.inclusive_taxes_str|default:'No' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Specific Handler:</td>
+                                <td><span class="fw-bold">{{ pricing.specific_handler_link|default:'--'|safe }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Hookup Method:</td>
+                                <td><span class="fw-bold">{{ pricing.specific_hookup_method.name|default:'All' }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col pt-2 ps-4 pe-4 mb-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Fuel Type:</td>
+                                <td><span class="fw-bold">{{ pricing.fuel|default:'--' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2 nowrap">Delivery Method(s):</td>
+                                <td><span class="fw-bold">{{ pricing.delivery_methods.all|join:", "|default:'All' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Destination:</td>
+                                <td><span class="fw-bold">{{ pricing.destination_type }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Quantity Band:</td>
+                                <td><span class="fw-bold">{{ pricing.quantity_band|default:'--' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Inclusive Fees:</td>
+                                <td><span class="fw-bold">{{ pricing.cascade_to_fees|yesno:'Yes,No' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3 pb-2 pt-2">Specific Apron:</td>
+                                <td><span class="fw-bold">{{ pricing.specific_apron.name|default:'--' }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,185 @@
+{% load static %}
+{{ form.media.css }}
+
+<style>
+  .qty-input {
+    padding: 3px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    width: 75%;
+  }
+
+  .data_col {
+    width: 80px !important;
+    white-space: normal !important;
+  }
+
+  .col-centered {
+    margin: 0 auto;
+    float: none;
+  }
+
+  .uom-input {
+    padding: 3px;
+    margin-left: 10px;
+    margin-right: 10px !important;
+    margin-bottom: 5px;
+  }
+  .flight-leg-number-left {
+    margin-left: -19px;
+  }
+</style>
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body p-0">
+    {% if metacontext.text %}
+      {% autoescape off %}
+        <p>{{ metacontext.text }}</p>
+      {% endautoescape %}
+    {% endif %}
+
+
+    <div id="mission_fueling_requirements">
+      {{ form.management_form }}
+      {{ form.non_field_errors }}
+      {% for error in form.non_form_errors %}
+        <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>
+            {{ error }}
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="table-responsive">
+        <table class="table table-centered table-nowrap mb-0 rounded">
+          <thead class="thead-light">
+          <tr>
+            <th class="border-0 text-center p-2" colspan="100%">Mission Turnarounds</th>
+          </tr>
+          <tr>
+            <th class="border-0">Flight Legs</th>
+            {% for flight_leg_number in mission.active_legs_sequences_for_table.0 %}
+              <th class="border-0">
+                	<span class="flight-leg-number-left">
+                  {{ flight_leg_number }}
+                  </span>
+                {% if forloop.last %}
+                  <span class="float-end flight-leg-number-right">
+                {{ mission.active_legs_sequences_for_table.1.0 }}
+                  </span>
+                {% endif %}
+              </th>
+            {% endfor %}
+          </tr>
+
+          <tr>
+            <th class="border-0 text-center"></th>
+            {% for turnaround in turnarounds %}
+              <th class="border-0 text-center p-2">{{ turnaround.mission_leg.arrival_location.tiny_repr }}</th>
+            {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr class="thead-light border-bottom">
+            <th class="border-0 w-20">Fuel Required?</th>
+            {% for form in form %}
+              {{ form.management_form }}
+              {{ form.non_field_errors }}
+              {{ form.non_form_errors }}
+              {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+              {% endfor %}
+              <td class="border-0 border-start text-center align-middle p-1 fuel_required_cell {% if not form.instance.is_servicing_requested %} bg-gray-50{% endif %}"
+                  data-form-prefix="{{ form.prefix }}"
+                  data-servicing_requested="{{ form.instance.is_servicing_requested|yesno }}">
+                {% for checkbox in form.fuel_required %}
+                  <span class="align-middle">
+                    <label class="m-0">{% if checkbox.choice_label == 'ARRIVAL' %}A{% else %}D{% endif %}<br>
+                      {{ checkbox.tag }}
+                    </label>
+                    {% if checkbox.errors %}
+                      {% for error in form.legs.errors %}
+                        <div class="invalid-feedback d-block">
+                          {{ error|escape }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </span>
+                {% endfor %}
+              </td>
+            {% endfor %}
+          </tr>
+
+          <tr class="thead-light border-bottom">
+            <th class="border-0 w-20 thead-light bg-light">Quantity</th>
+            {% for form in form %}
+              {{ form.management_form }}
+              {{ form.non_field_errors }}
+              {{ form.non_form_errors }}
+              {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+              {% endfor %}
+              <td class="border-0 border-start text-center align-middle p-1 {% if not form.instance.is_servicing_requested %} bg-gray-50{% endif %}">
+                <label for="{{ form.fuel_quantity.id_for_label }}" class="m-0">Qnty<br>
+                  <span class="row d-flex justify-content-center">
+                  {{ form.fuel_quantity }}
+                </span>
+                </label>
+                <br>
+                <label class="m-0">Unit<br>
+                  <span class="row d-flex justify-content-center">
+                  {{ form.fuel_unit }}
+                </span>
+                </label>
+              </td>
+            {% endfor %}
+          </tr>
+
+          <tr class="thead-light border-bottom">
+            <th class="border-0 w-20 thead-light bg-light">Prist Required?</th>
+            {% for form in form %}
+              {{ form.management_form }}
+              {{ form.non_field_errors }}
+              {{ form.non_form_errors }}
+              {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+              {% endfor %}
+              <td class="border-0 border-start text-center align-middle p-1 {% if not form.instance.is_servicing_requested %} bg-gray-50{% endif %}">
+                {{ form.fuel_prist_required }}
+              </td>
+            {% endfor %}
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}"
+            data-bs-dismiss="modal">Close
+    </button>
+    <button type="submit"
+            class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">Update Fueling
+    </button>
+  </div>
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2_modal_formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/mission_fueling_requirements.js' %}"></script>

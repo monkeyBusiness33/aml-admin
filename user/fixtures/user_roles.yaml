@@ -1,0 +1,40 @@
+- model: user.role
+  pk: 1
+  fields:
+    name: "ERP Admin"
+    description: "Superuser role"
+
+- model: user.role
+  pk: 2
+  fields:
+    name: "Fuel Team"
+
+- model: user.role
+  pk: 3
+  fields:
+    name: "Accounts Team"
+
+- model: user.role
+  pk: 4
+  fields:
+    name: "Sales Team"
+
+- model: user.role
+  pk: 5
+  fields:
+    name: "ADS Data Processing"
+
+- model: user.role
+  pk: 1000
+  fields:
+    name: "Military Team"
+
+- model: user.role
+  pk: 1001
+  fields:
+    name: "Management"
+
+- model: user.role
+  pk: 1002
+  fields:
+    name: "Military Team Observer"

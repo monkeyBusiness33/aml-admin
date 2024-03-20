@@ -1,0 +1,92 @@
+{% load static %}
+{{form.media.css }}
+<style>
+  .flatpickr-wrapper {
+    display: block;
+  }
+</style>
+<link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+{% for file_path in metacontext.css_files %}
+  <link type="text/css" href="{{ file_path }}" rel="stylesheet">
+{% endfor %}
+
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% include 'modal_form/info-text.html' with position='top' %}
+
+    {% include 'modal_form/body-top.html' %}
+
+  <div class="{% if metacontext.hide_form_fields %}d-none{% endif %}">
+    {% for field in form %}
+      {% if field.widget_type == 'checkbox' %}
+      <div class="form-check mb-3">
+        <label class="form-check-label">
+          {{ field }}
+          <span class="form-check-sign">{{ field.label }}</span>
+        </label>
+      </div>
+      {% elif field.widget_type == 'clearablefile' %}
+        <div class="form-group mb-3">
+            {% if field.label %}
+              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% endif %}
+            {{ field }}
+        </div>
+      {% else %}
+      <div class="form-group mb-3{% if field.errors %} is-invalid{% endif %}{% if field.widget_type == 'hidden' %} d-none{% endif %}">
+        {% if field.label %}
+          <label class="{% if field.field.required %}required{% endif %}" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {% endif %}
+        {{ field }}
+        {% if field.widget_type == 'textarea' %}
+        {{ field.attrs }}
+          <span class='textarea-char-counter badge bg-gray-600 p-1 mt-1 float-end'></span>
+        {% endif %}
+        {% for error in field.errors %}
+        <div class="invalid-feedback" style="display: unset;">{{ error|safe }}</div>
+        {% if not forloop.last %}<br/>{% endif %}
+        {% endfor %}
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+
+    {% include 'modal_form/info-text.html' with position='bottom' %}
+
+  </div>
+  </div>
+
+ {% include 'modal_form/footer.html' %}
+
+</form>
+
+{{form.media.js }}
+
+<script type="text/javascript">
+  $('button[name="multi_button"]').click(function () {
+    $("#id_multi_button").val($(this).val()).trigger('change')
+  });
+</script>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/flatpickr_bootstrap_modal.js' %}"></script>
+{% endblock javascripts %}
+
+{% for script in metacontext.js_scripts %}
+  <script type="text/javascript" charset="utf8" src="{{ script }}"></script>
+{% endfor %}

@@ -1,0 +1,23 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Activity Log</h2>
+            </div>
+
+        </div>
+    </div>
+    <div class="">
+
+        <div id="broadcast_message_activity_log_list" class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+            <div class="table-responsive ajax-datatable-container pt-0">
+                <table id="broadcast_message_activity_log_list_datatable" width="100%"
+                       class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                       data-datatable-url="{% url 'admin:broadcast_message_activity_log' %}">
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

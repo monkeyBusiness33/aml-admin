@@ -1,0 +1,100 @@
+{% load static %}
+{{form.media.css }}
+
+<form id="handling_service_edit" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% if metacontext.text %}
+    {% autoescape off %}
+    <p>{{ metacontext.text }}</p>
+    {% endautoescape %}
+    {% endif %}
+
+    <div class="row">
+      <div class="col">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+            General Options
+        </span>
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.name %}
+        </div>
+
+        <div class="col-md-12 mb-1">
+            {% include 'includes/_form_field.html' with field=form.is_active checkbox_left=True %}
+        </div>
+        <div class="col-md-12 mb-1">
+            {% include 'includes/_form_field.html' with field=form.is_spf_visible checkbox_left=True %}
+        </div>
+        <div class="col-md-12 mb-1">
+            {% include 'includes/_form_field.html' with field=form.always_included checkbox_left=True %}
+        </div>
+
+      </div>
+      <div class="col">
+
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+            Service Details Options
+        </span>
+        <div class="col-md-12 mb-1">
+            {% include 'includes/_form_field.html' with field=form.is_allowed_free_text checkbox_left=True %}
+        </div>
+        <div class="col-md-12 mb-1">
+            {% include 'includes/_form_field.html' with field=form.is_allowed_quantity_selection checkbox_left=True %}
+        </div>
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.quantity_selection_uom %}
+        </div>
+
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold mt-2">
+            Location Details Options
+        </span>
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.availability %}
+        </div>
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.organisations %}
+        </div>
+
+      </div>
+    </div>
+
+<div class="row">
+  <div class="col">
+
+  </div>
+  <div class="col">
+
+  </div>
+</div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">{% if metacontext.action_button_text %}{{ metacontext.action_button_text }}{% else %}Save{% endif %}</button>
+  </div>
+
+</form>
+
+{{form.media.js }}
+<script type="text/javascript">
+
+$('#modal').ready(function() {
+  setTimeout(() => {
+    $('.modal-body .django-select2').djangoSelect2({
+        dropdownParent: $('.modal-body'),
+        width: '100%'
+    });
+
+     }, 150);
+
+});
+
+
+</script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/handling_service_edit.js' %}"></script>

@@ -1,0 +1,82 @@
+{% extends "layouts/base.html" %}
+{% load static proper_paginate %}
+{% block title %} Daily Schedule {% endblock %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'css/mission_daily_schedule.css' %}" rel="stylesheet">
+  {{ form.media.css }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12 col-xl-12">
+      <div class="card border-0 shadow mb-4">
+
+        <div class="card-header p-3 ps-3 pe-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <h2 class="fs-5 fw-bold mb-0">Schedule For: {{ working_date|date:'M-d-Y'|upper }} (Day {{ working_date|date:'z' }})</h2>
+            </div>
+
+            <div class="col text-end justify-content-end d-flex">
+
+              <div class="btn-group btn-group-toggle me-3" data-toggle="buttons">
+                <button id="date-backward" class="btn btn-primary" type="submit"><span class="fa fa-chevron-left"></span></button>
+                <button id="date-today" class="btn btn-primary" type="submit">Today</button>
+                <button id="date-forward" class="btn btn-primary" type="submit"><span class="fa fa-chevron-right"></span></button>
+              </div>
+
+              <form id="daily-schedule-date-form" action="?{% param_replace %}" method="GET" class="form-inline">
+                <div class="row">
+                  <div class="">{{ form.date }}</div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+        <div class="card-body p-0">
+
+          <div id="mission_itinerary_section" class="table-responsive">
+            <table id="daily-schedule-table" class="table table-centered table-nowrap mb-0 rounded">
+              <thead class="thead-light">
+              <tr>
+                {% for tail_number, data in schedule_data.items %}
+                  <th class="text-center border-start">{{ tail_number|default:'Tail TBC' }}
+                    {% if data.operator_name %}
+                      <i class="fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                         data-bs-original-title="{{ data.operator_name }}">
+                      </i>
+                    {% endif %}
+                  </th>
+                {% endfor %}
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                {% for k, v in schedule_data.items %}
+                  <td class="border-start p-1">
+                    {% for tail_number in v.schedule %}
+                      {{ tail_number|safe }}
+                    {% endfor %}
+                  </td>
+                {% endfor %}
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ form.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'js/missions_daily_schedule.js' %}"></script>
+{% endblock javascripts %}
+

@@ -1,0 +1,70 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load i18n static %}
+{% block title %} Submit Signed SPF Document {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+  {{ form.media.css }}
+  <link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+  <!-- Section -->
+  <section class="vh-100 bg-soft d-flex align-items-center">
+    <div class="container">
+      <div class="row justify-content-center form-bg-image">
+        <div class="col-12 d-flex align-items-center justify-content-center">
+          <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+            <div class="text-center text-md-center mb-0 mt-md-0">
+              <img class="mb-3" src="{% static 'assets/img/aml_logo_v3_cut.png' %}" alt="Logo" width="250px">
+              <h1 class="mb-0 h3">
+                Submit Signed SPF Document
+              </h1>
+              <br/>
+            </div>
+
+            {% include 'modal_form/info-text.html' with position='top' %}
+            {% include 'modal_form/body-top.html' %}
+
+            {% if form %}
+              <form id="fuel_booking_confirmation" method="post" action="" class="mt-4"
+                    enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.reference %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.callsign %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.aircraft_type %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.tail_number %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.submitted_by %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.spf_file %}
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn btn-primary mt-2">{% trans "Submit" %}</button>
+                </div>
+
+              </form>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
+
+{% block javascripts %}
+  {{ form.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+{% endblock javascripts %}

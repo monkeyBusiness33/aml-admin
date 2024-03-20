@@ -1,0 +1,9 @@
+- model: user.persongender
+  pk: 1
+  fields:
+    name: "Male"
+
+- model: user.persongender
+  pk: 2
+  fields:
+    name: "Female"

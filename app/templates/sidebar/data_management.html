@@ -1,0 +1,128 @@
+{% load filters %}
+
+{% if perms.pricing.p_view %}
+  <li class="nav-item">
+    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+          data-bs-target="#data-section"
+          aria-expanded="{% if request.resolver_match.route|is_url_name_contained_in:'/data_management/' %}true{% else %}false{% endif %}">
+    <span>
+        <span class="sidebar-icon"><span class="icon icon-xs me-2 fas fa-table"></span></span>
+        <span class="sidebar-text">Data Management</span>
+    </span>
+    <span class="link-arrow">
+        <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path
+          fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd"></path></svg>
+    </span>
+    </span>
+    <div
+      class="multi-level top-tier collapse {% if request.resolver_match.route|is_url_name_contained_in:'/data_management/' %} show {% endif %}"
+      role="list" id="data-section" aria-expanded="false">
+      <ul class="flex-column nav">
+        <li
+          class="nav-item {% if request.resolver_match.route|is_url_name_contained_in:'fuel_pricing_backlog' %} active {% endif %}">
+          <a class="nav-link" href="{% url 'admin:fuel_pricing_backlog' %}">
+            <span class="sidebar-text-contracted">U</span>
+            <span class="sidebar-text">Pricing for Update</span>
+          </a>
+        </li>
+        <li class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'fuel_agreements' %} active {% endif %}">
+            <span
+              class="nav-link expandable-link collapsed  d-flex justify-content-between align-items-center">
+            <a class="d-flex flex-grow-1" href="{% url 'admin:fuel_agreements' %}">
+            <span>
+                <span class="sidebar-text-contracted">AP</span>
+                <span class="sidebar-text">Agreement Pricing</span>
+            </span>
+            </a>
+              {% if request.resolver_match.route|is_url_name_contained_in:'/data_management/fuel_agreement' and not request.resolver_match.url_name|is_url_name_in:'fuel_agreements' %}
+                <span class="link-arrow" data-bs-toggle="collapse"
+                      data-bs-target="#agreement-pricing-subsection"
+                      aria-expanded="{% if request.resolver_match.route|is_url_name_contained_in:'/data_management/fuel_agreement' and not request.resolver_match.url_name|is_url_name_in:'fuel_agreements' %}true{% else %}false{% endif %}">
+                <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd"
+                                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                              clip-rule="evenodd"></path></svg>
+            </span>
+              {% endif %}
+            </span>
+          <div
+            class="multi-level collapse {% if request.resolver_match.route|is_url_name_contained_in:'/data_management/fuel_agreement' and not request.resolver_match.url_name|is_url_name_in:'fuel_agreements' %} show {% endif %}"
+            role="list" id="agreement-pricing-subsection" aria-expanded="false">
+            <ul class="flex-column nav">
+              <li
+                class="nav-item {% if request.resolver_match.route|is_url_name_contained_in:'/data_management/fuel_agreement' and not request.resolver_match.url_name|is_url_name_in:'fuel_agreements' %} active {% endif %}">
+                  <span class="nav-link " href="">
+                      <span class="sidebar-text-contracted">AD</span>
+                      <span class="sidebar-text">Agreement Details</span>
+                  </span>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item">
+          <span class="nav-link  collapsed  d-flex justify-content-between align-items-center"
+                data-bs-toggle="collapse" data-bs-target="#fuel-pricing-updates-section"
+                aria-expanded="{% if request.resolver_match.url_name|is_url_name_contained_in:'fuel_pricing_market_document' %}true{% else %}false{% endif %}">
+          <span>
+              <span class="sidebar-text-contracted">U</span>
+              <span class="sidebar-text">Fuel Pricing Updates</span>
+          </span>
+          <span class="link-arrow">
+              <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                   xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd"
+                                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                            clip-rule="evenodd"></path></svg>
+          </span>
+          </span>
+          <div
+            class="multi-level collapse {% if request.resolver_match.url_name|is_url_name_contained_in:'fuel_pricing_market_document,fuel_market_pricing_csv_importer' %} show {% endif %}"
+            role="list" id="fuel-pricing-updates-section" aria-expanded="false">
+            <ul class="flex-column nav">
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_contained_in:'fuel_pricing_market_document' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:fuel_pricing_market_documents' %}">
+                  <span class="sidebar-text-contracted">MP</span>
+                  <span class="sidebar-text">Market Pricing</span>
+                </a>
+              </li>
+              <li class="nav-item {% if request.resolver_match.url_name == 'fuel_market_pricing_csv_importer' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:fuel_market_pricing_csv_importer' %}">
+                    <span class="sidebar-text-contracted">F</span>
+                    <span class="sidebar-text">Fuel Pricing Import</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <span class="nav-link " href="">
+                    <span class="sidebar-text-contracted">A</span>
+                    <span class="sidebar-text">Additives</span>
+                </span>
+              </li>
+              <li class="nav-item">
+                <span class="nav-link " href="">
+                    <span class="sidebar-text-contracted">E</span>
+                    <span class="sidebar-text">Equipment</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li
+          class="nav-item {% if request.resolver_match.route|is_url_name_contained_in:'fuel_pricing_indices' %} active {% endif %}">
+          <a class="nav-link" href="{% url 'admin:fuel_pricing_indices' %}">
+            <span class="sidebar-text-contracted">I</span>
+            <span class="sidebar-text">Fuel Pricing Indices</span>
+          </a>
+        </li>
+        <li
+          class="nav-item {% if request.resolver_match.url_name|is_url_name_contained_in:'tax_rule,tax_creation,tax_list,official_tax' %} active {% endif %}">
+          <a class="nav-link" href="{% url 'admin:official_taxes' %}">
+            <span class="sidebar-text-contracted">T</span>
+            <span class="sidebar-text">Taxes</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </li>
+{% endif %}

@@ -1,0 +1,32 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Mission #{{ mission.mission_number_repr }} {% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  {% include 'mission_details/05_status_bar.html' %}
+  {% if request.app_mode == 'ops_portal' %}
+    {% include 'comment/_comments.html' with entity=mission entity_slug="mission" title='Mil Team Notes' %}
+  {% endif %}
+  {% include 'mission_details/10_mission_details_section.html' %}
+
+  {% include 'mission_details/30_itinerary.html' %}
+  {% include 'mission_details/20_communications.html' %}
+
+  {% if request.app_mode == 'ops_portal' %}
+    {% include 'mission_details/41_documents_ops.html' %}
+  {% endif %}
+
+  {% if request.app_mode == 'dod_portal' %}
+    {% include 'mission_details/42_documents_dod.html' %}
+  {% endif %}
+
+  {% include '_activity_log.html' with entity_slug='mission' entity=mission %}
+
+{% endblock content %}
+
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

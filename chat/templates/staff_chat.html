@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} S&F Request Communications {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12 col-xl-12 my-2">
+      <script type="module" crossorigin src="{% static 'chat/index.js' %}"></script>
+      <link rel="stylesheet" href="{% static 'chat/index.css' %}">
+      <div id="chat-app"></div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

@@ -1,0 +1,21 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+  {% block content %}
+    <p>Dear Military Team,</p>
+
+    <p>
+      The Mission {{ mission.mission_number_repr }} for {{ mission.callsign }} starting on
+      {{ mission.start_date|date:'M-d-Y H:i' }}Z has been cancelled by {{ author.fullname }}.
+    </p>
+
+    <div style="text-align: center;margin-top: 20px;">
+      <a href="http://{{ domain }}{{ mission_url }}" target="_blank">
+        <button class="button">Mission Details</button>
+      </a>
+    </div>
+
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+{% endblock under_footer %}

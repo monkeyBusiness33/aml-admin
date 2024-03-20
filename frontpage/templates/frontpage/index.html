@@ -1,0 +1,121 @@
+{% extends "frontpage/layouts/base.html" %}
+
+{% block content %}
+<div class="head">
+
+
+</div>
+<div class="container head mt-2">
+	<div id="carouselExampleSlidesOnly" class="carousel slide carousel-fade" data-ride="carousel">
+		<div class="carousel-inner aml-carousel-border">
+			<div class="carousel-item active">
+				<img class="d-block w-100" src="/static/frontpage/img/group_218.png" alt="First slide">
+			</div>
+			<div class="carousel-item">
+				<img class="d-block w-100" src="/static/frontpage/img/group_219.png" alt="Second slide">
+			</div>
+			<div class="carousel-item">
+				<img class="d-block w-100" src="/static/frontpage/img/group_220.png" alt="Third slide">
+			</div>
+			<div class="carousel-item">
+				<img class="d-block w-100" src="/static/frontpage/img/group_221.png" alt="Third slide">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="cont container py-4">
+	<h4 id="aboutus" class="mb-3 amlheader offset">About Us</h4>
+		<div class="mb-2">
+			<p>AML Global’s jet fuel & ground handling business is part of AML Global group, a privately-owned group with focused activities and investments in the aerospace and financial / payments sector.
+        We act as an independent fuel agent and operate globally.
+        Since 2005, we have used our growing client base and strong financial balance sheet to build and support a comprehensive fuel supply network using main and regional oil companies, aviation fuel traders, into-plane agents and specialist aviation fuel suppliers.
+        We arrange fuel and ground handling support for our clients on a global basis. With a single
+				account our clients can uplift fuel at 1200+ <a href="#coverage">locations worldwide</a>.
+			</p>
+			<p class="mb-0">We operate in various sectors including:</p>
+			<ul class="mb-0">
+				<li>Business and General Aviation</li>
+				<li>Cargo</li>
+				<li>Airline (New Generation / Start-Ups, Low-Cost and Legacy Carriers)</li>
+				<li>Medivac</li>
+				<li>Government and Diplomatic.</li>
+			</ul>
+		</div>
+		<div class="mb-2">
+			<p class="mb-0">Our clients benefit from:</p>
+			<ul class="mb-0">
+				<li>Access to our global fuel and ground handling network</li>
+				<li>24/7 support from our specialized fuel team</li>
+				<li>Competitive pricing and fuel price hedging</li>
+				<li>Accurate and timely fuel quotes, invoicing, data collection and reporting</li>
+				<li>Multi-time zone and multi-currency payment options and solutions.</li>
+			</ul>
+		</div>
+		<div class="mb-4">
+			<p class="mb-0">New clients:</p>
+			<p>If you would like to sign up or simply wish to check fuel prices, please <a href="#contact">Contact
+					us</a>.</p>
+
+			<p class="mb-0">New partners and suppliers:</p>
+			<p>We also welcome enquiries from specialist fuel suppliers and potential partners, please <a
+					href="#contact">Contact us</a>.</p>
+		</div>
+
+{#		<div class="mb-4">#}
+{#			<h4 id="coverage" class="mb-3 amlheader offset">Coverage</h4>#}
+{#				<p class="ml-1">By contacting our 24/7 operations team, clients can arrange fuel at over 1200 locations#}
+{#					worldwide.#}
+{#					One account, one point of contact gives you global coverage.#}
+{#				</p>#}
+{#				<div class="mb-0">#}
+{#					<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"#}
+{#						src="https://www.easymapmaker.com/map/amlglobal_2?css=https://www.easymapmaker.com/cssoverride/hide_group_header_footer.css" />#}
+{#					</iframe>#}
+{#					<p class="text-left">Please use your mouse to scroll and click on any location to expand our scope#}
+{#						of#}
+{#						coverage</p>#}
+{#				</div>#}
+{#		</div>#}
+
+{#		<div class="mb-4">#}
+{#			<h4 id="sustainability" class="mb-3 amlheader offset">Sustainability</h4>#}
+{#				<p class="ml-1">AML Global supports Sustainable Aviation Fuel (SAF) Initiatives as well as environmental#}
+{#					and#}
+{#					wildlife protection projects.#}
+{#				</p>#}
+{#				<p class="ml-1">AML Global is working with our supply partners to provide our customers with cleaner,#}
+{#					more#}
+{#					environmentally friendly SAF. Propelled by the Paris Agreement and the initiatives set forth by#}
+{#					ICAO, we#}
+{#					support the international objective to reduce jet fuel carbon emissions 50% by 2050.</p>#}
+{#				<p class="ml-1">As part of our own ambition to make the world a better place for future generations and#}
+{#					the#}
+{#					overwhelming importance of protecting our wildlife, AML proudly transfers a portion of our global#}
+{#					revenues to#}
+{#					wildlife protection projects.#}
+{#				</p>#}
+{#		</div>#}
+
+    {% include 'frontpage/_contact_us.html' %}
+
+			<div class="mb-5">
+				<h4 id="legal" class="mb-3 amlheader offset">Legal</h4>
+					<ul class="mb-0">
+						<li><a href="/GTC.pdf">General Terms &amp; Conditions</a></li>
+						<li><a href="/Privacy.pdf">Information &amp; Privacy Policy</a></li>
+						<li><a href="/Email.pdf">Email Terms &amp; Conditions</a></li>
+						<li><a href="/Sanctions.pdf">Sanctions</a></li>
+					</ul>
+			</div>
+
+</div>
+  <script>
+    function goToId() {
+      if (!window.location.hash) window.location = window.location + '#contactus-form';
+    }
+    {% if form.is_bound %}
+      $(window).on("load", goToId);
+    {% endif %}
+  </script>
+{% endblock content %}

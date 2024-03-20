@@ -1,0 +1,126 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}Add Additional Contact Details: {{ organisation.details.registered_name }}{% endblock %}
+
+{% block stylesheets %}
+  {{ contact_details_formset.0.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form id="" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card border-0 shadow mb-4" style="min-width: fit-content">
+
+          <div class="card-header p-3">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="fs-5 fw-bold mb-0">
+                  Add Additional Contact Details: {{ organisation.details.registered_name }}
+                </h2>
+              </div>
+
+              <div class="col text-end">
+                <a href="{% url 'admin:organisation_details' organisation.pk %}"
+                   class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="card-body pt-3 px-0">
+            <div id='add_contact_details'>
+
+              {{ contact_details_formset.management_form }}
+              {{ contact_details_formset.non_field_errors }}
+              {{ contact_details_formset.non_form_errors }}
+
+              <table class='table table-flush table-hover align-middle alternating-primary-colors-table'>
+                <thead>
+                <th class="first"><span class="required">Description</span>,<br>Person,<br>Specific Location(s)</th>
+                <th>Email Address,<br>Phone Number</th>
+                <th>Supplier Comms Settings,<br>Client Comms Settings</th>
+                <th></th>
+                </thead>
+
+                <tbody class="table-form-body">
+                {% for form in contact_details_formset %}
+                  <tr class="form main align-top
+                    {% if forloop.counter > 5 and not form.errors and not form.description.value %}d-none{% endif %}">
+                    <td class="col-md-3 px-3 py-4">
+                      <div class="stacked-input" style="min-width: 200px">
+                        {% include 'includes/_form_field.html' with field=form.description hide_label=True %}
+                        {% include 'includes/_form_field.html' with field=form.organisations_people hide_label=True %}
+                        {% include 'includes/_form_field.html' with field=form.locations hide_label=True %}
+                      </div>
+                    </td>
+                    <td class="col-md-3 px-3 py-4">
+                      <div class="stacked-input" style="min-width: 200px">
+                        {% include 'includes/_form_field.html' with field=form.email_address hide_label=True %}
+                        <div class="stacked-input-element">
+                          <div class="d-flex gap-4">
+                            {% include 'includes/_form_field.html' with field=form.address_to %}
+                            {% include 'includes/_form_field.html' with field=form.address_cc %}
+                            {% include 'includes/_form_field.html' with field=form.address_bcc %}
+                          </div>
+                        </div>
+                        {% include 'includes/_form_field.html' with field=form.phone_number hide_label=True %}
+                        <div class="d-flex gap-4">
+                          {% include 'includes/_form_field.html' with field=form.phone_number_use_for_whatsapp %}
+                          {% include 'includes/_form_field.html' with field=form.phone_number_use_for_telegram %}
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-md-3 px-3 py-4">
+                      <div class="stacked-input" style="min-width: 200px">
+                        {% include 'includes/_form_field.html' with field=form.comms_settings_supplier hide_label=True %}
+                        {% include 'includes/_form_field.html' with field=form.comms_settings_client hide_label=True %}
+                      </div>
+                    </td>
+                    <td class="col-md-1 px-3 py-4 align-middle">
+                      <div class="stacked-input">
+                        <button class="btn btn-sm btn-outline-danger delete-form-section" type="button">Delete</button>
+                      </div>
+                    </td>
+
+                    <td class='d-none'>{{ form.DELETE }}</td>
+
+                    {{ form.id.as_hidden }}
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="m-4">
+                <button id="add_contact_details_btn" type="button" class="btn btn-outline-success">
+                  Add More Contact Details
+                </button>
+              </div>
+            </div>
+
+            <hr>
+            <div class="mt-3 ms-4">
+              <button class="btn btn-primary mt-2 animate-up-2" type="submit">Save</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ contact_details_formset.0.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'js/organisation_contact_details_create.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+
+{% endblock javascripts %}

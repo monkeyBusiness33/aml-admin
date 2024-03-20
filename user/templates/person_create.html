@@ -1,0 +1,192 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% if person.pk %}Edit Person: {{ person.fullname }}{% else %}Add New Person{% endif %} {% endblock %}
+
+{% block stylesheets %}
+{{ person_positions_formset.0.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<form id="" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-12 col-xl-12">
+            <div class="card border-0 shadow mb-4">
+
+                <div class="card-header p-3">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h2 class="fs-5 fw-bold mb-0">{% if person.pk %}Edit Person: {{ person.fullname }}{% else %}Add New Person{% endif %}</h2>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body pt-3">
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Personal Details
+                    </span>
+
+                    {{ person_details_form.management_form }}
+                    {{ person_details_form.non_field_errors }}
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.first_name %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.middle_name %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.last_name %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.title %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.abbreviated_name %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.personal_pronoun %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.contact_email %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.contact_phone %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            {% include 'includes/_form_field.html' with field=person_details_form.username %}
+                        </div>
+
+                        <span class="mb-3"></span>
+                    </div>
+
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Positions
+                    </span>
+
+                    {{ person_positions_formset.management_form }}
+                    {{ person_positions_formset.non_field_errors }}
+                    {{ person_positions_formset.non_form_errors }}
+
+                    {% for form in person_positions_formset %}
+                    <div id="id_{{ form.prefix }}_card" class="card mb-2 person_positions_form{% if forloop.counter > 1 and not form.job_title.value %} d-none{% endif %}">
+                        <div class="card-header p-2">
+
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    Position {{ forloop.counter }}
+                                </div>
+                                <div class="col text-end">
+                                    <span class="d-none">{{ form.DELETE }}</span>
+                                    <button data-form-pre="{{ form.prefix }}" class="btn btn-sm btn-outline-danger del_person_position_btn" type="button">Delete</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-body p-2 px-3">
+                            {{ form.management_form }}
+                            {{ form.non_field_errors }}
+
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="{% if form.organisation.field.required %}required{% endif %}"
+                                        for="{{ form.organisation.id_for_label }}">{{form.organisation.label}}</label>
+                                    <div class="">
+                                        <div class="col-md-9 pe-1 d-inline-block">
+                                            {{ form.organisation }}
+                                            {% if form.organisation.help_text %}
+                                            <small class="form-text text-muted">{{ form.organisation.help_text|safe }}</small>
+                                            {% endif %}
+                                            {% if form.organisation.errors %}
+                                            {% for error in form.organisation.errors %}
+                                            <div class="invalid-feedback">
+                                                {{ error|escape }}
+                                            </div>
+                                            {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-3 d-inline-block float-end text-end me-0 ps-0  bbb">
+                                            <button class="modal_button_async organisation_create_btn btn btn-primary"
+                                                    type="button" name="button"
+                                                    {% if not perms.core.p_contacts_create %}disabled{% endif %}
+                                                    data-form-url="">Create</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.job_title %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.role %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.contact_email %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.contact_phone %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.start_date %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.is_decision_maker %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.aircraft_types %}
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    {% include 'includes/_form_field.html' with field=form.applications_access %}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% endfor %}
+                    <div class="mt-2">
+                        <button id="add_person_position_btn" type="button" class="btn btn-outline-success">Add Another Position</button>
+                    </div>
+                    <hr>
+                    <div class="mt-3">
+                        <button class="btn btn-primary mt-2 animate-up-2" type="submit">{% if not person.pk %}Create Person{% else %}Save Changes{% endif %}</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+{{ person_positions_formset.0.media.js }}
+<script type="text/javascript">
+var organisation_create_url = "{% url 'admin:create_for_person_position' %}"
+ping_url = "{% url 'admin:ping' %}"
+</script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/person_edit.js' %}"></script>
+{% endblock javascripts %}

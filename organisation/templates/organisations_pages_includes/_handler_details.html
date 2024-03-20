@@ -1,0 +1,149 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Station Details</h2>
+            </div>
+
+        </div>
+    </div>
+    <div class="row {{ organisation.operational_status.text_color }}">
+        <div class="col">
+            <div class="row">
+                <div class="col pt-2 ps-4 mb-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Handler Type:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.handler_type.name|default:'' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Based Airport:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.airport.airport_details.icao_iata|default:'' }}</span>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2">&nbsp;</td></tr>
+                            <tr>
+                                <td colspan="2" class="pt-3">
+                                <div class="border-bottom w-100 fw-bold">Contact Details</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Contact Email:</td>
+                                <td><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-copy-value="{{ organisation.handler_details.contact_email|default:'' }}"
+                                    title="{{ organisation.handler_details.contact_email|default:'' }}<br><span class='text-secondary'>Click to Copy</span>"
+                                    class="fw-bold copy-to-clipboard">{{ organisation.handler_details.contact_email|default:''|truncatechars:20 }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Contact Phone:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.contact_phone|default:'' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Operations Email:</td>
+                                <td><span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-copy-value="{{ organisation.handler_details.ops_email|default:'' }}"
+                                    title="{{ organisation.handler_details.ops_email|default:'' }}<br><span class='text-secondary'>Click to Copy</span>"
+                                    class="fw-bold copy-to-clipboard">{{ organisation.handler_details.ops_email|default:''|truncatechars:20 }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Operations Phone:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.ops_phone|default:'' }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col pt-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Operations Frequency:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.ops_frequency|default:'' }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Is an Into-Plane Agent?:</td>
+                                <td><span class="fw-bold">{{ organisation.ipa_details|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr><td colspan="2">&nbsp;</td></tr>
+                            <tr>
+                                <td colspan="2" class="pt-3">
+                                <div class="border-bottom w-100 fw-bold">Handling Details</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Handles Military Flights?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.handles_military|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Handles Airline Flights?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.handles_airlines|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Handles Cargo Flights?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.handles_cargo|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Handles BA/GA Flights?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.handles_ba_ga|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col pt-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Located in GAT/BAT?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.is_in_gat|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Located in Airport Terminal?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.is_in_airport_terminal|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Is in Cargo Centre?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.is_in_cargo_centre|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="pt-3">
+                                <div class="border-bottom w-100 fw-bold">Rooms</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Has Passenger Lounge?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.has_pax_lounge|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Has Crew Room?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.has_crew_room|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Has VIP Lounge?:</td>
+                                <td><span class="fw-bold">{{ organisation.handler_details.has_vip_lounge|yesno:"Yes,No,TBC" }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

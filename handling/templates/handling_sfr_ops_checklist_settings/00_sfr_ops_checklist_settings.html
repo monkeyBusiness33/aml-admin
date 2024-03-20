@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}{{ metacontext.title }}{% endblock %}
+
+
+{% block content %}
+
+  <div class="row">
+
+        <div class="col-12 col-xl-12 organisation-details-text-section">
+          {% include 'handling_sfr_ops_checklist_settings/_template_items.html' %}
+        </div>
+
+        <div class="col-12 col-xl-12">
+          {% include 'handling_sfr_ops_checklist_settings/_location_specific_items.html' %}
+        </div>
+
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

@@ -1,0 +1,192 @@
+{% load static %}
+{{form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+
+    {% if metacontext.conflicting_official_taxes %}
+      <p>Depending on the expiration date, the following Official Taxes will no longer be taxed: </p>
+      <ul>
+      {% for entry in metacontext.conflicting_official_taxes %}
+
+          <li><a class = "text-danger underline"
+          href="{% url 'admin:tax_rule_details' country=entry.get_tax_country type=entry.get_tax_type pk=entry.id %}"
+          target="_blank">
+          {{entry.get_tax_representation}}</a></li>
+
+      {% if not forloop.last %} / {% endif %}
+
+      {% endfor %}
+      </ul>
+      <p></p>
+    {% endif %}
+
+    {% if metacontext.conflicting_exception_taxes %}
+      <p>The following Supplier-Defined Taxes will no longer be taxed: </p>
+      <ul>
+        {% for entry in metacontext.conflicting_exception_taxes %}
+          <li><a class="text-danger underline" href="{{ entry.details_url }}" target="_blank">
+            {{ entry.get_tax_representation }}</a></li>
+        {% endfor %}
+        </ul>
+      <p></p>
+    {% endif %}
+
+    {% if metacontext.text %}
+        {% autoescape off %}
+            <p>{{ metacontext.text }}</p>
+        {% endautoescape %}
+    {% endif %}
+
+    {% if metacontext.text_danger %}
+        {% autoescape off %}
+            <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                <i class="fas fa-exclamation-triangle me-3"></i>
+                <div>
+                    {{ metacontext.text_danger }}
+                </div>
+            </div>
+        {% endautoescape %}
+    {% endif %}
+
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                {{ error }}
+            </div>
+        </div>
+    {% endfor %}
+
+  <div class="{% if metacontext.hide_form_fields %}d-none{% endif %}">
+    {% for field in form %}
+      {% if field.widget_type == 'checkbox' %}
+      <div class="form-check mb-3">
+        <label class="form-check-label">
+          {{ field }}
+          <span class="form-check-sign">{{ field.label }}</span>
+        </label>
+      </div>
+      {% elif field.widget_type == 'clearablefile' %}
+        <div class="form-group mb-3">
+            {% if field.label %}
+              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {% endif %}
+            {{ field }}
+        </div>
+      {% else %}
+      <div class="form-group mb-3{% if field.errors %} is-invalid{% endif %}">
+        {% if field.label %}
+          <label class="{% if field.field.required %}required{% endif %}" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {% endif %}
+        {{ field }}
+        {% if field.widget_type == 'textarea' %}
+        {{ field.attrs }}
+          <span class='textarea-char-counter badge bg-gray-600 p-1 mt-1 float-end'></span>
+        {% endif %}
+        {% for error in field.errors %}
+        <div class="invalid-feedback" style="display: unset;">{{ error|safe }}</div>
+        {% if not forloop.last %}<br/>{% endif %}
+        {% endfor %}
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  </div>
+
+    <div class="modal-footer">
+        <div class="me-auto">
+            {% for button in metacontext.footer_buttons_left %}
+                {% include 'includes/_get_button.html' with btn_modal=True modal_validation=True title=button.title url=button.url %}
+            {% endfor %}
+        </div>
+
+        <button type="button" data-bs-dismiss="modal"
+                class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+            Close
+        </button>
+        {% if metacontext.multi_button %}
+            <button id="multi_button_1" type="submit" value="False" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+                    {{ metacontext.action_button1_text|default:'Decline' }}
+            </button>
+            <button id="multi_button_2" type="submit" value="True" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+                    {{ metacontext.action_button2_text|default:'Confirm' }}
+            </button>
+        {% elif metacontext.numbered_multi_button %}
+            <button id="multi_button_1" type="submit" value="1" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+                {{ metacontext.action_button1_text|default:'Decline' }}
+            </button>
+            <button id="multi_button_2" type="submit" value="2" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+                {{ metacontext.action_button2_text|default:'Confirm' }}
+            </button>
+        {% else %}
+            {% if not metacontext.hide_action_button and not form.hide_action_button %}
+                <button type="submit"
+                        class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+                        {% if action_button_disabled %} disabled {% endif %}>
+                        {{ metacontext.action_button_text|default:'Save' }}
+                </button>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</form>
+
+{{form.media.js }}
+<script type="text/javascript">
+  // Datepicker
+    var datepickers = [].slice.call(d.querySelectorAll('[data-datepicker]'))
+    var datepickersList = datepickers.map(function (el) {
+        return new Datepicker(el, {
+            buttonClass: 'btn',
+            format: 'yyyy-mm-dd',
+            autohide: true,
+        });
+    })
+
+  $(".modal-footer .modal_button_validation").each(function () {
+        $(this).off('click')
+        $(this).modalForm({
+            formURL: $(this).data('form-url'),
+            errorClass: ".is-invalid",
+            modalID: $(this).data('modal') || '#modal',
+        });
+    });
+
+  $(".modal-footer .modal_button_novalidation").each(function () {
+        $(this).off('click')
+        $(this).modalForm({
+            formURL: $(this).data('form-url'),
+            errorClass: ".is-invalid",
+            modalID: $(this).data('modal') || '#modal',
+        });
+    });
+
+$('button[name="multi_button"]').click(function () {
+    $("#id_multi_button").val($(this).val()).trigger('change')
+});
+
+date_checkbox = document.querySelector('[name*="set_today"]')
+date_field = document.querySelector('[name*="valid_to"]')
+
+date_checkbox.addEventListener('click', () => {
+  date_field.value = new Date().toJSON().slice(0,10);
+})
+
+</script>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>

@@ -1,0 +1,26 @@
+<div class="card border-0 shadow mb-4">
+  <div class="card-header p-1 bg-primary text-white">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 my-1 fw-bold ">Associated Agreement Pricing</h2>
+      </div>
+
+      <div class="col text-end">
+{#        <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"#}
+{#                type="button" name="button"#}
+{#                data-form-url="{% url 'admin:fuel_index_pricing_create' index.pk %}">Add Pricing#}
+{#        </button>#}
+      </div>
+
+    </div>
+  </div>
+  <div id="index_pricing_associated_agreement_pricing_list" class="compact_datatable datatable_auto_div">
+    <div class="table-responsive ajax-datatable-container pt-0">
+      <table id="index_pricing_associated_agreement_pricing_list_datatable" width="100%" class="table table-flush table-hover
+                ajax-datatable align-middle nowrap datatable_auto datatable-clickable"
+             data-datatable-uri="{% url 'admin:index_pricing_associated_agreement_pricing_ajax' index.pk %}">
+      </table>
+    </div>
+  </div>
+</div>

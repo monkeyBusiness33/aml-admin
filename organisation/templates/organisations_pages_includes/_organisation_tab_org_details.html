@@ -1,0 +1,45 @@
+{% load static %}
+
+<div id="organisation-details-container" class="details-section d-none">
+  <div class="row">
+
+    {% if organisation.credit_exposure %}
+      <div class="col-12 col-xl-12">
+        {% include 'organisations_pages_includes/_credit_exposure.html' with entity=organisation entity_slug="organisation" %}
+      </div>
+    {% endif %}
+
+    {% if False %}
+      <div class="col-12 col-xl-12">
+        {% include 'organisations_pages_includes/_opportunities.html' with organisation=organisation %}
+      </div>
+
+      <div class="col-12 col-xl-12">
+        {% include 'organisations_pages_includes/_orders.html' with organisation=organisation %}
+      </div>
+    {% endif %}
+
+    <div class="col-12 col-xl-12">
+      {% include 'organisations_pages_includes/_crm_activity.html' with entity=organisation entity_slug="organisation" %}
+    </div>
+
+    {% if perms.core.p_contacts_additional_contact_details_view %}
+      <div class="col-12 col-xl-12">
+        {% include 'organisations_pages_includes/_additional_contact_details.html' with entity=organisation entity_slug="organisation" %}
+      </div>
+    {% endif %}
+
+    <div class="col-12 col-xl-12">
+      {% include 'organisations_pages_includes/_departments.html' with organisation=organisation %}
+    </div>
+
+    <div class="col-13 col-xl-12">
+      {% include '_activity_log.html' with entity_slug='organisation' entity=organisation %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include 'comment/_comments.html' with entity=organisation entity_slug="organisation" %}
+    </div>
+
+  </div>
+</div>

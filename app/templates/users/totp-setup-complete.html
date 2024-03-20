@@ -1,0 +1,46 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load i18n static %}
+
+{% block title %} 2FA Setup Complete {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <section class="vh-100 bg-soft d-flex align-items-center bg-primary">
+    <div class="container">
+      <div class="row justify-content-center form-bg-image">
+        <div class="col-12 d-flex align-items-center justify-content-center">
+          <div class="bg-white shadow border-0 rounded border-light py-4 px-5 w-100 fmxw-500">
+            <div class="text-center text-md-center mb-4 mt-md-0">
+              <img class="mb-3 mt-3" src="{% static 'assets/img/aml_logo_v3_cut.png' %}" alt="Logo" width="250px">
+              <h1 class="mt-3 mb-0 h3 text-center">{% trans "Two-Factor Authentication Setup Complete" %}</h1>
+              <br/>
+              <span class="mb-0 text-muted">
+                {% blocktrans trimmed %}
+                  Congratulations, you've successfully enabled two-factor authentication.
+                {% endblocktrans %}
+
+                <div class="d-grid mt-2">
+                   <a href="{% url 'admin:dashboard' %}" class="btn btn-primary">
+                     {% trans "Open Operations Portal " %}</a>
+                </div>
+                </span>
+              <br/>
+              <div class="d-flex justify-content-center align-items-center mt-4">
+                <span class="fw-normal">
+                  <a href="https://www.amlglobal.net/" target="_blank">AML Global Limited</a>
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

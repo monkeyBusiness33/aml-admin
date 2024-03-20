@@ -1,0 +1,38 @@
+{% with organisation.documents.exists as documents_exists %}
+  <div class="card border-0 shadow mb-4">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not documents_exists %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Documents</h2>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:organisation_documents_create' organisation.pk %}"
+            {% if not perms.core.p_contacts_update %} disabled {% endif %}>Add Document
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% if documents_exists %}
+      <div class="{{ organisation.operational_status.text_color }}">
+
+        <div id="organisation_documents_list" class="card {{ metacontext.page_css_class }} compact_datatable">
+          <div class="table-responsive ajax-datatable-container pt-0">
+            <table id="organisation_documents_list_datatable" width="100%"
+                   class="table table-flush table-hover ajax-datatable align-middle nowrap">
+            </table>
+          </div>
+        </div>
+
+      </div>
+    {% endif %}
+  </div>
+{% endwith %}
+<script language="javascript">
+    var organisation_documents_datatable_uri = "{% url 'admin:organisation_documents_ajax' organisation.pk %}"
+</script>

@@ -1,0 +1,33 @@
+{% load static %}
+
+<div id="handler-details-container" class="details-section d-none">
+
+  <div class="col-12 col-xl-12 organisation-details-text-section">
+    {% include 'organisations_pages_includes/_handler_details.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12 organisation-details-text-section">
+    {% include 'organisations_pages_includes/_handler_ops_details.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12 organisation-details-text-section">
+    {% include 'organisations_pages_includes/_payment_methods.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12 organisation-details-text-section">
+    {% include 'organisations_pages_includes/_handler_cancellation_terms.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12 organisation-details-text-section">
+    {% include 'organisations_pages_includes/_spf_services_to_auto_select.html' with organisation=organisation %}
+  </div>
+
+  <div class="col-12 col-xl-12 organisation-details-text-section">
+    {% for address in organisation.addresses.all %}
+      {% if address.is_physical_address %}
+        {% include 'organisations_pages_includes/_handler_address.html' with address=address %}
+      {% endif %}
+    {% endfor %}
+  </div>
+
+</div>

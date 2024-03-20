@@ -1,0 +1,511 @@
+{% load static %}
+{{form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% if metacontext.text %}
+    {% autoescape off %}
+    <p>{{ metacontext.text }}</p>
+    {% endautoescape %}
+    {% endif %}
+    <div class="row">
+        <div class="col-lg-6 col-sm-6">
+
+        <div class="form-group mb-3{% if form.type.errors %} is-invalid{% endif %}">
+            {% if form.type.label %}
+            <label class="{% if form.type.field.required %}required{% endif %}" for="{{ form.type.id_for_label }}">{{ form.type.label }}</label>
+            {% endif %}
+            {{ form.type }}
+            {% for error in form.type.errors %}
+            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+            {% if not forloop.last %}<br/>{% endif %}
+            {% endfor %}
+            {% if form.type.help_text %}
+            <small class="form-text text-muted">{{ form.type.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group mb-3{% if form.aircard_number.errors %} is-invalid{% endif %}">
+            {% if form.aircard_number.label %}
+            <label class="{% if form.aircard_number.field.required %}required{% endif %}" for="{{ form.aircard_number.id_for_label }}">{{ form.aircard_number.label }}</label>
+            {% endif %}
+            {{ form.aircard_number }}
+            {% for error in form.aircard_number.errors %}
+            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+            {% if not forloop.last %}<br/>{% endif %}
+            {% endfor %}
+            {% if form.aircard_number.help_text %}
+            <small class="form-text text-muted">{{ form.aircard_number.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group mb-3{% if form.serial.errors %} is-invalid{% endif %}">
+            {% if form.serial.label %}
+            <label class="{% if form.serial.field.required %}required{% endif %}" for="{{ form.serial.id_for_label }}">{{ form.serial.label }}</label>
+            {% endif %}
+            {{ form.serial }}
+            {% for error in form.serial.errors %}
+            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+            {% if not forloop.last %}<br/>{% endif %}
+            {% endfor %}
+            {% if form.serial.help_text %}
+            <small class="form-text text-muted">{{ form.serial.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-group mb-3{% if form.client.errors %} is-invalid{% endif %}">
+            {% if form.client.label %}
+            <label class="{% if form.client.field.required %}required{% endif %}" for="{{ form.client.id_for_label }}">{{ form.client.label }}</label>
+            {% endif %}
+            {{ form.client }}
+            {% for error in form.client.errors %}
+            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+            {% if not forloop.last %}<br/>{% endif %}
+            {% endfor %}
+            {% if form.client.help_text %}
+            <small class="form-text text-muted">{{ form.client.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        </div>
+        <div class="col-lg-6 col-sm-6">
+
+            <div class="form-group mb-3{% if form.registration.errors %} is-invalid{% endif %}">
+                {% if form.registration.label %}
+                <label class="{% if form.registration.field.required %}required{% endif %}" for="{{ form.registration.id_for_label }}">{{ form.registration.label }}</label>
+                {% endif %}
+                {{ form.registration }}
+                {% for error in form.registration.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.registration.help_text %}
+                <small class="form-text text-muted">{{ form.registration.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.expiration_date_month.errors %} is-invalid{% endif %}">
+
+                <div class="row">
+
+                    <div class="col">
+                        {% if form.expiration_date_month.label %}
+                        <label class="{% if form.expiration_date_month.field.required %}required{% endif %}" for="{{ form.expiration_date_month.id_for_label }}">{{ form.expiration_date_month.label }}</label>
+                        {% endif %}
+                        {{ form.expiration_date_month }}
+                        {% for error in form.expiration_date_month.errors %}
+                        <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                        {% if not forloop.last %}<br/>{% endif %}
+                        {% endfor %}
+                        {% if form.expiration_date_month.help_text %}
+                        <small class="form-text text-muted">{{ form.expiration_date_month.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        {% if form.expiration_date_year.label %}
+                        <label class="{% if form.expiration_date_year.field.required %}required{% endif %}" for="{{ form.expiration_date_year.id_for_label }}">{{ form.expiration_date_year.label }}</label>
+                        {% endif %}
+                        {{ form.expiration_date_year }}
+                        {% for error in form.expiration_date_year.errors %}
+                        <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                        {% if not forloop.last %}<br/>{% endif %}
+                        {% endfor %}
+                        {% if form.expiration_date_year.help_text %}
+                        <small class="form-text text-muted">{{ form.expiration_date_year.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-group mb-3{% if form.operator.errors %} is-invalid{% endif %}">
+                {% if form.operator.label %}
+                    <label class="{% if form.operator.field.required %}required{% endif %}" for="{{ form.operator.id_for_label }}">{{ form.operator.label }}</label>
+                {% endif %}
+                <div class="row">
+                    <div class="col-8 pe-0">
+                        {{ form.operator }}
+                        {% for error in form.operator.errors %}
+                        <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                        {% if not forloop.last %}<br/>{% endif %}
+                        {% endfor %}
+                        {% if form.operator.help_text %}
+                        <small class="form-text text-muted">{{ form.operator.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="col-4 float-end text-end ps-0 me-0">
+                        <button id="operator_create_btn" class="btn btn-success" type="button" name="button">Add new</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div id="operator_create" class="row mb-2" style="display:none">
+        <div class="col">
+            <div class="card border-1">
+                <div class="card-body">
+                <h2 class="fs-5 fw-normal">Create Operator for this Aircraft</h2>
+
+                    <div class="row">
+                    <div class="col-lg-6 col-sm-6">
+
+                        <div class="form-group mb-3{% if form.operator_name.errors %} is-invalid{% endif %}">
+                            {% if form.operator_name.label %}
+                            <label class="{% if form.operator_name.field.required %}required{% endif %}" for="{{ form.operator_name.id_for_label }}">{{ form.operator_name.label }}</label>
+                            {% endif %}
+                            {{ form.operator_name }}
+                            {% for error in form.operator_name.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_name.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_name.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3{% if form.operator_country.errors %} is-invalid{% endif %}">
+                            {% if form.operator_country.label %}
+                            <label class="{% if form.operator_country.field.required %}required{% endif %}" for="{{ form.operator_country.id_for_label }}">{{ form.operator_country.label }}</label>
+                            {% endif %}
+                            {{ form.operator_country }}
+                            {% for error in form.operator_country.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_country.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_country.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3{% if form.operator_state.errors %} is-invalid{% endif %}">
+                            {% if form.operator_state.label %}
+                            <label class="{% if form.operator_state.field.required %}required{% endif %}" for="{{ form.operator_state.id_for_label }}">{{ form.operator_state.label }}</label>
+                            {% endif %}
+                            {{ form.operator_state }}
+                            {% for error in form.operator_state.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_state.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_state.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3{% if form.operator_phone.errors %} is-invalid{% endif %}">
+                            {% if form.operator_phone.label %}
+                            <label class="{% if form.operator_phone.field.required %}required{% endif %}" for="{{ form.operator_phone.id_for_label }}">{{ form.operator_phone.label }}</label>
+                            {% endif %}
+                            {{ form.operator_phone }}
+                            {% for error in form.operator_phone.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_phone.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_phone.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        </div>
+
+                        <div class="col-lg-6 col-sm-6">
+
+                        <div class="form-group mb-3{% if form.operator_address.errors %} is-invalid{% endif %}">
+                            {% if form.operator_address.label %}
+                            <label class="{% if form.operator_address.field.required %}required{% endif %}" for="{{ form.operator_address.id_for_label }}">{{ form.operator_address.label }}</label>
+                            {% endif %}
+                            {{ form.operator_address }}
+                            {% for error in form.operator_address.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_address.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_address.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3{% if form.operator_city.errors %} is-invalid{% endif %}">
+                            {% if form.operator_city.label %}
+                            <label class="{% if form.operator_city.field.required %}required{% endif %}" for="{{ form.operator_city.id_for_label }}">{{ form.operator_city.label }}</label>
+                            {% endif %}
+                            {{ form.operator_city }}
+                            {% for error in form.operator_city.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_city.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_city.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3{% if form.operator_zipcode.errors %} is-invalid{% endif %}">
+                            {% if form.operator_zipcode.label %}
+                            <label class="{% if form.operator_zipcode.field.required %}required{% endif %}" for="{{ form.operator_zipcode.id_for_label }}">{{ form.operator_zipcode.label }}</label>
+                            {% endif %}
+                            {{ form.operator_zipcode }}
+                            {% for error in form.operator_zipcode.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_zipcode.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_zipcode.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group mb-3{% if form.operator_fax.errors %} is-invalid{% endif %}">
+                            {% if form.operator_fax.label %}
+                            <label class="{% if form.operator_fax.field.required %}required{% endif %}" for="{{ form.operator_fax.id_for_label }}">{{ form.operator_fax.label }}</label>
+                            {% endif %}
+                            {{ form.operator_fax }}
+                            {% for error in form.operator_fax.errors %}
+                            <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                            {% if not forloop.last %}<br/>{% endif %}
+                            {% endfor %}
+                            {% if form.operator_fax.help_text %}
+                            <small class="form-text text-muted">{{ form.operator_fax.help_text|safe }}</small>
+                            {% endif %}
+                        </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 col-sm-6">
+            <div class="form-group mb-3{% if form.owner_name.errors %} is-invalid{% endif %}">
+                {% if form.owner_name.label %}
+                <label class="{% if form.owner_name.field.required %}required{% endif %}" for="{{ form.owner_name.id_for_label }}">{{ form.owner_name.label }}</label>
+                {% endif %}
+                {{ form.owner_name }}
+                {% for error in form.owner_name.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.owner_name.help_text %}
+                <small class="form-text text-muted">{{ form.owner_name.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.expected_monthly_fuel.errors %} is-invalid{% endif %}">
+                {% if form.expected_monthly_fuel.label %}
+                <label class="{% if form.expected_monthly_fuel.field.required %}required{% endif %}" for="{{ form.expected_monthly_fuel.id_for_label }}">{{ form.expected_monthly_fuel.label }}</label>
+                {% endif %}
+                {{ form.expected_monthly_fuel }}
+                {% for error in form.expected_monthly_fuel.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.expected_monthly_fuel.help_text %}
+                <small class="form-text text-muted">{{ form.expected_monthly_fuel.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.mtow.errors %} is-invalid{% endif %}">
+                {% if form.mtow.label %}
+                <label class="{% if form.mtow.field.required %}required{% endif %}" for="{{ form.mtow.id_for_label }}">{{ form.mtow.label }}</label>
+                {% endif %}
+                {{ form.mtow }}
+                {% for error in form.mtow.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.mtow.help_text %}
+                <small class="form-text text-muted">{{ form.mtow.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.contact_first_name.errors %} is-invalid{% endif %}">
+                {% if form.contact_first_name.label %}
+                <label class="{% if form.contact_first_name.field.required %}required{% endif %}" for="{{ form.contact_first_name.id_for_label }}">{{ form.contact_first_name.label }}</label>
+                {% endif %}
+                {{ form.contact_first_name }}
+                {% for error in form.contact_first_name.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.contact_first_name.help_text %}
+                <small class="form-text text-muted">{{ form.contact_first_name.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.contact_email.errors %} is-invalid{% endif %}">
+                {% if form.contact_email.label %}
+                <label class="{% if form.contact_email.field.required %}required{% endif %}" for="{{ form.contact_email.id_for_label }}">{{ form.contact_email.label }}</label>
+                {% endif %}
+                {{ form.contact_email }}
+                {% for error in form.contact_email.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.contact_email.help_text %}
+                <small class="form-text text-muted">{{ form.contact_email.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-check mt-4">
+                <label class="form-check-label">
+                {{ form.is_owner }}
+                <span class="form-check-sign">{{ form.is_owner.label }}</span>
+                </label>
+            </div>
+            <div class="form-check mt-3">
+                <label class="form-check-label">
+                {{ form.is_verified }}
+                <span class="form-check-sign">{{ form.is_verified.label }}</span>
+                </label>
+            </div>
+
+        </div>
+
+        <div class="col-lg-6 col-sm-6">
+
+            <div class="form-group mb-3{% if form.special_requirement.errors %} is-invalid{% endif %}">
+                {% if form.special_requirement.label %}
+                <label class="{% if form.special_requirement.field.required %}required{% endif %}" for="{{ form.special_requirement.id_for_label }}">{{ form.special_requirement.label }}</label>
+                {% endif %}
+                {{ form.special_requirement }}
+                {% for error in form.special_requirement.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.special_requirement.help_text %}
+                <small class="form-text text-muted">{{ form.special_requirement.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.monthly_hour_flown.errors %} is-invalid{% endif %}">
+                {% if form.monthly_hour_flown.label %}
+                <label class="{% if form.monthly_hour_flown.field.required %}required{% endif %}" for="{{ form.monthly_hour_flown.id_for_label }}">{{ form.monthly_hour_flown.label }}</label>
+                {% endif %}
+                {{ form.monthly_hour_flown }}
+                {% for error in form.monthly_hour_flown.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.monthly_hour_flown.help_text %}
+                <small class="form-text text-muted">{{ form.monthly_hour_flown.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.mtow_unit.errors %} is-invalid{% endif %}">
+                {% if form.mtow_unit.label %}
+                <label class="{% if form.mtow_unit.field.required %}required{% endif %}" for="{{ form.mtow_unit.id_for_label }}">{{ form.mtow_unit.label }}</label>
+                {% endif %}
+                {{ form.mtow_unit }}
+                {% for error in form.mtow_unit.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.mtow_unit.help_text %}
+                <small class="form-text text-muted">{{ form.mtow_unit.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.contact_last_name.errors %} is-invalid{% endif %}">
+                {% if form.contact_last_name.label %}
+                <label class="{% if form.contact_last_name.field.required %}required{% endif %}" for="{{ form.contact_last_name.id_for_label }}">{{ form.contact_last_name.label }}</label>
+                {% endif %}
+                {{ form.contact_last_name }}
+                {% for error in form.contact_last_name.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.contact_last_name.help_text %}
+                <small class="form-text text-muted">{{ form.contact_last_name.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.homebase.errors %} is-invalid{% endif %}">
+                {% if form.homebase.label %}
+                <label class="{% if form.homebase.field.required %}required{% endif %}" for="{{ form.homebase.id_for_label }}">{{ form.homebase.label }}</label>
+                {% endif %}
+                {{ form.homebase }}
+                {% for error in form.homebase.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.homebase.help_text %}
+                <small class="form-text text-muted">{{ form.homebase.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3{% if form.note_internal.errors %} is-invalid{% endif %}">
+                {% if form.note_internal.label %}
+                <label class="{% if form.note_internal.field.required %}required{% endif %}" for="{{ form.note_internal.id_for_label }}">{{ form.note_internal.label }}</label>
+                {% endif %}
+                {{ form.note_internal }}
+                {% for error in form.note_internal.errors %}
+                <div class="invalid-feedback" style="display: unset;">{{ error }}</div>
+                {% if not forloop.last %}<br/>{% endif %}
+                {% endfor %}
+                {% if form.note_internal.help_text %}
+                <small class="form-text text-muted">{{ form.note_internal.help_text|safe }}</small>
+                {% endif %}
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">{% if metacontext.action_button_text %}{{ metacontext.action_button_text }}{% else %}Save{% endif %}</button>
+  </div>
+
+</form>
+
+{{form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/jquery-inputmask/jquery.inputmask.min.js' %}"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $("#id_aircard_number").inputmask('9999 9999 9999 9999');
+})
+
+$('#modal').ready(function() {
+  setTimeout(() => {
+    $('.modal-body .django-select2').djangoSelect2({
+        dropdownParent: $('.modal-body'),
+        width: '100%'
+    });
+        $('.modal-body').ready(function() {
+        var prev_operator_value = $('#id_operator').select2('data')[0].id
+
+            $("#operator_create_btn").on( "click", function( event ) {
+                var is_operator_create_visible = $("#operator_create").is(":visible")
+                if (!is_operator_create_visible) {
+                    $("#operator_create").show();
+                    $('#id_operator').attr("disabled", true);
+                    $('#id_operator').val(null);
+                    $('#id_operator').trigger('change')
+                    $("#operator_create_btn").html('Cancel')
+                }
+                else {
+                    $("#operator_create").hide();
+                    $('#id_operator').attr("disabled", false);
+                    $('#id_operator').val(prev_operator_value)
+                    $('#id_operator').trigger('change')
+                    $("#operator_create_btn").html('Add new')
+                }
+            });
+        })
+     }, 200);
+
+});
+
+</script>

@@ -1,0 +1,134 @@
+.duration-picker .duration-picker-placeholder.form-control {
+    background-color: #fff !important;
+}
+
+.duration-picker-popover {
+    background: #fff;
+    box-shadow: 0 3px 13px rgba(0, 0, 0, 0.08);
+    border-radius: 5px;
+    width: 307.875px;
+    max-width: 307.875px;
+}
+
+.duration-picker-popover .popover-body {
+    padding: 0;
+}
+
+.duration-picker-popover .popover-arrow {
+    left: 17px !important;
+    top: -4px !important;
+    transform: none !important;
+    width: 8px;
+    height: 4px;
+}
+
+.duration-picker-popover .popover-arrow::before {
+    top: 0;
+    border-width: 0 4px 4px 4px;
+    border-bottom-color: rgba(17, 24, 39, .25);
+    box-sizing: border-box;
+}
+
+.duration-picker-popover .popover-arrow::after {
+    top: 0.0625rem;
+    border-width: 0 4px 4px 4px;
+    border-bottom-color: #fff;
+    box-sizing: border-box;
+}
+
+.duration-picker-popover .duration-picker-popover-content {
+    display: flex;
+    border: 1px solid rgba(72, 72, 72, 0.1);
+    line-height: 40px;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper {
+    height: 40px;
+    position: relative;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper input {
+    box-shadow: none;
+    border: 0;
+    border-radius: 0;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    height: inherit;
+    line-height: inherit;
+    color: #484848;
+    font-size: 14px;
+    box-sizing: border-box;
+    appearance: textfield;
+    outline-width: 0;
+    background: transparent;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper input:focus {
+    background: #eaeaea;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper input[name="hours"] {
+    font-weight: bold;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span {
+    position: absolute;
+    right: 0;
+    width: 14px;
+    padding: 0 4px 0 2px;
+    height: 50%;
+    line-height: 50%;
+    opacity: 0;
+    cursor: pointer;
+    border: 1px solid rgba(72, 72, 72, 0.15);
+    box-sizing: border-box;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper:hover span {
+    opacity: 1;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span:after {
+    display: block;
+    content: "";
+    position: absolute;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span.arrow-up {
+    top: 0;
+    border-bottom: 0;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span.arrow-up:after {
+    border-bottom: 4px solid #484848;
+    top: 26%;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span.arrow-down {
+    bottom: 0;
+}
+
+.duration-picker-popover .duration-picker-popover-content .input-wrapper span.arrow-down:after {
+    border-top: 4px solid #484848;
+    top: 40%;
+}
+
+.duration-picker-popover .duration-picker-popover-content .time-seperator {
+    line-height: inherit;
+    color: #484848;
+    font-weight: bold;
+    width: 6px;
+    user-select: none;
+    align-self: center;
+}

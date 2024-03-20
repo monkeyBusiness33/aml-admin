@@ -1,0 +1,162 @@
+{% load static %}
+{{organisation_people_activity_form.media.css }}
+{{activity_attachment_formset.media.css }}
+
+<form id="crm_activity_form" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas fa-building"></i> Create New Organisation</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+      <div class="row">
+          <div class="col">
+
+              <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_type_form.type field_title='Select Organisation Type to Create' %}
+                </div>
+          </div>
+      </div>
+
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-2 fw-bold">
+            Organisation Details
+        </span>
+
+        <div id="#organisation_details" class="px-2">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_details_form.registered_name field_title='Registered / Legal Name' %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_details_form.trading_name field_title='Trading Name' field_subtitle='(if different)' %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_details_form.department_of field_title='Parent Organisation' field_subtitle='(if applicable)' %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_details_form.country field_title='Country of Registration' %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_details_form.tax_number field_title='Tax Number / ID' %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_restricted_form.invoiceable_organisation field_title='Invoiceable Organisation' field_subtitle='(if applicable)' %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_customer %}
+                </div>
+
+                <div class="col-md-2 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_fuel_seller %}
+                </div>
+
+                <div class="col-md-2 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_service_supplier %}
+                </div>
+
+                <div class="col-md-2 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_competitor %}
+                </div>
+
+                <div class="col-md-2 mb-3">
+                    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_invoiceable %}
+                </div>
+
+            </div>
+
+        </div>
+
+    <div id="operator_details_seciton">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+            Operator Details
+        </span>
+        <div class="px-2">
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=operator_details_form.contact_email %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=operator_details_form.contact_phone %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=operator_details_form.type %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="fuel_reseller_details_section">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+            Fuel Reseller Details
+        </span>
+        <div class="px-2">
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=fuel_reseller_details_form.is_fuel_agent %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="ground_handler_details_section">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+            Ground Handler Details
+        </span>
+        <div class="px-2">
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=handler_details_form.airport %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=handler_details_form.handler_type %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=handler_details_form.is_ipa %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="nasdl_details_section">
+        <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+            Non-Airport Location Details
+        </span>
+        <div class="px-2">
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=nasdl_details_form.type %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}" data-bs-dismiss="modal">Back</button>
+    <button type="submit" id="submit_btn" class="submit-btn btn btn-secondary">Create Organisation</button>
+  </div>
+
+</form>
+
+{{organisation_people_activity_form.media.js }}
+{{activity_attachment_formset.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/person_pos_add_organisation.js' %}"></script>

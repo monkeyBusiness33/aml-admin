@@ -1,0 +1,121 @@
+
+body {
+    font-family: FuturaBookBT, serif !important;
+    font-size:13px;
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+    word-wrap: break-word;
+}
+
+.aml_bg {
+    background-color: #515d8a;
+    color: white;
+}
+
+.header {
+    padding-top: 45px;
+    padding-left: 35px;
+    padding-right: 35px;
+    font-weight: 500;
+    height: 130px;
+}
+
+.organisation_logo_container {
+    margin-bottom: 10px;
+}
+
+.organisation_logo_image {
+    max-width: 120px;
+    width: auto;
+    height: auto;
+}
+
+.footer {
+    padding-top: 20px;
+    padding-left: 35px;
+    padding-right: 35px;
+    font-weight: 400;
+
+    bottom: 0;
+    position: fixed;
+    height: 100px;
+    width: 100%;
+}
+
+.header_mission_number_value {
+    font-weight: 700;
+    font-size:15px;
+    text-transform: uppercase;
+}
+
+.footer_company_name {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.aml_logo_image_container {
+    vertical-align: middle;
+    margin-top: 8px;
+}
+
+.aml_logo_image {
+    max-width: 120px;
+}
+
+.details_body {
+    padding-top: 10px !important;
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+.general_details {
+    text-align: center;
+}
+
+.details_title {
+    font-size: 22px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.details_title_handling_request {
+    font-size: 21px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.details_card {
+    margin-top: 15px;
+}
+
+.card-header {
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-bottom: none;
+}
+
+.details_card table th {
+    font-weight: 200;
+    background-color: #eaecef;
+}
+
+.details_card table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.details_card table th {
+    vertical-align: middle;
+}
+
+.details_card table td {
+    font-weight: bold;
+}
+
+.details_card table {
+    border-color: #515d8a;
+}
+
+.small-text {
+    font-size: 8px;
+}

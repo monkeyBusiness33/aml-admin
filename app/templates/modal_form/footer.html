@@ -1,0 +1,40 @@
+<div class="modal-footer">
+  <div class="me-auto">
+    {% for button in metacontext.footer_buttons_left %}
+      {% include 'includes/_get_button.html' with btn_modal=True modal_validation=True title=button.title url=button.url %}
+    {% endfor %}
+  </div>
+
+  <button type="button" data-bs-dismiss="modal"
+          class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+    Close
+  </button>
+  {% if metacontext.multi_button %}
+    <button id="multi_button_1" type="submit" value="False" name="multi_button"
+            class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+      {{ metacontext.action_button1_text|default:'Decline' }}
+    </button>
+    <button id="multi_button_2" type="submit" value="True" name="multi_button"
+            class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+      {{ metacontext.action_button2_text|default:'Confirm' }}
+    </button>
+  {% elif metacontext.numbered_multi_button %}
+    <button id="multi_button_1" type="submit" value="1" name="multi_button"
+            class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+      {{ metacontext.action_button1_text|default:'Decline' }}
+    </button>
+    <button id="multi_button_2" type="submit" value="2" name="multi_button"
+            class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+      {{ metacontext.action_button2_text|default:'Confirm' }}
+    </button>
+  {% else %}
+    {# Display submit button when action_button_hide is not True #}
+    {% if not metacontext.hide_action_button and not form.hide_action_button %}
+      <button type="submit"
+              class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+        {% if action_button_disabled %} disabled {% endif %}>
+        {{ metacontext.action_button_text|default:'Save' }}
+      </button>
+    {% endif %}
+  {% endif %}
+</div>

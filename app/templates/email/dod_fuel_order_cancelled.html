@@ -1,0 +1,29 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+{% block content %}
+<p>Dear Fuel Team,</p>
+
+<p>
+    {% if previous_fuel_order_number or amendment %}
+        Fuel has been cancelled for servicing & fueling request with reference <b>{{ handling_request.reference }}</b>.
+    {% else %}
+        The servicing & fueling request with reference <b>{{ handling_request.reference }}</b> has been cancelled.
+    {% endif %}
+
+    {% if handling_request.fuel_booking %}
+        {% if handling_request.fuel_booking.fuel_order_number %}
+            Please cancel fuel order reference: "<b>{{ handling_request.fuel_booking.fuel_order_number }}</b>".
+        {% elif handling_request.fuel_booking.dla_contracted_fuel %}
+            This is for notification purposes only, there is no action needed due to this being a DLA contracted location.
+        {% endif %}
+    {% else %}
+        Please cancel any requests made in relation to the fuel order for this mission.
+    {% endif %}
+</p>
+
+{% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

@@ -1,0 +1,4 @@
+- model: user.role
+  pk: 1000
+  fields:
+    name: "Military Team"

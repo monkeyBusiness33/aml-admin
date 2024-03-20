@@ -1,0 +1,16 @@
+{% if metacontext.alerts %}
+  {% for alert in metacontext.alerts %}
+    {% if alert.position == position %}
+      {% autoescape off %}
+        <div class="alert {{ alert.class|default:'p-0' }} d-flex align-items-center mb-2" role="alert">
+          {% if alert.icon %}
+            <i class="fas fa-{{ alert.icon }} me-3"></i>
+          {% endif %}
+          <div>
+            {{ alert.text }}
+          </div>
+        </div>
+      {% endautoescape %}
+    {% endif %}
+  {% endfor %}
+{% endif %}

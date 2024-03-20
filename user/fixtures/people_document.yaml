@@ -1,0 +1,5 @@
+- model: user.peopledocumenttype
+  pk: 1
+  fields:
+    name: "Passport"
+    is_td: 1

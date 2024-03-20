@@ -1,0 +1,386 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %} Create Fuel Fees {% endblock %}
+
+{% block stylesheets %}
+  {{ combined_fuel_fee_formset.media.css }}
+  <link type="text/css" href="{% static 'css/fuel_fees.css' %}" rel="stylesheet">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+  <div class="col-12 col-xl-12">
+    <div class="card border-0 shadow mb-4">
+      <div class="card-header p-3 formset-page">
+        <div class="row align-items-center">
+          <div class="col">
+            <h2 class="fs-5 fw-bold mb-0">Create New Fuel Fees for {% firstof doc_instance.pld_name doc_instance %}</h2>
+          </div>
+        </div>
+      </div>
+
+      <form id="fuel_fee_form" method="post" enctype="multipart/form-data">
+        {{ combined_fuel_fee_formset.management_form }}
+        {{ combined_fuel_fee_formset.non_field_errors }}
+        {{ combined_fuel_fee_formset.non_form_errors }}
+
+        {% csrf_token %}
+        {% for form in combined_fuel_fee_formset %}
+          {% if forloop.counter0 != 0 and not form.errors and not combined_fuel_fee_formset|get_formset_errors:forloop.counter0 and not form.local_name.value %}
+            <div class="d-none form-section form-{{ forloop.counter0 }}">
+          {% else %}
+            <div class="form-section form-{{ forloop.counter0 }}">
+          {% endif %}
+          <div class="d-none">
+            {{ form.DELETE }}
+          </div>
+          <hr class="header-start-line">
+          <div class="card-body pt-3 fuel-form-body">
+          <div class="pld-form-header flex-space-between mb-2">
+            <h2 class="fs-5 fw-bold mb-0 form-section-title">Fee #{{ forloop.counter }}</h2>
+            <button class="btn btn-sm btn-outline-danger delete-form-section" type="button">Delete</button>
+          </div>
+
+          <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Fee Details
+                    </span>
+
+          {% if doc_instance %}
+            <div class="row">
+              <div class="col-10">
+                <div class="row">
+                  <div class="col-md-3 ps-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.applies_to_private field_title='Applies to Private?' %}
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.applies_to_commercial field_title='Applies to Commercial?' %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+          {% endif %}
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              {% include 'includes/_form_field.html' with field=form.local_name field_title='Local Name' %}
+            </div>
+            <div class="col-md-4 mb-3">
+              {% include 'includes/_form_field.html' with field=form.destination_type field_title='Destination Type' %}
+            </div>
+            <div class="col-md-4 mb-3">
+              {% include 'includes/_form_field.html' with field=form.flight_type field_title='Flight Type' %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-2 mb-3">
+              {% include 'includes/_form_field.html' with field=form.specific_fuel field_title='Specific Fuel' %}
+            </div>
+            <div class="col-md-2 mb-3">
+              {% include 'includes/_form_field.html' with field=form.delivery_method field_title='Delivery Method' %}
+            </div>
+            <div class="col-md-4 mb-3">
+              {% include 'includes/_form_field.html' with field=form.fuel_fee_category field_title='Category' %}
+            </div>
+            <div class="col-md-2 mb-3">
+              <div>
+                <label
+                  for="id_new-fuel-fee-rate-{{ forloop.counter0 }}-valid_from_date">{{ form.valid_from_date.label }}<span
+                  class='required'></span>
+                  <i class="ms-1 fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                     data-bs-original-title="Only 'Valid From' can be set, as 'Valid To' will be
+                                                        automatically set on supersede based on the next entry's 'Valid From' minus a day."></i>
+                </label>
+                {{ form.valid_from_date }}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              {% include 'includes/_form_field.html' with field=form.specific_hookup_method %}
+            </div>
+            <div class="mb-3"></div>
+          </div>
+
+          <div class="accordion" id="locationAccordion-{{ forloop.counter0 }}">
+            <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#collapseLocationAccordion-{{ forloop.counter0 }}"
+                    aria-expanded="true" aria-controls="collapseOne">
+              <div class="flex-space-between">
+                <span>Location &#38; Pricing Details</span>
+                <span class="accordion-arrow">&#x25BC;</span>
+              </div>
+            </button>
+
+            <div id="collapseLocationAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse show"
+                 data-bs-parent="#locationAccordion-{{ forloop.counter0 }}">
+              <div class="row location-row">
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.location %}
+                </div>
+                <div class="col-md-3 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.ipa %}
+                </div>
+                <div class="col-md-3 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.pricing_native_unit %}
+                </div>
+                <div class="col-md-1 mb-3 larger-width">
+                  {% include 'includes/_form_field.html' with field=form.pricing_native_amount field_title="Amount" %}
+                </div>
+
+                <div class="col-md-4">
+                  {% include 'includes/_form_field.html' with field=form.specific_handler %}
+                </div>
+                <div class="col-md-3">
+                  {% include 'includes/_form_field.html' with field=form.specific_handler_is_excluded field_title=form.specific_handler_is_excluded.label|safe %}
+                </div>
+                <div class="col-md-3">
+                  {% include 'includes/_form_field.html' with field=form.specific_apron %}
+                </div>
+              </div>
+              <hr>
+
+              {% for field_name, field in form.fields.items %}
+                {% if "location-additional" in field_name %}
+                  <div class="row location-row">
+                  <div class="col-md-4 mb-3 fee-location">
+                    {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                  </div>
+                {% endif %}
+              {% if "ipa-additional" in field_name %}
+                <div class="col-md-3 mb-3 fee-ipa">
+                  {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                </div>
+              {% endif %}
+              {% if "pricing_native_unit-additional" in field_name %}
+                <div class="col-md-3 mb-3 fee-method">
+                  {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                </div>
+              {% endif %}
+              {% if "pricing_native_amount-additional" in field_name and "band" not in field_name %}
+                <div class="col-md-1 mb-3 fee-amount larger-width">
+                  {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                </div>
+              {% endif %}
+              {% if "specific_handler-additional" in field_name %}
+                <div class="col-md-4 mb-3 fee-specific_handler">
+                  {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                </div>
+              {% endif %}
+              {% if "specific_handler_is_excluded-additional" in field_name %}
+                <div class="col-md-3 mb-3 fee-specific_handler_is_excluded">
+                  {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                </div>
+              {% endif %}
+              {% if "specific_apron-additional" in field_name %}
+                <div class="col-md-3 mb-3 fee-specific_apron">
+                  {% include 'includes/_form_field.html' with field=form|get_form_field:field_name hide_label=True %}
+                </div>
+
+                <div class="col md-4 mb-3 deletion-col">
+                  <button class="fas fa-minus text-danger delete-location-row" type="button"></button>
+                </div>
+                <hr>
+                </div>
+              {% endif %}
+              {% endfor %}
+
+              <hr class="insert-before-row d-none">
+              <button class="btn btn-primary mt-2 animate-up-2 new-row-button" type='button'>Add New Row</button>
+              <div class="mb-3"></div>
+            </div>
+          </div>
+
+          <div class="accordion" id="bandAccordion-{{ forloop.counter0 }}">
+            <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#collapseBandAccordion-{{ forloop.counter0 }}"
+                    aria-expanded="true" aria-controls="collapseOne">
+              <div class="flex-space-between">
+                <span>Band Details</span>
+                <span class="accordion-arrow">&#x25BC;</span>
+              </div>
+            </button>
+
+            {% if 'quantity_band_start' in form.errors or 'quantity_band_end' in form.errors or 'weight_band_start' in form.errors or 'weight_band_end' in form.errors or 'quantity_band_uom' in form.errors or 'weight_band' in form.errors or 'band_pricing_native_amount' in form.errors or form.band_pricing_native_amount.initial != None %}
+              <div id="collapseBandAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse show"
+                   data-bs-parent="#bandAccordion-{{ forloop.counter0 }}">
+            {% else %}
+              <div id="collapseBandAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse"
+                   data-bs-parent="#bandAccordion-{{ forloop.counter0 }}">
+            {% endif %}
+
+            <div class="row">
+              <div class="col-md-4 mb-3 band-uom">
+                {% include 'includes/_form_field.html' with field=form.quantity_band_uom %}
+              </div>
+              <div class="col-md-4 mb-3 weight-band-uom">
+                {% include 'includes/_form_field.html' with field=form.weight_band %}
+              </div>
+            </div>
+            <div class="row band-row">
+              <div class="col-md-2 mb-3 band band-start">
+                {% include 'includes/_form_field.html' with field=form.quantity_band_start %}
+              </div>
+              <div class="col-md-2 mb-3 band band-end">
+                {% include 'includes/_form_field.html' with field=form.quantity_band_end %}
+              </div>
+              <div class="col-md-2 mb-3 band weight-band-start">
+                {% include 'includes/_form_field.html' with field=form.weight_band_start %}
+              </div>
+              <div class="col-md-2 mb-3 band weight-band-end">
+                {% include 'includes/_form_field.html' with field=form.weight_band_end %}
+              </div>
+              <div class="col-md-2 mb-3 band band-pricing-native {% if not form.errors %} d-none {% endif %}">
+                {% include 'includes/_form_field.html' with field=form.band_pricing_native_amount field_title="Amount" %}
+              </div>
+            </div>
+
+
+            {% for field_name, field in form.fields.items %}
+              {% if "quantity_band_start-additional" in field_name %}
+                <div class="row band-row">
+                <div class="col-md-2 mb-3 band band-start">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+              {% endif %}
+              {% if "quantity_band_end-additional" in field_name %}
+                <div class="col-md-2 mb-3 band band-end">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            {% for field_name, field in form.fields.items %}
+              {% if "weight_band_start-additional" in field_name %}
+                <div class="col-md-2 mb-3 band weight-band-start">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+              {% endif %}
+              {% if "weight_band_end-additional" in field_name %}
+                <div class="col-md-2 mb-3 band weight-band-end">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+              {% endif %}
+              {% if "band_pricing_native_amount-additional" in field_name %}
+                <div class="col-md-2 mb-3 band band-pricing-native">
+                  <div>
+                    {{ form|get_form_field:field_name }}
+                  </div>
+                </div>
+
+                <div class="col md-4 mb-3 deletion-col">
+                  <button class="fas fa-minus text-danger delete-row" type="button"></button>
+                </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+              <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+
+            {% for error in form.non_form_errors %}
+              <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+
+            <hr class="insert-before-band">
+            <button class="btn btn-primary mt-2 animate-up-2 new-band-button" type='button'>Add New Band</button>
+            <button class="btn btn-primary mt-2 animate-up-2 revert-button" type='button'>Revert to Default Pricing
+            </button>
+            <div class="mb-3"></div>
+            </div>
+            </div>
+
+            {% include 'pricing_pages_includes/_supplier_fee_validity_periods.html' %}
+
+            <div class="accordion" id="optionalAccordion-{{ forloop.counter0 }}">
+              <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#collapseOptional-{{ forloop.counter0 }}"
+                      aria-expanded="true" aria-controls="collapseOne">
+                <div class="flex-space-between">
+                  <span>Optional Details</span>
+                  <span class="accordion-arrow">&#x25BC;</span>
+                </div>
+              </button>
+
+              {% if 'supplier_exchange_rate' in form.errors or 'pricing_converted_unit' in form.errors or form.pricing_converted_unit.value %}
+                <div id="collapseOptional-{{ forloop.counter0 }}" class="accordion-collapse collapse show"
+                     data-bs-parent="#optionalAccordion-{{ forloop.counter0 }}">
+              {% else %}
+                <div id="collapseOptional-{{ forloop.counter0 }}" class="accordion-collapse collapse"
+                     data-bs-parent="#optionalAccordion-{{ forloop.counter0 }}">
+              {% endif %}
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.pricing_converted_unit field_title='Supplier Converted Unit' %}
+                </div>
+                <div class="col-md-3 mb-3">
+                  <div>
+                    <label
+                      for="id_new-fuel-fee-rate-{{ forloop.counter0 }}-supplier_exchange_rate">{{ form.supplier_exchange_rate.label }}
+                      <i class="ms-1 fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                         data-bs-original-title="The exchange rate is going to be used to convert
+                                                the currency of 'Pricing Native Unit' into that of
+                                                'Supplier Converted Unit'. The conversion of units
+                                                and currency divisions will be applied automatically,
+                                                so please enter a basic currency exchange rate."></i>
+                    </label>
+                    {{ form.supplier_exchange_rate }}
+                  </div>
+                </div>
+                <div class="col-md-5 mb3">
+                  <label class="mb-0">Final exchange rate(s):</label>
+                  <div class="lh-lg" id="id_new-fuel-fee-rate-{{forloop.counter0}}-supplier_final_exchange_rate">
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+        <hr class="footer-start-line">
+        <input type="hidden" name='button-pressed' class="button-pressed" value="">
+        <div class="pld-form-footer flex-space-between">
+          <button class="btn btn-primary mt-2 animate-up-2 add-form-section" type="button">+1</button>
+          {% if doc_is_new %}
+            <div class="pld-form-footer">
+              <button class="btn btn-primary mt-2 animate-up-2" value="skip" type="submit">Skip</button>
+              <button class="btn btn-primary mt-2 animate-up-2 submit" type="submit">Continue</button>
+            </div>
+          {% else %}
+            <button class="btn btn-primary mt-2 animate-up-2 submit" type="submit">Save</button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ combined_fuel_fee_formset.media.js }}
+  <script>
+    let supplier_xr_url = "{% url 'admin:apply_supplier_exchange_rate' %}";
+  </script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script type="module" charset="utf8"
+          src="{% static 'js/fuel_pricing_fees_create.js' %}"></script>
+
+{% endblock javascripts %}

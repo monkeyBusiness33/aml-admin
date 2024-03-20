@@ -1,0 +1,31 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+{% block content %}
+<p>Dear {{ person_details.first_name|default:'' }},</p>
+
+<p>
+    You have been invited to set up a user account in the AML Department of Defense Flight Servicing Portal, which enables you to submit and manage Servicing & Fueling requests. Please follow instructions below to complete the set-up of your account.
+</p>
+
+<p>
+    <b>Login:</b> {{ user.username }} <br>
+    <b>Password:</b> <a href="http://{{domain}}/reset_password/{{uid}}/{{token}}/" target="_blank">Set New Password</a>
+</p>
+<p>
+    Once you have set a password for your account, use this link to login to the DoD Flight Servicing Portal.: <a href="http://{{domain}}/login/" target="_blank">{{domain}}/login</a>
+</p>
+<p>
+    <p style="border-bottom:1px solid #e8e8e8;"></p>
+    <div style="font-weight: bold;">Download the AML Global mobile application</div>
+</p>
+<p>
+    <a style="text-decoration:none" href="https://play.google.com/store/apps/details?id=aero.aml_global">
+        <img src="cid:play-market.png" alt="Download on Play Market" style="max-height: 40px;">
+    </a>
+
+    <a style="text-decoration:none" href="https://apps.apple.com/gb/app/aml-global/id1585624707">
+        <img src="cid:appstore.png" alt="Download on Appstore" style="max-height: 40px;">
+    </a>
+</p>
+{% endblock content %}
+{% endautoescape %}

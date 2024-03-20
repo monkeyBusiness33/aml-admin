@@ -1,0 +1,195 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ organisation.details.registered_name }} {% endblock %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'assets/vendor/select2/select2.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  {% include 'organisations_pages_includes/_details_header.html' with organisation=organisation %}
+
+  <div class="row align-items-left mb-3">
+    <div class="col-6">
+      {% include 'organisations_pages_includes/_tags.html' with organisation=organisation %}
+    </div>
+
+    <div class="col-6 d-flex gap-1 justify-content-end">
+      <div id="org-edit-details-btn" class="text-end d-none">
+        <a class="btn btn-outline-primary {% if not perms.core.p_contacts_update %}disabled{% endif %}"
+           href="">
+          <i class="fas fa-edit"></i> Edit Details</a>
+      </div>
+
+      <div id="org-add-type-btn" class="text-end
+  {% if not organisation.has_missing_org_types or organisation.details.type_id == 1002 %}d-none{% endif %}">
+        <btn
+          class="modal_button_novalidation bs-modal btn btn-outline-primary {% if not perms.core.p_contacts_update %}disabled{% endif %}"
+          data-modal="#modal-lg" data-form-url="{% url 'admin:add_organisation_type' organisation.pk %}">
+          <i class="fas fa-plus"></i> Add Business Type
+        </btn>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs - navigation section  -->
+  <div class='org-details-navbar d-flex' data-org-type="{{ organisation.details.type }}">
+    {% if organisation.operator_details %}
+      <button id="operator-details" class="nav-button btn btn-primary
+           {% if organisation.details.type_id == 1 %}order-first{% endif %}">
+        Aircraft Operator
+      </button>
+    {% endif %}
+    {% if organisation.airport_details %}
+      <button id="airport-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 8 %}order-first{% endif %}">
+        Airport
+      </button>
+    {% endif %}
+    {% if organisation.dao_details %}
+      <button id="dao-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 1001 %}order-first{% endif %}">
+        DAO Details
+      </button>
+    {% endif %}
+    {% if organisation.airport_details %}
+      <button id="fuel-pricing"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 8 %}order-first{% endif %}">
+        Fuel Pricing
+      </button>
+    {% endif %}
+    {% if organisation.sells_fuel %}
+      <button id="fuel-seller-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id in "2,13" %}order-first{% endif %}">
+        Fuel Seller
+      </button>
+    {% endif %}
+    {% if organisation.handler_details %}
+      <button id="handler-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 3 %}order-first{% endif %}">
+        Ground Handler
+      </button>
+    {% endif %}
+    {% if organisation.ipa_details %}
+      <button id="ipa-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 4 %}order-first{% endif %}">
+        Into-Plane Agent
+      </button>
+    {% endif %}
+    {% if organisation.nasdl_details %}
+      <button id="nasdl-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 1002 %}order-first{% endif %}">
+        Non-Airport Location
+      </button>
+    {% endif %}
+    {% if organisation.oilco_details %}
+      <button id="oilco-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 5 %}order-first{% endif %}">
+        Oilco
+      </button>
+    {% endif %}
+    {% if organisation.provides_services %}
+      <button id="service-provider-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 14 %}order-first{% endif %}">
+        Services
+      </button>
+    {% endif %}
+    {% if organisation.provides_trip_support %}
+      <button id="trip-support-company-details"
+              class="nav-button btn btn-primary {% if organisation.details.type_id == 11 %}order-first{% endif %}">
+        Trip Support
+      </button>
+    {% endif %}
+
+    <button id="organisation-details" class="nav-button btn btn-primary">Organisation Details</button>
+    <button id="people" class="nav-button btn btn-primary">People</button>
+    <button id="documents" class="nav-button btn btn-primary">Documents</button>
+  </div>
+
+  <!-- Tabs - page body section  -->
+  {% if organisation.operator_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_operator.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.airport_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_airport.html' with organisation=organisation %}
+    {% include 'organisations_pages_includes/_organisation_tab_fuel_calculator.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.dao_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_dao.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.sells_fuel %}
+    {% include 'organisations_pages_includes/_organisation_tab_fuel_seller.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.handler_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_ground_handler.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.ipa_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_ipa.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.oilco_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_oilco.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.nasdl_details %}
+    {% include 'organisations_pages_includes/_organisation_tab_nasdl.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.provides_services %}
+    {% include 'organisations_pages_includes/_organisation_tab_service_provider.html' with organisation=organisation %}
+  {% endif %}
+  {% if organisation.provides_trip_support %}
+    {% include 'organisations_pages_includes/_organisation_tab_trip_support_company.html' with organisation=organisation %}
+  {% endif %}
+
+  {% include 'organisations_pages_includes/_organisation_tab_org_details.html' with organisation=organisation %}
+  {% include 'organisations_pages_includes/_organisation_tab_people.html' with organisation=organisation %}
+  {% include 'organisations_pages_includes/_organisation_tab_documents.html' with organisation=organisation %}
+
+{% endblock content %}
+
+{% block javascripts %}
+  <script>
+    const editBtnData = {{ edit_btn_data|safe }}
+    let activeTabFromOrigin = "{{ active_tab_from_origin }}"
+  </script>
+
+  <script type="text/javascript" charset="utf8" src="{% static 'js/organisation_details.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/select2/select2.min.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+
+  {% if organisation.airport_details %}
+    <script>
+      const metacontext = {{ metacontext|safe }};
+      const context = "{{ context }}";
+      const airport = {{ airport }};
+      let results = null;
+    </script>
+    <script type="text/javascript" charset="utf8" src="{% static 'js/fuel_pricing_calculation.js' %}"></script>
+  {% endif %}
+  {% if organisation.handler_details %}
+    <script type="text/javascript" charset="utf8" src="{% static 'js/ground_handler_details.js' %}"></script>
+  {% endif %}
+  {% if organisation.nasdl_details %}
+    <script type="text/javascript" charset="utf8">
+      var nasdl_details_use_address_for_location = "{{ organisation.nasdl_details.use_address|yesno:"true,false" }}"
+      var nasdl_details_latitude = "{{ organisation.nasdl_details.latitude }}"
+      var nasdl_details_longitude = "{{ organisation.nasdl_details.longitude }}"
+
+      var nasdl_details_address_country = "{{ organisation.nasdl_details.physical_address.country.name }}"
+      var nasdl_details_address_line_1 = "{{ organisation.nasdl_details.physical_address.line_1 }}"
+      var nasdl_details_address_line_2 = "{{ organisation.nasdl_details.physical_address.line_2 }}"
+      var nasdl_details_address_line_3 = "{{ organisation.nasdl_details.physical_address.line_3 }}"
+      var nasdl_details_address_state = "{{ organisation.nasdl_details.physical_address.state }}"
+      var nasdl_details_address_city = "{{ organisation.nasdl_details.physical_address.town_city }}"
+      var nasdl_details_address_post_zip_code = "{{ organisation.nasdl_details.physical_address.post_zip_code }}"
+    </script>
+
+    <script async type="module"
+            src="https://cdn.what3words.com/javascript-components@4-latest/dist/what3words/what3words.esm.js"></script>
+    <script async nomodule
+            src="https://cdn.what3words.com/javascript-components@4-latest/dist/what3words/what3words.js?key={{ WHAT3WORDS_API_KEY }}"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}"></script>
+    <script type="text/javascript" charset="utf8" src="{% static 'js/nasdl_map.js' %}"></script>
+  {% endif %}
+
+{% endblock javascripts %}

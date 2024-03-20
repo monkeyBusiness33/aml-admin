@@ -1,0 +1,61 @@
+{% extends "email/base.html" %}
+
+{% block stylesheets %}
+  <style>
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #b3bdc6;
+    }
+
+    table td, table th {
+      padding: 5px;
+    }
+
+    tbody td, th {
+      border-style: solid;
+      border-color: #b3bdc6;
+    }
+
+  </style>
+{% endblock stylesheets %}
+
+{% autoescape on %}
+  {% block content %}
+    <p>
+      Dear {% for position in people_to_notify %}
+      {{ position.person.full_repr }},
+      {% endfor %}
+    </p>
+
+    <p>
+      This is a polite request to sign the attached invoice for ground services provided for {{ handling_request.callsign }}
+      at {{ handling_request.location_short_repr }} with an arrival date of {{ handling_request.arrival_movement.date|date:'M-d-Y' }}
+      and departure date of {{ handling_request.departure_movement.date|date:'M-d-Y' }}.
+    </p>
+
+    <p>
+      You can quickly and easily digitally sign this invoice through the corresponding Servicing & Fueling Request
+      screen in the AML Global mobile app, or you can return a signed copy by reply to this email. <br>
+      If you have any questions or queries about this invoice that first need resolving, please reply to this email
+      or contact the AML Global Operations Team directly using the contact details below.
+    </p>
+
+    <p>
+      Very respectfully,
+      <br><br><br><br>
+      The AML Global Operations Team
+      <br><br>
+      Ops: +1-786-220-1154 | ops@amlglobal.net
+    </p>
+
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

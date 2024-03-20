@@ -1,0 +1,48 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+  {% block content %}
+    <p>Dear Fuel Team,</p>
+
+    <p>
+      New changes were detected on the <a href="{{ cis_url }}" target="_blank">Into Plane CIS</a> website.
+    </p>
+    <p>
+      The following locations now appear to be uncontracted:
+    </p>
+
+    <p>
+      {% for location in locations %}
+        <table>
+          <tbody>
+          <tr>
+            <td>ICAO Code:</td>
+            <td><b>{{ location.airport_details.icao_code }}</b></td>
+          </tr>
+          <tr>
+            <td>Airport Name:</td>
+            <td><b>{{ location.details.registered_name }}</b></td>
+          </tr>
+          <tr>
+            <td style="vertical-align:top">Past Contract(s):</td>
+            <td>
+              <ul class="small">
+                {% for contract in location.dla_contracted_locations_here.all %}
+                  <li><small>
+                    <b>{{ contract.contract_reference }}</b><br>
+                    ({{ contract.supplier.details.registered_name }}; {{ contract.start_date }} - <b>
+                    {% if contract.early_termination_date %}TERMINATED ON:
+                      {{ contract.early_termination_date }}{% else %}EXPIRES ON: {{ contract.end_date }}{% endif %}</b>)
+                  </small></li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      {% endfor %}
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

@@ -1,0 +1,37 @@
+<div class="card border-0 shadow mb-2">
+  {% with location_specific_items.exists as location_specific_items_exist %}
+    <div class="card-header p-3 {% if not location_specific_items_exist %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-5 fw-bold mb-0">Ops Checklist - Location-Specific Items</h2>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation bs-modal btn btn-outline-primary"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:sfr_ops_checklist_settings_create_item' %}?location-specific=1"
+            {% if not perms.handling.p_manage_sfr_ops_checklist_settings %} disabled {% endif %}>
+            <i class="fas fa-plus"></i>Add Location-Specific Checklist Item
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% if location_specific_items_exist %}
+      <div>
+
+        <div id="sfr_ops_checklist_location_specific_items_list"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+          <div class="table-responsive ajax-datatable-container pt-0">
+            <table id="sfr_ops_checklist_location_specific_items_list" width="100%"
+                   class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                   data-datatable-url="{% url 'admin:sfr_ops_checklist_settings_location_specific_ajax' %}">
+            </table>
+          </div>
+        </div>
+
+      </div>
+    {% endif %}
+  {% endwith %}
+</div>

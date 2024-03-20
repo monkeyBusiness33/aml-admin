@@ -1,0 +1,266 @@
+{% autoescape on %}
+{% load static tz %}
+{% load partition_filters %}
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ static_path }}/assets/vendor/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ pdf_templates_path }}/pdf_v1.css">
+    <style>
+        @page {
+            size: A4;
+            margin-left: 0mm;
+            margin-right: 0mm;
+            margin-top: 0mm;
+            margin-bottom: 0mm;
+        }
+        @font-face {
+            font-family: 'FuturaBookBT';
+            src: url('{{ static_path }}/assets/fonts/futura_book_bt.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'FuturaBookBT';
+            font-weight: bold;
+            src: url('{{ static_path }}/assets/fonts/futura_book_bold.ttf') format('truetype');
+        }
+    </style>
+</head>
+<body style="">
+
+    <div class="aml_bg header">
+
+        <div class="row">
+            <div class="col ps-1">
+                <span class="header_created_at">
+                    Created At: {{ handling_request.created_at|date:'M-d-Y H:i'|upper }}Z
+                </span>
+                <br/>
+                <span class="header_created_by">
+                    Created By: {{ handling_request.created_by.fullname }}
+                </span>
+                <br/>
+            </div>
+
+            <div class="col text-end">
+                <span class="header_mission_number_title">
+                    Mission Number:
+                </span>
+                <br/>
+                <span class="header_mission_number_value pe-1">
+                    {{ handling_request.mission_number|default:'--' }}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="details_body">
+        <div class="general_details">
+
+            <div class="organisation_logo_container">
+                {% if handling_request.customer_organisation.logo_motto.logo %}
+                <img src="{{ handling_request.customer_organisation.logo_motto.logo.url }}"
+                     alt="Logo"
+                     class="organisation_logo_image">
+                {% endif %}
+            </div>
+
+            <span class="details_title">
+                Servicing & Fueling Details:
+            </span>
+            <br>
+            <span class="details_title_handling_request">
+                {{ handling_request.callsign }} - {{ handling_request.location_short_repr  }} - {{ handling_request.arrival_movement.date|date:'M-d' }} - {{ handling_request.departure_movement.date|date:'M-d' }}
+            </span>
+
+        </div>
+
+        <div class="details_card">
+            <div class="card-header aml_bg">Arrival Details</div>
+            <div class="details_card_body">
+                <table class="table table-bordered mb-0 pb-0">
+                    <tbody>
+
+                    <tr>
+                        <th>Arrival Date & Time (L):</th>
+                        <td>{% localtime off %}{{ handling_request.arrival_movement.date_local|date:'M-d-Y H:i'|upper }}{% endlocaltime %}</td>
+                        <th>Arrival Date & Time (Z):</th>
+                        <td>{% localtime off %}{{ handling_request.arrival_movement.date|date:'M-d-Y H:i'|upper }}{% endlocaltime %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Arrival PPR Number:</th>
+                        <td>
+                          {% if handling_request.arrival_movement.ppr_number|length >= 25 %}
+                            <span class="small-text">
+                              {{ handling_request.arrival_movement.ppr_number|default:'--' }}
+                            </span>
+                          {% else %}
+                            {{ handling_request.arrival_movement.ppr_number|default:'--' }}
+                          {% endif %}
+                        </td>
+                        <th>Diplomatic Clearance:</th>
+                        <td>{{ handling_request.apacs_number|default:'--' }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Parking Apron:</th>
+                        <td>{{ handling_request.parking_apron|default:'TBC' }}</td>
+                        <th>Parking Stand:</th>
+                        <td>{{ handling_request.parking_stand|default:'TBC' }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Arrival Services:</th>
+                        <td colspan="3">
+                            {% for hr_service in handling_request.arrival_movement.hr_services.all %}
+                            {{ hr_service.service_repr }}{% if forloop.last %}.{% else %}, {% endif%}
+                            {% endfor %}
+
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="details_card">
+            <div class="card-header aml_bg">Ground Handling Details</div>
+            <div class="details_card_body">
+                <table class="table table-bordered mb-0 pb-0">
+                    <tbody>
+
+                    <tr>
+                        <th>Ground Handler:</th>
+                        <td>{% firstof handling_request.handling_agent.details.department_of.details.registered_name handling_request.handling_agent.details.registered_name 'TBC' %}</td>
+                        <th>Contact Phone Number:</th>
+                        <td>{{ handling_request.handling_agent.handler_details.contact_phone|default:'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Operations Frequency:</th>
+                        <td>{{ handling_request.handling_agent.handler_details.ops_frequency|default:'N/A' }}</td>
+                        <td colspan="2"></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="details_card">
+            <div class="card-header aml_bg">Fueling Details</div>
+            <div class="details_card_body">
+                <table class="table table-bordered mb-0 pb-0">
+                    <tbody>
+
+                    {% if handling_request.fuel_required %}
+                        <tr>
+                            <th>Into-Plane Agent:</th>
+                            <td>{{ handling_request.fuel_booking.ipa.details.registered_name|default:'TBC' }}</td>
+                            <th>Fueling On:</th>
+                            <td>{{ handling_request.fuel_required.code|lower|capfirst }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th>Fuel Quantity Ordered:</th>
+                            <td>{{ handling_request.fuel_quantity }} {{ handling_request.fuel_unit.code }}</td>
+                            <th>Prist Required:</th>
+                            <td>{{ handling_request.fuel_prist_required|yesno|capfirst }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td>
+                                No fuel has been ordered with AML Global for this turnaround.
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="details_card">
+            <div class="card-header aml_bg">Departure Details</div>
+            <div class="details_card_body">
+                <table class="table table-bordered mb-0 pb-0">
+                    <tbody>
+
+                    <tr>
+                        <th>Departure Date & Time (L):</th>
+                        <td>{% localtime off %}{{ handling_request.departure_movement.date_local|date:'M-d-Y H:i'|upper }}{% endlocaltime %}</td>
+                        <th colspan="2">Departure Services:</th>
+                    </tr>
+
+                    <tr>
+                        <th>Departure Date & Time (Z):</th>
+                        <td>{% localtime off %}
+                                {{ handling_request.departure_movement.date|date:'M-d-Y H:i'|upper }}{% endlocaltime %}
+                        </td>
+                        <td colspan="2" rowspan="3">
+                            {% for hr_service in handling_request.departure_movement.hr_services.all %}
+                                {{ hr_service.service_repr }}{% if forloop.last %}.{% else %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Departure PPR Number:</th>
+                        <td>
+                          {% if handling_request.departure_movement.ppr_number|length >= 25 %}
+                            <span class="small-text">
+                              {{ handling_request.departure_movement.ppr_number|default:'--' }}
+                            </span>
+                          {% else %}
+                            {{ handling_request.departure_movement.ppr_number|default:'--' }}
+                          {% endif %}
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="aml_bg footer">
+
+        <div class="row">
+            <div class="col ps-1">
+                <span class="footer_company_name">
+                    AML GLOBAL LIMITED
+                </span>
+                <br/>
+                <span class="header_created_by">
+                    Email: ops@amlglobal.net
+                </span>
+                <br>
+                <span class="header_created_by">
+                    Phone: +1 786 220 1154
+                </span>
+            </div>
+
+            <div class="col text-end">
+                <div class="aml_logo_image_container">
+                    <img
+                    src="{{static_path}}/assets/img/aml_logo_slim.png"
+                    alt="AML Logo"
+                    class="aml_logo_image">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+{% endautoescape %}

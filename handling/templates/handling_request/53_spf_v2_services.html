@@ -1,0 +1,45 @@
+{% if not handling_request.is_legacy_spf_v1 %}
+  <div class="card border-0 shadow mb-2">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not handling_request.spf_v2 %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Services Provided Form
+            <span class="badge datatable-badge-normal status-badge-for-card-header-v2"
+                  style="color: {{ handling_request.spf_v2_status.color }};background-color: {{ handling_request.spf_v2_status.background_color }};">
+                          {{ handling_request.spf_v2_status.detail }}
+            </span>
+          </h2>
+
+        </div>
+
+      </div>
+    </div>
+
+    {% if handling_request.spf_v2 %}
+      <div class="">
+
+        <div id="sfr_spf_v2_services_list"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+          <div class="table-responsive ajax-datatable-container pt-0">
+            <table id="sfr_spf_v2_services_list_datatable"
+                   class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                   data-datatable-url="{% url 'admin:handling_request_spf_v2_services' handling_request.pk %}">
+            </table>
+            <button
+              class="modal_button_validation bs-modal btn me-2 d-none {% if handling_request.spf_v2.is_reconciled %}btn-outline-success{% else %}btn-outline-primary{% endif %}"
+              data-bs-toggle="tooltip" data-bs-placement="top" title="" type="button"
+              data-form-url="{% url 'admin:handling_request_spf_v2_reconciled' handling_request.pk %}"
+              {% if not perms.handling.p_spf_v2_reconcile or not handling_request.is_spf_v2_editable %} disabled{% endif %}
+              id="spf_reconciled_btn"
+              data-bs-original-title="">
+              <i class="fas fa-clipboard-check"></i>SPF Reconciled
+            </button>
+          </div>
+        </div>
+
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

@@ -1,0 +1,383 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %}Supersede Associated Fee{% if not single_fee_mode %}s{% endif %}
+  for {% firstof document.pld_name new_document %} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form method="POST" id="form-container">
+    {% csrf_token %}
+    {{ fuel_fee_rate_formset.management_form }}
+    {{ fuel_fee_rate_formset.media.css }}
+
+    <div class="row align-items-center mb-3">
+      <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0 header-name-container">
+          {% if single_fee_mode %}
+            Associated Fee: {{ fee }} - {% firstof document.pld_name new_document %}
+          {% else %}
+            Associated Fees - {% firstof document.pld_name new_document %}
+          {% endif %}
+        </h2>
+      </div>
+
+      <div class="col text-end">
+        {% if document_type == 'pld' and not single_fee_mode %}
+          <button class="datatable-buttons btn btn-outline-primary ms-1 create-new" type="submit"
+                  value='fuel-fee-create'>
+            Create New
+          </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow mb-4 form-body">
+      <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+          <div class="col">
+            <h2 class="fs-6 ps-2 fw-bold mb-0">{{ card_title|default:'Existing Fees' }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <table class='table table-flush table-hover align-middle supersede-table margin-top-5'>
+        {% if fuel_fee_rate_formset|length == 0 %}
+          <td>No existing fees to display</td>
+        {% else %}
+          {% if update_date_form %}
+            <div class="header-date-setting">
+              <span>Apply date for all rows?</span>
+              {{ update_date_form.apply_to_all }}
+              {{ update_date_form.valid_from }}
+            </div>
+          {% endif %}
+          <thead>
+          <tr>
+            <th class="first">Details</th>
+            <th><span class="required">Fuel</span><span class="required">, Delivery Method</span>,
+              Hookup Method</span><br> and Handler</th>
+            <th><span class="required">Flight</span>, <span class="required">Destination Type</span> and Apron</th>
+            <th class="required">Operated As</th>
+            <th class="set-width">Uplift and Weight Band</th>
+            <th class="set-width required">New Valid From</th>
+            {% if not single_fee_mode %}<th class="align-text-middle">No Changes?</th>{% endif %}
+            <th class="last align-text-middle"></th>
+          </tr>
+          </thead>
+          <tbody class="table-form-body">
+          {% for form in fuel_fee_rate_formset %}
+            <tr class="form-row form-{{ forloop.counter0 }} main">
+              <td class="white">{{ form.instance.supplier_fuel_fee.local_name }}<br>
+                ({{ form.instance.supplier_fuel_fee.location.airport_details.icao_iata }})
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fuel %}
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.delivery_method %}
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_hookup_method %}
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_handler %}
+                  <div class="stacked-input-element space-apart white align-items-center justify-content-start">
+                    {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_handler_is_excluded %}
+                    <span class="ms-3 mt-1">{{ form.specific_handler_is_excluded.label|safe }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.flight_type %}
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.destination_type %}
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_apron %}
+                  <div class="stacked-input-element"></div>
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input white">
+                  <div class="space-apart set-width">Commercial {{ form.applies_to_commercial }}</div>
+                  <div class="space-apart set-width">Private {{ form.applies_to_private }}</div>
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.quantity_band_uom %}
+                  {% include 'pricing_pages_includes/_table_form_field.html' with field=form.weight_band %}
+                </div>
+              </td>
+              <td>{% include 'pricing_pages_includes/_table_form_field.html' with field=form.valid_from_date %}</td>
+              {% if not single_fee_mode %}
+                <td>
+                  <div class="checkbox-align">
+                    {% include 'pricing_pages_includes/_table_form_field.html' with field=form.no_change %}
+                  </div>
+                </td>
+              {% endif %}
+              <td class="align-text-middle">
+                <button class="btn p-0 text-primary fw-bolder fas fa-clock"
+                        data-bs-toggle="modal" data-bs-target="#validityAccordion-{{ forloop.counter }}"
+                        type="button"></button>
+                {% if not single_fee_mode %}
+                  <button class="btn p-0 text-primary fw-bolder fas fa-trash text-danger hide-row"
+                          value='{{ forloop.counter0 }}'
+                          data-bs-toggle="modal" data-bs-target="#modal-expiration-{{ forloop.counter0 }}"
+                          type="button"></button>
+                {% endif %}
+                {% if fuel_fee_rate_formset.non_form_errors %}
+                  <i class="fas fa-exclamation text-danger"></i>
+                {% endif %}
+              </td>
+              <td class='d-none'>{{ form.DELETE }}</td>
+              {{ form.supplier_fuel_fee.as_hidden }}
+              {{ form.pricing_native_unit.as_hidden }}
+              {{ form.supplier_exchange_rate.as_hidden }}
+              {{ form.pricing_converted_unit.as_hidden }}
+              {{ form.id.as_hidden }}
+            </tr>
+            <tr class="form-row form-{{ forloop.counter0 }} sub">
+              <td>
+                <div class="add-col">
+                  <button class="fas fa-plus text-success add-row supersede-add" id='{{ forloop.counter0 }}-add'
+                          type="button"></button>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-large">
+                  <div>
+                    <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-quantity_band_start">Uplift Band
+                      Start</label>
+                    {{ form.quantity_band_start }}
+                  </div>
+                  <div>
+                    <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-quantity_band_end">Uplift Band
+                      End</label>
+                    {{ form.quantity_band_end }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-large">
+                  <div>
+                    <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-weight_band_start">Weight Band
+                      Start</label>
+                    {{ form.weight_band_start }}
+                  </div>
+                  <div>
+                    <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-weight_band_end">Weight Band
+                      End</label>
+                    {{ form.weight_band_end }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-small">
+                  <div>
+                    <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-pricing_native_amount_old">Current
+                      Pricing</label>
+                    {{ form.pricing_native_amount_old }}
+                  </div>
+                  <div>
+                    <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-pricing_native_amount">New
+                      Pricing</label>
+                    {{ form.pricing_native_amount }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pt-4 pricing-unit">{{ form.instance.pricing_native_unit.description }}</div>
+              </td>
+
+              <td></td>
+              <td></td>
+            </tr>
+            {% with forloop.counter0 as main_counter %}
+              {% for field_name, field in form.fields.items %}
+                {% if "quantity_band_start-additional" in field_name %}
+                  <tr class="form-row form-{{ main_counter }} sub">
+                  <td>
+                    <div class="deletion-col">
+                      <button class="fas fa-minus text-danger delete-row supersede-delete" type="button"></button>
+                    </div>
+                  </td>
+                  <td>
+                  <div class="pricing-flex-large">
+                  {{ form|get_form_field:field_name }}
+                {% endif %}
+
+              {% if "quantity_band_end-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+              {% endif %}
+
+                {% if "weight_band_start-additional" in field_name %}
+                  <td>
+                  <div class="pricing-flex-large">
+                  {{ form|get_form_field:field_name }}
+
+                {% endif %}
+
+              {% if "weight_band_end-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+              {% endif %}
+
+                {% if "pricing_native_amount_old-additional" in field_name %}
+                  <td>
+                  <div class="pricing-flex-small">
+                  {{ form|get_form_field:field_name }}
+                {% endif %}
+
+              {% if "band_pricing_native_amount-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              {% endif %}
+
+              {% endfor %}
+            {% endwith %}
+          </tr>
+
+            <tr class="form-{{ forloop.counter0 }} insert-before-band"></tr>
+            {% if not forloop.last %}
+              <tr class="empty-section">
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+              </tr>
+            {% endif %}
+
+            <div class='form-modal'>
+              <div class="modal fade dynamic-section-container" id="validityAccordion-{{ forloop.counter }}"
+                   aria-labelledby="validityModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-wider modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="validityModalLabel">Validity Period Details</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-md-3 mb-3 validity-time-type">
+                          <label for="id_existing-fuel-fee-rate-{{ forloop.counter0 }}-is_local">Local Time</label>
+                          <div class="col-md-1">
+                            <div>
+                              {{ form.is_local }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row validity-period-row">
+                        <div class="col-md-3 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.valid_from_dow %}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.valid_to_dow %}
+                        </div>
+                        <div class="col-md-2 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.valid_from_time %}
+                        </div>
+                        <div class="col-md-2 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.valid_to_time %}
+                        </div>
+                        <div class="col-md-1 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.valid_all_day %}
+                        </div>
+                      </div>
+
+                      {% regroup form by field.group as rows %}
+                      {% for row in rows %}
+                        {% if 'additional-period-row' in row.grouper %}
+                          <div class="row validity-period-row">
+                            {% for field in row.list %}
+                              <div class="{{ field.field.wrapper_classes }}">
+                                {% include 'includes/_form_field.html' with field=field hide_label=True %}
+                              </div>
+                            {% endfor %}
+                            <div class="col md-4 mb-3 deletion-col">
+                              <button class="fas fa-minus text-danger delete-period-row" type="button"></button>
+                            </div>
+                          </div>
+                        {% endif %}
+                      {% endfor %}
+
+                      <hr class="insert-before-validity-period">
+                      <button class="btn btn-primary mt-2 animate-up-2 new-validity-period-button" type='button'>
+                        Add New Period
+                      </button>
+                      <button class="btn btn-primary mt-2 animate-up-2 revert-validity-periods-button" type='button'>
+                        Revert to Always Valid
+                      </button>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Editing</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='form-modal'>
+              <div class="modal fade" id="modal-expiration-{{ forloop.counter0 }}" data-bs-backdrop="static"
+                   data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalExpirationLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalExpirationLabel">Specify the fee's expiration date</h5>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group mb-3">
+                        {% include 'includes/_form_field.html' with field=form.valid_to_date field_title='Validity End Date' %}
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+          </tbody>
+        {% endif %}
+      </table>
+    </div>
+
+    <input type="hidden" name='button-pressed' class="button-pressed-input" value="">
+
+    <div class="button-row">
+      {% if not single_fee_mode %}
+        <button type="submit" value='fuel-pricing' class="btn btn-primary">Fuel Pricing</button>
+        <button type="submit" value='taxes'
+                class="btn btn-primary {% if supplier_defined_tax_saved %}already-saved{% endif %}"
+                {% if supplier_defined_tax_saved %}disabled{% endif %}> Supplier-Defined Taxes
+        </button>
+      {% endif %}
+      <button type="submit" value='save' class="btn btn-primary">Save</button>
+    </div>
+
+  </form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  <script>
+    let supplier_xr_url = "{% url 'admin:apply_supplier_exchange_rate' %}";
+  </script>
+  {{ fuel_fee_rate_formset.media.js }}
+  <script type="module" charset="utf8"
+          src="{% static 'js/fuel_pricing_fees_supersede.js' %}"></script>
+{% endblock javascripts %}

@@ -1,0 +1,164 @@
+body, footer, header {
+    font-family: 'Arimo', sans-serif !important;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+}
+
+.header {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #1f497d;
+}
+
+.header_company_name {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.header_company_details {
+    color: #1f497d;
+    vertical-align: bottom;
+}
+
+.header_company_website a {
+    color: inherit;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.aml_logo_image {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.aml_logo_image img {
+    width: auto;
+    height: 65px;
+}
+
+.form_header {
+    font-size: 25px;
+}
+
+.heading_table {
+    table-layout: fixed
+}
+
+.heading_table tbody tr td {
+    padding: 5px;
+    font-size: 15px;
+}
+
+.services_table tbody tr td {
+    padding: 1px;
+    padding-left: 4px;
+    font-size: 12px;
+}
+
+.services_table tbody td,
+.services_table tbody tr {
+    border: 1px solid black;
+}
+
+.services_table_checkbox {
+    width: 35px;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+
+.customer_signature {
+    position: absolute;
+    max-width: 150px;
+    max-height: 70px;
+    width: auto;
+    height: auto;
+}
+
+.footer_version {
+    color: #808080;
+    font-size: 10px;
+}
+
+.footer_info {
+    color: #1f497d;
+    font-style: italic;
+    font-size: 12px;
+}
+
+header {
+    position: fixed;
+    right: 0;
+    top: 0;
+    margin-top: -20mm;
+    text-align: start;
+    width: 100%;
+}
+
+footer {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin-bottom: -51px;
+    padding: 0;
+    text-align: start;
+    font-size: 10px;
+    width: 100%;
+    line-height: 14px;
+}
+
+.body_container {
+    max-width: 100%;
+    background: #fff;
+    padding: 0;
+}
+
+div.break {
+    page-break-before: always;
+}
+
+.movement_dates_row {
+    border-bottom: #dc3545 1px solid;
+}
+
+.air_card_number_row {
+    border: #dc3545 1px solid !important;
+}
+
+.footer_table {
+    width: 100%;
+}
+
+.footer_table td, .footer_table th {
+    /*border: #0a0a0a 1px solid;*/
+    padding: 3px;
+}
+
+.footer_table_col1 {
+    width: 130px;
+}
+
+.footer_table_col2 {
+    width: 160px;
+}
+
+.footer_table_col3 {
+    width: 110px;
+}
+
+.footer_table th {
+    font-weight: normal;
+}
+
+.footer_table td {
+    text-align: start;
+    border-bottom: #0a0a0a 1px solid;
+}
+
+.text_bold_underline {
+    text-decoration: underline;
+    font-weight: bold;
+}

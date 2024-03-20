@@ -1,0 +1,73 @@
+<thead class="thead-light"></thead>
+<tbody>
+    <tr>
+        <td colspan="5" class="p-0">
+            <div class="card-header mx-3 mt-3 p-1 bg-primary text-white card-header-empty-section">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h2 class="fs-6 ps-2 fw-bold mb-0">{{ movement.direction.code|lower|capfirst }} Details</h2>
+                    </div>
+
+                    {% if user.is_staff %}
+                    <div class="col text-end">
+
+                        {% if movement.direction.code == 'ARRIVAL' and handling_request.is_arrival_movement_editable or movement.direction.code == 'DEPARTURE' and handling_request.is_departure_movement_editable %}
+                        <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                                type="button" name="button"
+                                {% if not perms.handling.p_update %} disabled {% endif %}
+                                data-form-url="{% url 'admin:handling_request_update_movement' movement.id %}">Update Movement
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                        <div class="col text-end">
+                            {% if handling_request in managed_sfr_list %}
+                            {% if movement.direction.code == 'ARRIVAL' and handling_request.is_arrival_movement_editable or movement.direction.code == 'DEPARTURE' and handling_request.is_departure_movement_editable %}
+                                <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                                        type="button" name="button"
+                                        data-form-url="{% url 'dod:request_movement_update' movement.id %}">Update Movement
+                                </button>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-sm-flex flex-wrap justify-content-start m-2 mx-3">
+                <span class="fc-daygrid-event fc-daygrid-block-event fc-h-event bg-gray-500 text-white px-1">
+                    {{ movement.direction.code|lower|capfirst }} Date: {{ movement.date|date:'Y-m-d H:i' }}Z
+                </span>
+                <span class="fc-daygrid-event fc-daygrid-block-event fc-h-event bg-gray-500 text-white ms-2 px-1">
+                    Airport: {{ movement.airport.short_repr|default:'None' }}
+                </span>
+                <span class="fc-daygrid-event fc-daygrid-block-event fc-h-event bg-gray-500 text-white ms-2 px-1">
+                    Crew: {{ movement.crew }}
+                </span>
+                <span class="fc-daygrid-event fc-daygrid-block-event fc-h-event bg-gray-500 text-white ms-2 px-1">
+                    Passengers: {{ movement.passengers_tiny_repr }}
+                </span>
+                {% if movement.ppr_number %}
+                    <span class="fc-daygrid-event fc-daygrid-block-event fc-h-event bg-gray-500 text-white ms-2 px-1">
+                        PPR Number: {{ movement.ppr_number }}
+                    </span>
+                {% endif %}
+
+            </div>
+            <div class="d-xxl-flex flex-wrap justify-content-start m-2 mx-3">
+                {% if movement.comment %}
+                <div class="alert alert-info w-100" role="alert">
+                    <h5 class="alert-heading">Client Comments</h5>
+                    {{ movement.comment }}
+                    </div>
+                {% endif %}
+                {% if movement.special_requests %}
+                <div class="alert alert-warning w-100 mb-0" role="alert">
+                    <h5 class="alert-heading">Special Requests</h5>
+                    {{ movement.special_requests|default:'' }}
+                    </div>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+</tbody>

@@ -1,0 +1,15 @@
+<tr>
+  <td class="cargo_payload_qty">{{ row.quantity|default:'&nbsp;' }}</td>
+  <td class="cargo_payload_description">
+    <div class="cargo_payload_description_div">
+      {{ row.description|default:'' }}
+    </div>
+  </td>
+  <td class="cargo_payload_dimensions">
+    {% if row.pk %}{{ row.length }} x {{ row.width }} x {{ row.height }}{% endif %}
+  </td>
+  <td class="cargo_payload_weight">{% if row.weight %}{{ row.weight }} (lbs){% endif %}</td>
+  <td class="cargo_payload_dg">{{ row.is_dg|yesno:'X, ' }}</td>
+  <td class="cargo_payload_arr">{{ row.is_arrival|yesno:'X, ' }}</td>
+  <td class="cargo_payload_dep">{{ row.is_departure|yesno:'X, ' }}</td>
+</tr>

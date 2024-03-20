@@ -1,0 +1,135 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}{{ metacontext.title }}{% endblock %}
+
+{% block stylesheets %}
+  {{ form.media.css }}
+  <link rel="stylesheet" href="{% static 'css/pricing.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form id="{{ metacontext.form_id }}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="card card-body p-0">
+      <div class="card-header border-bottom d-flex flex-column align-items-left justify-content-between">
+        <h2 class="fs-5 fw-bold mb-0 me-auto">{{ metacontext.title }}</h2>
+        {% if metacontext.mode == 'supersede' %}
+          <small>Superseding agreement {{ old_agreement }} ({{ old_agreement.validity_range_str }})</small>
+        {% endif %}
+      </div>
+
+      <div class="row px-4 mt-3">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.supplier %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.aml_group_company %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.aml_is_agent %}
+        </div>
+      </div>
+
+      <div class="row px-4">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.supplier_agreement_reference %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.aml_reference %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.aml_reference_legacy %}
+        </div>
+      </div>
+
+      <div class="row px-4">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.start_date %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.end_date %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.valid_ufn %}
+        </div>
+      </div>
+
+      <div class="row px-4">
+        <div class="col-md-4 mb-3 d-flex">
+          {% include 'includes/_form_field.html' with field=form.payment_terms_unit_count %}
+          {% include 'includes/_form_field.html' with field=form.payment_terms_time_unit %}
+        </div>
+        <div class="col-md-4 mb-3 d-flex">
+          {% include 'includes/_form_field.html' with field=form.is_prepayment %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.priority %}
+        </div>
+
+      </div>
+
+      <div class="p-3">
+        <div class="badge w-100 bg-primary text-white text-start text-start py-2 mb-1 fw-bold">
+          <span class="fs-6 ps-3 fw-bold mb-0">Deposit</span>
+        </div>
+      </div>
+
+      <div class="row px-4">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.deposit_required %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.deposit_amount %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.deposit_currency %}
+        </div>
+      </div>
+
+      <div class="p-3">
+        <div class="badge w-100 bg-primary text-white text-start text-start py-2 mb-1 fw-bold">
+          <span class="fs-6 ps-3 fw-bold mb-0">Source Document</span>
+        </div>
+      </div>
+
+      <div class="row px-4">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.source_doc_name %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.source_doc_file %}
+        </div>
+
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.source_doc_description %}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="m-3">
+      <button class="btn btn-primary mt-2 animate-up-2" type="submit">
+        {{ metacontext.action_button_text }}</button>
+    </div>
+  </form>
+{% endblock content %}
+
+{% block javascripts %}
+  {{ form.media.js }}
+  <script>
+    let mode = '{{ metacontext.mode }}';
+  </script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'js/fuel_agreement_create.js' %}"></script>
+{% endblock javascripts %}

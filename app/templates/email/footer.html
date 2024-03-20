@@ -1,0 +1,21 @@
+<p>
+  Very respectfully,<br><br>
+</p>
+<p>
+  {{ requester_person.fullname|default:'' }}
+  {% if requester_position %}
+    <br>{% if requester_position.organisation.trading_or_registered_name %}
+    {{ requester_position.organisation.trading_or_registered_name }} |
+  {% endif %}
+    {{ requester_position.job_title }}
+    <br>
+    {% if requester_position.contact_phone %}
+      <br>Mobile / WhatsApp: {{ requester_position.contact_phone }}
+    {% endif %}
+    <br>Ops: +1-786-220-1154 | ops@amlglobal.net
+    {% if requester_position.contact_email %}
+      <br>Email: {{ requester_position.contact_email }}
+    {% endif %}
+
+  {% endif %}
+</p>

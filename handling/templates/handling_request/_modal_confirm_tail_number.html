@@ -1,0 +1,88 @@
+{% load static %}
+{{ form.media.css }}
+<link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+  {% include 'modal_form/info-text.html' with position='top' %}
+
+    <div class="row mt-2">
+      <div class="col-md-12 mb-3">
+        <label class="{% if form.tail_number.field.required %}required{% endif %}"
+               for="{{ form.tail_number.id_for_label }}">{{ form.tail_number.label }}</label>
+        <div class="">
+          <div
+            class="{% if user.is_staff or 'dod_planners' in request.dod_selected_position_perms %}col-md-9{% else %}col-md-12{% endif %} pe-1 d-inline-block">
+            {{ form.tail_number }}
+            {% if form.tail_number.help_text %}
+              <small class="form-text text-muted">{{ form.tail_number.help_text|safe }}</small>
+            {% endif %}
+            {% if form.tail_number.errors %}
+              {% for error in form.tail_number.errors %}
+                <div class="invalid-feedback">
+                  {{ error|escape }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+          {% if request.app_mode == 'ops_portal' and perms.handling.p_create %}
+            <div class="col-md-3 d-inline-block float-end text-end me-0 ps-0  bbb">
+              <button id="tail_number_create_btn" class="modal_button_async btn btn-primary" type="button" name="button"
+                      data-form-url="">Create
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div id="create_aircraft" class="{% if not form.is_bound %}d-none{% endif %}">
+      <div class="alert alert-info d-flex align-items-center is-invalid mb-2" role="alert">
+        <i class="fas fa-info-circle me-3"></i>
+        <div>
+          Created Aircraft will be automatically assigned to the current S&F Request
+        </div>
+      </div>
+
+      <div class="col-md-12 mb-3">
+        {% include 'includes/_form_field.html' with field=form.asn %}
+      </div>
+      <div class="col-md-12 mb-3">
+        {% include 'includes/_form_field.html' with field=form.registration %}
+      </div>
+      <div class="col-md-12 mb-3">
+        {% include 'includes/_form_field.html' with field=form.type %}
+      </div>
+      <div class="col-md-12 mb-3">
+        {% include 'includes/_form_field.html' with field=form.pax_seats %}
+      </div>
+
+    </div>
+
+    {% include 'includes/_form_field.html' with field=form.update_mission checkbox_left=True additional_classes='mb-3' %}
+
+    {% include 'includes/_form_field.html' with field=form.spf_file additional_classes='mb-3' %}
+
+  {% include 'modal_form/info-text.html' with position='bottom' %}
+
+  </div>
+
+  {% include 'modal_form/footer.html' %}
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2_modal_formset.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/handling_request_confirm_tail.js' %}"></script>
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/flatpickr_bootstrap_modal.js' %}"></script>
+{% endblock javascripts %}

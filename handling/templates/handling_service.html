@@ -1,0 +1,55 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ service.name }} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0 {% if not service.is_active %}text-black-50{% endif %}">{{ service.name }}</h2>
+        <small class="{% if not service.is_active %}text-black-50{% endif %}">{{ service.is_active|yesno:"Active, Inactive" }}</small>
+    </div>
+
+</div>
+
+<div class="row align-items-left mb-3">
+    <div class="col-9">
+        {% include 'handling_service_includes/_tags.html' with handling_service=service %}
+    </div>
+
+    <div class="col-3 text-end">
+        <button class="modal_button_validation bs-modal btn btn-outline-primary me-2"
+                type="button" name="button" data-modal="#modal-lg"
+                data-form-url="{% url 'admin:handling_service_edit' service.pk %}"
+                {% if not perms.handling.p_update %}disabled{% endif %}>
+                <i class="fas fa-edit"></i> Edit Service</button>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-12 col-xl-12">
+        {% include 'handling_service_includes/_availability.html' with service=service %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'handling_service_includes/_organisation_specific.html' with service=service %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'comment/_comments.html' with entity=service entity_slug="handling_service" %}
+    </div>
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

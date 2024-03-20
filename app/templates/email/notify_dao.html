@@ -1,0 +1,91 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+{% block content %}
+<p>Hello,</p>
+
+<p>This automated email is to inform you that a US Military aircraft has requested fuel and ground handling support. This email is from AML Global, who will be arranging the servicing and fuelling of the aircraft. All diplomatic clearance requests will be sent through APACS by the aircraft’s unit.
+</p>
+
+<p>
+<table>
+    <tbody>
+        <tr>
+            <td>Location Identifier:</td>
+            <td><b>{{ handling_request.location_tiny_repr }}</b></td>
+        </tr>
+
+        <tr>
+            <td>ETA:</td>
+            <td><b>{{ handling_request.arrival_movement.date|date:'M-d-Y H:i' }}</b></td>
+        </tr>
+
+        <tr>
+            <td>ETD:</td>
+            <td><b>{{ handling_request.departure_movement.date|date:'M-d-Y H:i' }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Callsign:</td>
+            <td><b>{{ handling_request.callsign }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Aircraft Type:</td>
+            <td><b>{{ handling_request.aircraft_type }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Service:</td>
+            <td><b>USAF</b></td>
+        </tr>
+
+        <tr>
+            <td>Fuel Requested:</td>
+            <td><b>{{ handling_request.fuel_required|lower|capfirst }} {{ handling_request.fuel_quantity }} {{ handling_request.fuel_unit }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Previous Airport:</td>
+            <td><b>{{ handling_request.arrival_movement.airport.tiny_repr }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Next Airport:</td>
+            <td><b>{{ handling_request.departure_movement.airport.tiny_repr }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Total Passengers:</td>
+            <td><b>{{ handling_request.arrival_movement.passengers }} / {{ handling_request.departure_movement.passengers }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Total Crew:</td>
+            <td><b>{{ handling_request.arrival_movement.crew }} / {{ handling_request.departure_movement.crew }}</b></td>
+        </tr>
+
+        <tr>
+            <td>Ground Handling Requests:</td>
+            <td>{% for service in requested_services %}<b>{{ service }}</b>{% if not forloop.last %}, {% else %}.{% endif %}{% endfor %}</b></td>
+        </tr>
+
+    </tbody>
+</table>
+
+<br/>
+Remarks:
+</p>
+
+<p>
+Requester Information (Cc’d on this email): <b>{{ person_repr }}</b>
+</p>
+<p>
+Please respond to this email with any questions, or we can be reached at ops@amlglobal.net
+</p>
+
+{% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

@@ -1,0 +1,73 @@
+{% load static %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'assets/css/notes_dashboard.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% with entity.comments.exists as comments_exists %}
+  <div class="card border-0 shadow mb-3">
+    <div class="card-header p-2 {% if not comments_exists %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-5 ps-2 fw-bold mb-0">Mil Team Notes</h2>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation bs-modal btn btn-sm btn-outline-primary"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:comment_add' entity_slug entity.pk %}"
+            {% if not perms.core.p_comments_create %} disabled {% endif %}>Add Note
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% if comments_exists %}
+      <div class="page-content container note-has-grid mt-4">
+        <div class="tab-content bg-transparent">
+          <div id="note-full-container" class="note-has-grid notes-row">
+            {% for comment in entity.comments.all %}
+              <div class="col-md-4 single-note-item all-category
+                  {% if not comment.is_read %}unread-note{% endif %}" style="">
+                <div class="note-card note-card-body">
+                  <span class="side-stick"></span>
+                  <p class="note-date font-12 text-muted">
+                    {{ comment.author.fullname }}<br>
+                    {{ comment.created_at|date:'Y-m-d H:i' }}
+                  </p>
+                  <div class="note-content">
+                    <p class="note-inner-content"
+                       data-notecontent="{{ comment.text }}">{{ comment.text }}</p>
+                  </div>
+                  <div class="d-flex align-items-center">
+                  <span class="me-2">
+                    <button
+                      class="pin-note-btn modal_button_novalidation bs-modal btn p-0 text-primary fw-bolder fas fa-thumbtack
+                        {% if comment.is_pinned %}text-success{% else %}text-primary{% endif %}"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="" type="button" name="button"
+                      data-form-url="{% url 'admin:comment_pin' comment.pk %}" data-bs-original-title=""></button>
+                    </span>
+                    <span class="me-2">
+                      <button
+                        class="remove-note-btn modal_button_novalidation bs-modal btn p-0 text-primary fw-bolder fas fa-trash"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="" type="button" name="button"
+                        data-form-url="{% url 'admin:comment_delete' comment.pk %}" data-bs-original-title=""></button>
+                    </span>
+                    <span class="me-2">
+                      <button
+                        class="toggle-note-read-btn btn p-0 text-primary fw-bolder fas fa-check"
+                        data-bs-toggle="tooltip" data-bs-placement="top" type="button" name="button"
+                        title="{% if comment.is_read %}Mark as unread{% else %}Mark as read{% endif %}"
+                        data-url="{% url 'admin:comment_read' comment.pk %}" data-bs-original-title=""></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endwith %}

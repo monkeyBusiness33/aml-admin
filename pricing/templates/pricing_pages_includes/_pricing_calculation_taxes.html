@@ -1,0 +1,49 @@
+{% load currency_uom_tags %}
+{% load pricing_tags %}
+
+<div class="border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+          <h2 class="fs-6 fw-bold mx-auto my-0">Taxes</h2>
+        </div>
+        <div class="card-content col d-flex justify-content-between">
+          {% if taxes.list %}
+            {% if taxes.comparison %}
+              <div class="taxes-results-wrapper w-100 px-2">
+                <div class="px-3 d-flex fst-italic fs-6 text-center">
+                  <div class="w-50 py-2 border-right-black">Official Taxes</div>
+                  <div class="w-50 py-2">Supplier-Defined Taxes</div>
+                </div>
+                {% for name, tax in taxes.list.items|sort_taxes %}
+                  {% include "pricing_pages_includes/_tax_comparison_item.html" %}
+                {% endfor %}
+              </div>
+            {% elif taxes.supplier_total %}
+              <table class="taxes-results-wrapper w-100 my-2">
+                <tbody>
+                {% for name, tax in taxes.list.items %}
+                  {% include "pricing_pages_includes/_tax_item.html" with tax=tax.supplier %}
+                {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <table class="taxes-results-wrapper w-100 my-2">
+                <tbody>
+                {% for name, tax in taxes.list.items %}
+                  {% include "pricing_pages_includes/_tax_item.html" with tax=tax.official %}
+                {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+          {% else %}
+            <div class="px-4 pt-2 mb-2">
+              No applicable taxes found.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

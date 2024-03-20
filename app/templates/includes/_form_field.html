@@ -1,0 +1,78 @@
+{% if field %}
+<div class="{% if field.errors %}is-invalid{% endif %} {{ additional_classes|default:'' }}">
+    {% if field.widget_type == 'checkbox' and checkbox_type == 'form-switch' %}
+        <div class="form-check form-switch pt-1">
+            <label class="form-check-label mb-0" for="{{ field.id_for_label }}">
+                {{ field.label }}
+            </label>
+            {{ field }}
+        </div>
+
+    {% elif field.widget_type == 'checkbox' and checkbox_left %}
+        <div class="form-check">
+            <label class="form-check-label mb-0">
+              {{ field }}
+              <span class="form-check-sign">{{ field.label }}</span>
+              {% if field.help_text %}
+                <small class="form-text text-muted d-block mt-0 fw-normal">{{ field.help_text|safe }}</small>
+              {% endif %}
+            </label>
+        </div>
+    {% elif field.widget_type == 'checkboxselectmultiple' or field.widget_type == 'radioselect' %}
+      {% if not disable_label %}
+        <label class="d-block{% if field.errors %} is-invalid{% endif %} {% if field.field.required %}required{% endif %}">
+          {{ field.label }}</label>
+      {% endif %}
+        <div>
+            {% for checkbox in field %}
+              {# Set checkbox_multiple_newline=True to display each option in new line, otherwise inline #}
+              <div class="{% if checkbox_multiple_newline %}form-check{% else %}form-check-inline{% endif %}">
+                <label class="form-check-label me-5">
+                    {{ checkbox.tag }}
+                    <span class="form-check-sign">{{ checkbox.choice_label|safe }}</span>
+                </label>
+              </div>
+            {% endfor %}
+        {% if field.errors %}
+        {% for error in field.errors %}
+        <div class="invalid-feedback d-block">
+            {{ error|escape }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        </div>
+    {% else %}
+
+        {% if not field.widget_type == 'hidden' %}
+        <label
+            class="{% if field.field.required %}required{% endif %} {% if hide_label %}d-none{% endif %}"
+            for="{{ field.id_for_label }}">
+            {% if field_title %}{{ field_title }}{% else %}{{ field.label }}{% endif %}
+            <small><i>{{ field_subtitle|default:'' }}</i></small>
+        </label>
+        {% endif %}
+        {% if field_icon_class %}
+          <div class="input-group">
+              <span class="input-group-text"><span class="fas {{ field_icon_class }}"></span></span>
+              {{ field }}
+          </div>
+        {% else %}
+          {{ field }}
+        {% endif %}
+        {% if field.widget_type == 'textarea' %}
+            {{ field.attrs }}
+            <span class='textarea-char-counter badge bg-gray-600 p-1 mt-1 float-end'></span>
+        {% endif %}
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+        {% endif %}
+        {% if field.errors %}
+        {% for error in field.errors %}
+        <div class="invalid-feedback">
+            {{ error|escape }}
+        </div>
+        {% endfor %}
+        {% endif %}
+    {% endif %}
+</div>
+{% endif %}

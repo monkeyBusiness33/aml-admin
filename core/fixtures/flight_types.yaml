@@ -1,0 +1,177 @@
+- model: core.FlightType
+  pk: "A"
+  fields:
+    name: "All Flight Types"
+
+- model: core.FlightType
+  pk: "B"
+  fields:
+    name: "Business Aviation Flight Only"
+
+- model: core.FlightType
+  pk: "C"
+  fields:
+    name: "Commercial Air Transport Flight Only"
+
+- model: core.FlightType
+  pk: "E"
+  fields:
+    name: "Emergency Services Flights Only"
+
+- model: core.FlightType
+  pk: "G"
+  fields:
+    name: "General Aviation Flights Only"
+
+- model: core.FlightType
+  pk: "M"
+  fields:
+    name: "Military Flights Only"
+
+- model: core.FlightType
+  pk: "T"
+  fields:
+    name: "Training Flights Only"
+
+
+
+- model: core.GeographichFlightType
+  pk: "ALL"
+  fields:
+    name: "All Flights"
+
+- model: core.GeographichFlightType
+  pk: "INT"
+  fields:
+    name: "International"
+
+- model: core.GeographichFlightType
+  pk: "DOM"
+  fields:
+    name: "Domestic"
+
+- model: core.GeographichFlightType
+  pk: "RGL"
+  fields:
+    name: "Regional"
+
+- model: core.GeographichFlightType
+  pk: "IEU"
+  fields:
+    name: "Intra-EU"
+
+- model: core.GeographichFlightType
+  pk: "EEU"
+  fields:
+    name: "Outside EU"
+
+- model: core.GeographichFlightType
+  pk: "ISH"
+  fields:
+    name: "Intra-Schengen"
+
+- model: core.GeographichFlightType
+  pk: "ISEU"
+  fields:
+    name: "Intra-Schengen (EU)"
+
+- model: core.GeographichFlightType
+  pk: "ISNE"
+  fields:
+    name: "Intra-Schengen (Non-EU)"
+
+- model: core.GeographichFlightType
+  pk: "ESH"
+  fields:
+    name: "Outside Schengen"
+
+- model: core.GeographichFlightType
+  pk: "OSHE"
+  fields:
+    name: "Outside Schengen (Europe)"
+
+- model: core.GeographichFlightType
+  pk: "OSHR"
+  fields:
+    name: "Outside Schengen (Rest of World)"
+
+- model: core.GeographichFlightType
+  pk: "OSEU"
+  fields:
+    name: "Outside Schengen (EU)"
+
+- model: core.GeographichFlightType
+  pk: "OSNE"
+  fields:
+    name: "Outside Schengen (non-EU)"
+
+- model: core.GeographichFlightType
+  pk: "IEA"
+  fields:
+    name: "Intra-EEA"
+
+- model: core.GeographichFlightType
+  pk: "EEA"
+  fields:
+    name: "Outside EEA"
+
+- model: core.GeographichFlightType
+  pk: "INT-EU"
+  fields:
+    name: "International - Europe"
+
+- model: core.GeographichFlightType
+  pk: "INT-AF"
+  fields:
+    name: "International - Africa"
+
+- model: core.GeographichFlightType
+  pk: "INT-AM"
+  fields:
+    name: "International - America"
+
+- model: core.GeographichFlightType
+  pk: "INT-AS"
+  fields:
+    name: "International - Asia"
+
+- model: core.GeographichFlightType
+  pk: "INT-AU"
+  fields:
+    name: "International - Australia & Oceania"
+
+- model: core.GeographichFlightType
+  pk: "AF-CE"
+  fields:
+    name: "To/From Africa (CEMAC)"
+
+- model: core.GeographichFlightType
+  pk: "AF-AN"
+  fields:
+    name: "To/From Africa (Angola)"
+
+- model: core.GeographichFlightType
+  pk: "AF-DR"
+  fields:
+    name: "To/From Africa (DRC)"
+
+- model: core.GeographichFlightType
+  pk: "AF-NI"
+  fields:
+    name: "To/From Africa (Nigeria)"
+
+- model: core.GeographichFlightType
+  pk: "USA"
+  fields:
+    name: "To/From USA"
+
+- model: core.GeographichFlightType
+  pk: "AF-ECO"
+  fields:
+    name: "To/From Africa (ECOWAS)"
+
+- model: core.GeographichFlightType
+  pk: "SPEC"
+  fields:
+    name: "To / From Specific Country"
+

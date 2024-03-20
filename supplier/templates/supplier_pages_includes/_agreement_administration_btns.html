@@ -1,0 +1,25 @@
+<div class="border-0 mb-4">
+  <div id="agreement-administration-btns" class="display-flex flex-row">
+    <a class="btn btn-outline-primary mt-1 mb-1 nowrap
+       {% if not perms.pricing.p_update %}disabled{% endif %}" data-modal="#modal"
+       href="{% url 'admin:fuel_agreement_edit' agreement.pk %}">
+      <i class="fas fa-edit"></i> Edit Agreement</a>
+
+    <a class="btn btn-outline-primary mt-1 mb-1 nowrap
+        {% if not perms.pricing.p_create or agreement.superseded_by %}disabled{% endif %}"
+       href="{% url 'admin:fuel_agreement_supersede' agreement.pk %}">
+      <i class="fas fa-copy"></i> Supersede Agreement</a>
+
+    <button class="btn btn-outline-primary mt-1 mb-1 nowrap modal_button_validation bs-modal" data-modal="#modal"
+            data-form-url="{% url 'admin:fuel_agreement_extend' agreement.pk %}"
+            {% if not perms.pricing.p_update or agreement.valid_ufn or agreement.voided_at %}disabled{% endif %}>
+      <i class="far fa-calendar-plus"></i> Extend Agreement
+    </button>
+
+    <button class="btn btn-outline-primary mt-1 mb-1 nowrap modal_button_validation bs-modal" data-modal="#modal"
+            data-form-url="{% url 'admin:fuel_agreement_void' agreement.pk %}"
+            {% if not perms.pricing.p_update or agreement.voided_at or not agreement.is_voidable %}disabled{% endif %}>
+      <i class="fas fa-times"></i> Void Agreement
+    </button>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+{% if not handling_request.fuel_required %}
+    <td>No Fuel</td>
+{% elif handling_request.fuel_required.code == direction_code %}
+    <td class="service-taken-bg">
+    {{ handling_request.localised_fuel_details.0|floatformat:0 }} {{ handling_request.localised_fuel_details.1.description_plural }}
+    {% if handling_request.fuel_prist_required %}
+        <br>Prist required (if available)
+    {% endif %}
+    {% if handling_request.fuel_booking and handling_request.fuel_booking.dla_contracted_fuel %}
+        <br>Fuel will be supplied by the DLA Contract Merchant{% if dla_contract %}, {{ dla_contract.supplier.trading_or_registered_name }}{% endif %}
+    {% elif handling_request.fuel_booking and handling_request.fuel_booking.fuel_release %}
+        <br>Fuel has been arranged with {{ handling_request.fuel_booking.ipa.details.registered_name }}, and the fuel release is attached
+    {% else %}
+        <br>Fuel has yet to be arranged, and as such the fuel release will follow.
+    {% endif %}
+    </td>
+{% else %}
+    <td>--</td>
+{% endif %}

@@ -1,0 +1,188 @@
+{% load static %}
+{{ formset.media.css }}
+<style>
+  .flatpickr-wrapper {
+    display: block;
+  }
+</style>
+<link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+{% for file_path in metacontext.css_files %}
+  <link type="text/css" href="{{ file_path }}" rel="stylesheet">
+{% endfor %}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% include 'modal_form/info-text.html' with position='top' %}
+
+    {% if metacontext.text %}
+      {% autoescape off %}
+        <p>{{ metacontext.text }}</p>
+      {% endautoescape %}
+    {% endif %}
+
+    {% if metacontext.text_danger %}
+      {% autoescape off %}
+        <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+          <i class="fas fa-exclamation-triangle me-3"></i>
+          <div>
+            {{ metacontext.text_danger }}
+          </div>
+        </div>
+      {% endautoescape %}
+    {% endif %}
+
+    {% for error in formset.non_form_errors %}
+      <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>
+          {{ error|safe }}
+        </div>
+      </div>
+    {% endfor %}
+
+    {{ formset.management_form }}
+
+    <div class="table-responsive">
+      <table class="table table-centered table-nowrap mb-0 rounded" style="table-layout: fixed">
+        <thead class="thead-light">
+        <tr>
+          {% for field in formset.0 %}
+            {% if field.widget_type != 'hidden' %}
+              <th class="border-0 text-center w-50">{{ field.label }}</th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for form in formset %}
+          {{ form.management_form }}
+          {% for error in form.non_field_errors %}
+            <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+              <i class="fas fa-exclamation-triangle"></i>
+              <div>
+                {{ error|safe }}
+              </div>
+            </div>
+          {% endfor %}
+
+          <tr class="{% if metacontext.hide_form_fields %}d-none{% endif %}">
+            {% for field in form %}
+              {% if field.widget_type == 'checkbox' %}
+                <td class="form-check mb-3">
+                  {{ field }}
+                </td>
+              {% elif field.widget_type == 'clearablefile' %}
+                <td class="form-group mb-3">
+                  {{ field }}
+                </td>
+              {% else %}
+                <td class="form-group mb-3{% if field.errors %} is-invalid{% endif %}">
+                  {{ field }}
+                  {% if field.widget_type == 'textarea' %}
+                    {{ field.attrs }}
+                    <span class='textarea-char-counter badge bg-gray-600 p-1 mt-1 float-end'></span>
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="invalid-feedback" style="display: unset;">{{ error|safe }}</div>
+                    {% if not forloop.last %}<br/>{% endif %}
+                  {% endfor %}
+                  {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                  {% endif %}
+                </td>
+              {% endif %}
+            {% endfor %}
+
+            {% include 'modal_form/info-text.html' with position='bottom' %}
+
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+      <div class="me-auto">
+        {% for button in metacontext.footer_buttons_left %}
+          {% include 'includes/_get_button.html' with btn_modal=True modal_validation=True title=button.title url=button.url %}
+        {% endfor %}
+      </div>
+
+      <button type="button" data-bs-dismiss="modal"
+              class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+        Close
+      </button>
+      {% if metacontext.multi_button %}
+        <button id="multi_button_1" type="submit" value="False" name="multi_button"
+                class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+          {{ metacontext.action_button1_text|default:'Decline' }}
+        </button>
+        <button id="multi_button_2" type="submit" value="True" name="multi_button"
+                class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+          {{ metacontext.action_button2_text|default:'Confirm' }}
+        </button>
+      {% elif metacontext.numbered_multi_button %}
+        <button id="multi_button_1" type="submit" value="1" name="multi_button"
+                class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+          {{ metacontext.action_button1_text|default:'Decline' }}
+        </button>
+        <button id="multi_button_2" type="submit" value="2" name="multi_button"
+                class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+          {{ metacontext.action_button2_text|default:'Confirm' }}
+        </button>
+      {% else %}
+        {% if not metacontext.hide_action_button and not form.hide_action_button %}
+          <button type="submit"
+                  class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+            {% if action_button_disabled %} disabled {% endif %}>
+            {{ metacontext.action_button_text|default:'Save' }}
+          </button>
+        {% endif %}
+      {% endif %}
+    </div>
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript">
+  $(".modal-footer .modal_button_validation").each(function () {
+    $(this).off('click')
+    $(this).modalForm({
+      formURL: $(this).data('form-url'),
+      errorClass: ".is-invalid",
+      modalID: $(this).data('modal') || '#modal',
+    });
+  });
+
+  $(".modal-footer .modal_button_novalidation").each(function () {
+    $(this).off('click')
+    $(this).modalForm({
+      formURL: $(this).data('form-url'),
+      errorClass: ".is-invalid",
+      modalID: $(this).data('modal') || '#modal',
+    });
+  });
+
+  $('button[name="multi_button"]').click(function () {
+    $("#id_multi_button").val($(this).val()).trigger('change')
+  });
+</script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+
+
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/flatpickr_bootstrap_modal.js' %}"></script>
+{% endblock javascripts %}
+
+{% for script in metacontext.js_scripts %}
+  <script type="text/javascript" charset="utf8" src="{{ script }}"></script>
+{% endfor %}

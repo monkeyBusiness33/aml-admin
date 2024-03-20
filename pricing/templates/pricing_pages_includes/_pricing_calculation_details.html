@@ -1,0 +1,47 @@
+<div class="border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <div class="col pt-2 ps-4 pe-4 mb-2">
+          <table class="borderless w-100">
+            <tbody>
+            <tr class="w-100 d-flex">
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Location:</b>
+                <span class="fw-bold ps-2">{{ results_row.airport.full_repr|default:'--' }}</span>
+              </td>
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Supplier:</b>
+                <span class="fw-bold ps-2">{{ results_row.supplier.full_repr|default:'--' }}</span>
+              </td>
+            </tr>
+            <tr class="w-100 d-flex">
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Into-Plane Agent:</b>
+                <span class="fw-bold ps-2">{{ results_row.ipa.full_repr|default:'TBC / Confirmed on Order' }}</span>
+              </td>
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Delivery Method:</b>
+                <span class="fw-bold ps-2">{{ results_row.delivery_method.name|default:'All' }}</span>
+              </td>
+            </tr>
+            <tr class="w-100 d-flex">
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Pricing Type:</b>
+                <span class="fw-bold ps-2">{{ results_row.fuel_price.pricing_link|safe }}
+                  {% if results_row.fuel_price.base_pricing_url %}
+                    (<a href="{{ results_row.fuel_price.base_pricing_url }}">Base Market Pricing</a>)
+                  {% endif %}
+                </span>
+              </td>
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Client-Specific Pricing?:</b>
+                <span class="fw-bold ps-2">{{ results_row.client_specific_pricing|yesno:'Yes,No' }}</span>
+              </td>
+            </tr>
+            <tr class="w-100 d-flex">
+              <td class="pe-3 pb-2 pt-2 w-50"><b>Handler-Specific Pricing?:</b>
+                <span class="fw-bold ps-2">{{ results_row.handler_specific_pricing|yesno:'Yes,No' }}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

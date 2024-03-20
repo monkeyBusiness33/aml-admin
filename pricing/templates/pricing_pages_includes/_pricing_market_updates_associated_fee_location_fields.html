@@ -1,0 +1,33 @@
+<div class="col-md-4 mb-3 fee-location">
+  {% include 'includes/_form_field.html' with field=form.location hide_label=True %}
+</div>
+
+<div class="col-md-3 mb-3 fee-ipa">
+  {% include 'includes/_form_field.html' with field=ipa_field hide_label=True %}
+</div>
+
+<div class="col-md-3 mb-3 fee-method">
+  {% include 'includes/_form_field.html' with field=form.pricing_native_unit hide_label=True %}
+</div>
+
+<div class="col-md-1 mb-3 fee-amount larger-width">
+  {% include 'includes/_form_field.html' with field=form.pricing_native_amount hide_label=True %}
+</div>
+
+<div class="col-md-4 mb-3 fee-specific_handler">
+  {% include 'includes/_form_field.html' with field=handler_field hide_label=True %}
+</div>
+
+<div class="col-md-3 mb-3 fee-specific_handler_is_excluded">
+  {% include 'includes/_form_field.html' with field=form.specific_handler_is_excluded hide_label=True %}
+</div>
+
+<div class="col-md-3 mb-3 fee-specific_apron">
+  {% include 'includes/_form_field.html' with field=form.specific_apron hide_label=True %}
+</div>
+
+<div class="col md-4 mb-3 deletion-col">
+  <button class="fas fa-minus text-danger delete-location-row" type="button"></button>
+</div>
+
+<hr>

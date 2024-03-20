@@ -1,0 +1,107 @@
+<thead class="thead-light">
+    <tr>
+        <th class="border-bottom" scope="col">Service</th>
+        <th class="border-bottom" scope="col">Status</th>
+        <th class="border-bottom" scope="col">Details / Quantity</th>
+        <th class="border-bottom" scope="col">Comments</th>
+        <th class="border-bottom" scope="col">Actions</th>
+    </tr>
+</thead>
+<tbody>
+    {% for service in movement.hr_services.all %}
+    <tr>
+        <th  scope="row">
+            <div class="d-block">
+                <span class="fw-bold">{{ service.service.name }}</span>
+            </div>
+        </th>
+        <td class="fw-bolder text-gray-500">
+            {% if service.booking_confirmed == None %}
+            <i class="fas fa-question-circle text-secondary"></i> In Progress
+            {% elif service.booking_confirmed == True %}
+            <i class="fas fa-check-circle text-success"></i> Confirmed
+            {% elif service.booking_confirmed == False %}
+            <i class="fas fa-ban text-danger"></i> Unavailable
+            {% endif %}
+        </td>
+        <td>
+            {% if service.booking_quantity %}
+                {{ service.booking_quantity }} {{ service.booking_quantity_uom.description_plural }}
+            {% elif service.booking_text %}
+                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ service.booking_text }}">{{ service.booking_text|truncatechars:30 }}</span>
+            {% else %}
+                N/A
+            {% endif %}
+        </td>
+        <td>
+            {% if service.note %}
+                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ service.note }}">{{ service.note|truncatechars:30 }}</span>
+            {% endif %}
+        </td>
+        <td class="">
+            {% if request.app_mode == 'ops_portal' %}
+            <button
+                class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center"
+                type="button" name="button"
+                data-form-url="{% url 'admin:handling_request_confirm' 'service' service.id %}"
+                {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+                <i class="fas fa-check"></i> Process</button>
+
+            <button
+                class="modal_button_novalidation bs-modal btn btn-outline-danger d-inline-flex align-items-center"
+                type="button" name="button"
+                data-form-url="{% url 'admin:handling_request_remove_service' service.id %}"
+                {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+                <i class="fas fa-trash-alt"></i> Remove</button>
+
+            <button
+                class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center"
+                type="button" name="button"
+                data-form-url="{% url 'admin:handling_request_service_int_note' service.id %}"
+                {% if not perms.handling.p_update %} disabled {% endif %}>
+                <i class="fas fa-edit"></i> Edit Service</button>
+
+
+        {% else %}
+            <button
+                class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center"
+                type="button" name="button"
+                data-form-url="{% url 'dod:update_service_note' service.id %}"
+                {% if handling_request not in managed_sfr_list %}
+                    disabled
+                {% endif %}>
+                <i class="fas fa-sticky-note"></i> Update Note</button>
+        {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    {% if not movement.hr_services.exists %}
+    <td colspan="4">No services requested.</td>
+    {% endif %}
+    {% if handling_request %}
+        <tr>
+            <td colspan="5" class="p-0">
+                <div class="d-sm-flex flex-wrap justify-content-end m-2 mx-3">
+                    {% if request.app_mode == 'ops_portal' %}
+                    <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center me-2"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:handling_request_confirm' movement.direction|lower movement.id %}"
+                        {% if not movement.hr_services.exists or not perms.handling.p_update or movement.booking_completed or not handling_request.is_services_editable %}disabled{% endif %}>
+                        <i class="fas fa-check-double"></i> Confirm all Services on {{ movement.direction|lower|capfirst }}</button>
+
+                    <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center"
+                        type="button" name="button" data-form-url="{% url 'admin:handling_request_add_service' movement.id %}"
+                        {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+                        <i class="fas fa-plus"></i> Add service on {{ movement.direction|lower|capfirst }}</button>
+                    {% elif request.app_mode == 'dod_portal' %}
+                    <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center"
+                            type="button" name="button" data-form-url="{% url 'dod:request_add_service' movement.id %}"
+                            {% if not handling_request.is_services_editable %}disabled{% endif %}>
+                      <i class="fas fa-plus"></i> Manage Ground Services on {{ movement.direction|lower|capfirst }}
+                    </button>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+</tbody>

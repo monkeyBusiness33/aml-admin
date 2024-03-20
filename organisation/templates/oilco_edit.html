@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} {% if organisation.oilco_details %}Edit OilCo Details
+{% else %}Create OilCo Details{% endif %}: {{ organisation.details.registered_name }} {% endblock %}
+
+{% block stylesheets %}
+  {{ oilco_fuel_types_form.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form id="" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card border-0 shadow mb-4">
+
+          <div class="card-header p-3">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="fs-5 fw-bold mb-0">{% if organisation.oilco_details %}Edit Oil Company Details
+                {% else %}Create Oil Company Details{% endif %}:
+                  {{ organisation.details.registered_name }}</h2>
+              </div>
+
+            </div>
+          </div>
+          <div class="card-body pt-3">
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Oil Company Details
+                    </span>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                {% include 'includes/_form_field.html' with field=oilco_details_form.iata_code %}
+              </div>
+              <div class="col-md-6 mb-3">
+                {% include 'includes/_form_field.html' with field=oilco_fuel_types_form.oilco_fuel_types %}
+              </div>
+            </div>
+
+            <hr>
+            <div class="mt-3">
+              <button class="btn btn-primary mt-2 animate-up-2" type="submit">{% if organisation.oilco_details %}Update Oil
+                Company Details{% else %}Create Oil Company Details{% endif %}</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ oilco_fuel_types_form.media.js }}
+
+{% endblock javascripts %}

@@ -1,0 +1,172 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+            {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        {% if metacontext.text %}
+            {% autoescape off %}
+                <p>{{ metacontext.text }}</p>
+            {% endautoescape %}
+        {% endif %}
+
+        {% if metacontext.text_danger %}
+            {% autoescape off %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mb-0" role="alert">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>
+                        {{ metacontext.text_danger }}
+                    </div>
+                </div>
+            {% endautoescape %}
+        {% endif %}
+
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    {{ error }}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="row">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.type %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.number %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.issue_country %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.start_date %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.end_date %}
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.dob %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.nationality %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.files %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.comments %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% if form.instance.pk %}
+            <div id="person_documents_list">
+                <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-1 fw-bold">
+                    Document Files
+                </span>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-nowrap mb-0 rounded">
+                        <thead class="thead-light">
+                        <tr>
+                            <th class="border-0">Name</th>
+                            <th class="border-0">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for document_file in form.instance.files.all %}
+                            <tr id="document_file_row_{{ document_file.pk }}">
+                                <td class="">
+                                    <a href="{{ document_file.file.url }}" class="text-primary fw-bold">
+                                        {{ document_file.file.name }}</a>
+                                </td>
+                                <td class="fw-bold">
+                                    <button class="btn p-0 text-primary fw-bolder fas fa-trash text-danger document-file-delete"
+                                            data-bs-toggle="tooltip" data-bs-placement="top" type="button" name="button"
+                                            title="Delete" aria-label="Delete"
+                                            data-file-id="{{ document_file.pk }}"
+                                            data-form-url="{% url 'admin:person_travel_document_file_delete' document_file.pk %}">
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal"
+                class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+            Close
+        </button>
+        {% if metacontext.multi_button %}
+            <button id="multi_button_1" type="submit" value="False" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button1_class|default:'btn-danger' }}">
+                {{ metacontext.action_button1_text|default:'Decline' }}
+            </button>
+            <button id="multi_button_2" type="submit" value="True" name="multi_button"
+                    class="submit-btn btn {{ metacontext.action_button2_class|default:'btn-success' }}">
+                {{ metacontext.action_button2_text|default:'Confirm' }}
+            </button>
+        {% else %}
+            {% if not metacontext.hide_action_button and not form.hide_action_button %}
+                <button type="submit"
+                        class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}"
+                        {% if action_button_disabled %} disabled {% endif %}>
+                    {{ metacontext.action_button_text|default:'Save' }}
+                </button>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/person_documents.js' %}"></script>

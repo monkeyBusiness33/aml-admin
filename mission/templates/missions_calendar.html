@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Missions Calendar {% endblock %}
+
+{% block stylesheets %}
+    <link type="text/css" href="{% static 'assets/css/fullcalendar.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'css/mission_calendar.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="card border-0 shadow">
+        <div id="missions_calendar" class="p-3"></div>
+    </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+    {% if request.app_mode == 'ops_portal' %}
+        <script type="text/javascript" charset="utf8">
+            missions_json_url = "{% url 'admin:missions_calendar_json' %}"
+            missions_list_url = "{% url 'admin:missions_list' %}"
+            missions_create_url = "{% url 'admin:missions_create' %}"
+        </script>
+    {% elif request.app_mode == 'dod_portal' %}
+        <script type="text/javascript" charset="utf8">
+            missions_json_url = "{% url 'dod:missions_calendar_json' %}"
+            missions_list_url = "{% url 'dod:missions_list' %}"
+            missions_create_url = "{% url 'dod:missions_create' %}"
+        </script>
+    {% endif %}
+
+{#  <script type="text/javascript" charset="utf8" src="{% static 'js/missions_calendar.js' %}"></script>#}
+
+  {% if user.pk == 42 or user.pk == 43 %}
+    <script type="text/javascript" charset="utf8" src="https://gist.githack.com/mykhailo-diakovych/795c983d9804c26e8b67c9727e091e7e/raw/calendar.js"></script>
+  {% else %}
+    <script type="text/javascript" charset="utf8" src="{% static 'js/missions_calendar.js' %}"></script>
+  {% endif %}
+
+{% endblock javascripts %}

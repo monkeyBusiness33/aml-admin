@@ -1,0 +1,47 @@
+- model: organisation.handlertype
+  pk: 1
+  fields:
+    name: "FBO - Own Brand"
+    is_fbo: true
+
+- model: organisation.handlertype
+  pk: 2
+  fields:
+    name: "FBO - Airport Partnership"
+    is_fbo: true
+
+- model: organisation.handlertype
+  pk: 3
+  fields:
+    name: "FBO - Third-Party Partnership"
+    is_fbo: true
+
+- model: organisation.handlertype
+  pk: 4
+  fields:
+    name: "Ground Support Station"
+    is_fbo: true
+
+- model: organisation.handlertype
+  pk: 5
+  fields:
+    name: "Ground Supervision"
+    is_fbo: false
+
+- model: organisation.handlertype
+  pk: 6
+  fields:
+    name: "Airport Ground Services Provider"
+    is_fbo: true
+
+- model: organisation.handlertype
+  pk: 7
+  fields:
+    name: "Ground Handler"
+    is_fbo: false
+
+- model: organisation.handlertype
+  pk: 999
+  fields:
+    name: "Self-Handling"
+    is_fbo: false

@@ -1,0 +1,196 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ person.fullname }} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0 {{ person.details.operational_status.header_color }}">{{ person.details.complete_representation }}</h2>
+    </div>
+
+    <div class="col text-end">
+        <span class="badge organisation-status-badge {{ person.details.operational_status.badge_bg }}">
+            {{ person.details.operational_status.text }}
+        </span>
+    </div>
+</div>
+
+<div class="row align-items-left mb-3">
+    <div class="col">
+        {% include 'person_pages_includes/_tags.html' with person=person %}
+    </div>
+
+    <div class="col-3 text-end">
+        <a class="btn btn-outline-primary {% if not perms.core.p_contacts_update %}disabled{% endif %}" href="{% url 'admin:person_edit' person.pk %}">
+            <i class="fas fa-edit"></i> Edit Person</a>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-12 col-xl-12">
+        <div class="card border-0 shadow mb-4">
+            <div class="card-header p-1 bg-primary text-white">
+                <div class="row align-items-center">
+
+                    <div class="col">
+                        <h2 class="fs-6 ps-2 fw-bold mb-0">Personal Details</h2>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row {{ organisation.operational_status.text_color }}">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-5 pt-2 ps-4 mb-2">
+                            <table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td class="pe-3">Title:</td>
+                                        <td><span class="fw-bold">{{ person.details.title.name|default:'' }}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">First Name:</td>
+                                        <td>
+                                            <span class="fw-bold">{{ person.details.first_name|default:'' }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">Middle Name:</td>
+                                        <td>
+                                            <span class="fw-bold">{{ person.details.middle_name|default:'' }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">Last Name:</td>
+                                        <td>
+                                            <span class="fw-bold">{{ person.details.last_name|default:'' }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">Access Username:</td>
+                                        <td>
+                                            <span class="fw-bold">
+                                                {% if person.user %}
+                                                  {{ person.user.username }}
+                                                  {% if not person.user.roles.exists %}
+                                                    <button
+                                                      class="modal_button_novalidation bs-modal btn btn-sm fw-bolder fas fa-trash text-danger p-0 ps-1"
+                                                      type="button" name="button"
+                                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                                      data-bs-original-title="Remove user access"
+                                                      {% if not perms.core.p_contacts_person_app_access_del %}disabled{% endif %}
+                                                      data-form-url="{% url 'admin:user_delete' person.user.pk %}"></button>
+                                                    <button
+                                                      class="modal_button_novalidation bs-modal btn fw-bolder fas fa-key text-danger p-0"
+                                                      type="button" name="button"
+                                                      data-bs-toggle="tooltip" data-bs-placement="top"
+                                                      data-bs-original-title="Send password reset email"
+                                                      {% if not perms.core.p_contacts_person_password_reset %}disabled{% endif %}
+                                                      data-form-url="{% url 'admin:user_request_password_reset' person.user.pk %}"></button>
+                                                    {% if person.details.invitation_status.code %}
+                                                      <span
+                                                        class="badge person-invitation-status-badge {{ person.details.invitation_status.badge_bg }}">
+                                                        {{ person.details.invitation_status.text }}</span>
+                                                    {% endif %}
+                                                  {% endif %}
+                                                {% else %}
+                                                  None
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-7 pt-2">
+                            <table class="borderless">
+                                <tbody>
+                                    <tr>
+                                        <td class="pe-3">Abbreviated Name:</td>
+                                        <td>
+                                            <span class="fw-bold">{{ person.details.abbreviated_name|default:'' }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">Personal Pronouns:</td>
+                                        <td>
+                                            {% if person.details.personal_pronoun %}
+                                            <span class="fw-bold">{{ person.details.personal_pronoun.subject_pronoun }}/{{ person.details.personal_pronoun.object_pronoun }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">Personal Email:</td>
+                                        <td>
+                                            <span class="fw-bold">{{ person.details.contact_email|default:'' }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pe-3">Personal Phone:</td>
+                                        <td>
+                                            <span class="fw-bold">{{ person.details.contact_phone|default:'' }}</span>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'person_pages_includes/_current_positions.html' with person=person %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'person_pages_includes/_previous_positions.html' with person=person %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'person_pages_includes/_opportunities.html' with person=person %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'person_pages_includes/_orders.html' with person=person %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'organisations_pages_includes/_crm_activity.html' with entity=person entity_slug="person" %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'comment/_comments.html' with entity=person entity_slug="person" %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+        {% include 'person_pages_includes/_travel_duocuments.html' with person=person %}
+    </div>
+
+    <div class="col-12 col-xl-12">
+      {% include '_activity_log.html' with entity_slug='person' entity=person %}
+    </div>
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

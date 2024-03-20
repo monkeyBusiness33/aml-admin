@@ -1,0 +1,71 @@
+{% load currency_uom_tags %}
+{% load filters %}
+
+<div class="card border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+          <h2 class="fs-5 fw-bold mb-0 me-auto">Pricing</h2>
+        </div>
+        {% if pricing_type == 'formula' %}
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3 pb-2 pt-2">Index:</td>
+                <td><span class="fw-bold">{{ pricing.index }}</span></td>
+              </tr>
+              <tr>
+                <td class="pe-3 pb-2 pt-2">Differential:</td>
+                <td><span class="fw-bold">{{ pricing.differential_value_string }}
+                  {{ pricing.differential_pricing_unit.description }}</span>
+                </td>
+              </tr>
+              {% comment %}
+              {% if pricing.volume_conversion_ratio_override %}
+                <tr>
+                  <td class="pe-3 pb-2 pt-2">Volume Conversion Ratio Override:</td>
+                  <td><span
+                    class="fw-bold">{% custom_round_to_str pricing.volume_conversion_ratio_override 2 4 %}
+                    <small>({{ pricing.volume_conversion_units_str }})</small>
+                  </span>
+                  </td>
+                </tr>
+              {% endif %}
+              {% endcomment %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          {% if pricing.pricing_discount_amount != None %}
+            <div class="col pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3 pb-2 pt-2">Discount (Amount):</td>
+                  <td><span class="fw-bold">{{ pricing.discount_amount }}</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          {% elif pricing.pricing_discount_percentage != None %}
+            <div class="col pt-2 ps-4 mb-2 me-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3 pb-2 pt-2">Discount (Percentage):</td>
+                  <td><span class="fw-bold">{{ pricing.discount_percentage }}</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>

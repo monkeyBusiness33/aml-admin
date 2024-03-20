@@ -1,0 +1,89 @@
+{% load static %}
+{{ form.media.css }}
+
+<style>
+  div.toggle {
+    width: 75px !important;
+    height: 39px !important;
+  }
+</style>
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+   <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+     {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+ </div>
+
+  <div class="modal-body">
+    {% include 'modal_form/info-text.html' with position='top' %}
+
+    {% include 'modal_form/body-top.html' %}
+
+    <div class="row mb-3">
+      <div class="col-4">
+        {% include 'includes/_form_field.html' with field=form.new_date %}
+      </div>
+      <div class="col-4">
+        {% include 'includes/_form_field.html' with field=form.new_time %}
+      </div>
+      <div class="col-4">
+        {% include 'includes/_form_field.html' with field=form.is_local_timezone %}
+      </div>
+    </div>
+
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.airport %}
+    </div>
+
+    <div class="col-md-12 mb-3">
+      {% include 'includes/_form_field.html' with field=form.crew %}
+    </div>
+
+    <div class="row">
+
+      <div class="col-4 mb-3">
+        {% include 'includes/_form_field.html' with field=form.is_passengers_onboard %}
+      </div>
+
+      <div class="col">
+        <label class="{% if form.passengers.field.required %}required{% endif %}"
+               for="{{ form.passengers.id_for_label }}">
+          {{ form.passengers.label }}
+        </label>
+        <div class="input-group">
+
+          <div class="input-group-text"><span class="me-1">TBC</span>
+            {{ form.is_passengers_tbc }}
+          </div>
+          {{ form.passengers }}
+        </div>
+        {% if form.passengers.errors %}
+          {% for error in form.passengers.errors %}
+            <div class="invalid-feedback">
+              {{ error|escape }}
+            </div>
+          {% endfor %}
+        {% endif %}
+        {% if form.is_passengers_tbc.errors %}
+          {% for error in form.is_passengers_tbc.errors %}
+            <div class="invalid-feedback">
+              {{ error|escape }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    </div>
+
+  </div>
+
+  {% include 'modal_form/footer.html' with metacontext=metacontext %}
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'js/sfr_update_movement.js' %}"></script>

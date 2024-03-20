@@ -1,0 +1,716 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Supplier Tax Details {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row align-items-center mb-3">
+    <div class="col-8">
+      <h2 class="fs-5 fw-bold mb-0">
+        {% if document_type == 'agreement' %}
+          {{ entry.is_historical|yesno:'Historical, Active' }}
+        {% else %}
+          {% if not entry.related_pld.is_current %}
+            <span class="inactive-tax">Historical </span> -
+          {% else %}
+            <span class="active-tax">Active </span> -
+          {% endif %}
+        {% endif %}
+        {{ entry.tax.category.name }}
+        {% if entry.exception_country %}
+          for <a href="{{ entry.exception_organisation.get_absolute_url }}" class="fw-bold">
+          {{ entry.exception_organisation.details }}</a>
+          in {{ entry.exception_country.name }}
+        {% else %}
+          for <a href="{{ entry.exception_organisation.get_absolute_url }}" class="fw-bold">
+          {{ entry.exception_organisation.details }}</a>
+          at <a href="{% url 'admin:airport' entry.exception_airport %}" class="fw-bold">
+          {{ entry.exception_airport.details }} ({{ entry.exception_airport.airport_details.icao_iata }})</a>
+        {% endif %}
+      </h2>
+
+    </div>
+
+    <div class="col text-end">
+      <a href="{{ request.META.HTTP_REFERER }}" class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">General Details</h2>
+        </div>
+
+        <div class="col text-end">
+          {% if not entry.deleted_at %}
+            <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+               {% if not perms.pricing.p_update %} disabled {% endif %}"
+               type="button" name="button"
+               href="{{ metacontext.edit_url }}">
+              Edit</a>
+            <span class="card-header-text-action-button-separator">/</span>
+            <button
+              class="modal_button_novalidation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+              type="button" name="button"
+              data-form-url="{{ metacontext.archive_url }}"
+              data-modal="#modal-lg"
+              {% if not perms.pricing.p_update %} disabled {% endif %}>Archive
+            </button>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Local Name:</td>
+                <td>
+                  {% if entry.tax.local_name|length < 37 %}
+                    <span class="fw-bold">{{ entry.tax.local_name }}
+                  {% else %}
+                    <span class="fw-bold"
+                          data-bs-toggle="tooltip" data-bs-placement="top" title="{{ entry.tax.local_name }}">
+                    {{ entry.tax.local_name|truncatechars:37 }}
+                  {% endif %}
+                  {% if entry.tax.short_name %}
+                    ({{ entry.tax.short_name }})
+                  {% endif %}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Tax applies:</td>
+                <td>
+                  <span class="fw-bold">
+                  {% if entry.taxable_tax and entry.taxable_exception %}
+
+                    {% if entry.band_1_type or entry.band_2_type %}
+                      <a
+                        href="{% url 'admin:tax_rule_details' country=entry.taxable_tax.get_tax_country type=entry.taxable_tax.get_tax_type pk=entry.taxable_tax.id %}">
+                              Offical (Variable)</a> /
+
+                      {% if entry.taxable_exception.source_agreement_id %}
+                        <a
+                          href="{% url 'admin:agreement_supplier_tax_details' document.pk entry.taxable_exception.pk %}">
+                              Exception (Variable)</a>
+                      {% else %}
+                        <a
+                          href="{% url 'admin:fuel_pricing_market_documents_supplier_defined_tax_details' document.pk entry.taxable_exception.pk %}">
+                              Exception (Variable)</a>
+                      {% endif %}
+
+                    {% else %}
+
+                      <a
+                        href="{% url 'admin:tax_rule_details' country=entry.taxable_tax.get_tax_country type=entry.taxable_tax.get_tax_type pk=entry.taxable_tax.id %}">
+                              Offical ({{ entry.taxable_tax.tax_rate_percentage.tax_percentage }} %)</a> /
+
+                      {% if entry.taxable_exception.source_agreement_id %}
+                        <a
+                          href="{% url 'admin:agreement_supplier_tax_details' document.pk entry.taxable_exception.pk %}">
+                              Exception ({{ entry.taxable_exception.tax_percentage }} %)</a>
+                      {% else %}
+                        <a
+                          href="{% url 'admin:fuel_pricing_market_documents_supplier_defined_tax_details' document.pk entry.taxable_exception.pk %}">
+                              Exception ({{ entry.taxable_exception.tax_percentage }} %)</a>
+                      {% endif %}
+
+                    {% endif %}
+
+                    </span>
+                  {% elif entry.taxable_tax %}
+
+                    {% if entry.band_1_type or entry.band_2_type %}
+
+                      <a
+                        href="{% url 'admin:tax_rule_details' country=entry.taxable_tax.get_tax_country type=entry.taxable_tax.get_tax_type pk=entry.taxable_tax.id %}">
+                        Offical (Variable)</a>
+
+                    {% else %}
+
+                      <a
+                        href="{% url 'admin:tax_rule_details' country=entry.taxable_tax.get_tax_country type=entry.taxable_tax.get_tax_type pk=entry.taxable_tax.id %}">
+                        Offical ({{ entry.taxable_tax.tax_rate_percentage.tax_percentage }} %)</a>
+
+                    {% endif %}
+
+                    </span>
+                  {% elif entry.taxable_exception %}
+
+                    {% if entry.band_1_type or entry.band_2_type %}
+
+                      {% if entry.taxable_exception.source_agreement_id %}
+                        <a
+                          href="{% url 'admin:agreement_supplier_tax_details' document.pk entry.taxable_exception.pk %}">
+                          Exception (Variable)</a>
+                      {% else %}
+                        <a
+                          href="{% url 'admin:fuel_pricing_market_documents_supplier_defined_tax_details' document.pk entry.taxable_exception.pk %}">
+                          Exception (Variable)</a>
+                      {% endif %}
+
+                    {% else %}
+
+                      {% if entry.taxable_exception.source_agreement_id %}
+                        <a
+                          href="{% url 'admin:agreement_supplier_tax_details' document.pk entry.taxable_exception.pk %}">
+                          Exception ({{ entry.taxable_exception.tax_percentage }} %)</a>
+                      {% else %}
+                        <a
+                          href="{% url 'admin:fuel_pricing_market_documents_supplier_defined_tax_details' document.pk entry.taxable_exception.pk %}">
+                          Exception ({{ entry.taxable_exception.tax_percentage }} %)</a>
+                      {% endif %}
+
+                    {% endif %}
+                    </span>
+                  {% else %}
+                    <span class="fw-bold">No</span>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Flight Type:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.applicable_flight_type }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Exemption Available with Cert.:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.exemption_available_with_cert|yesno:"Yes,No" }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Applies to Fuel:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.applies_to_fuel|yesno:"Yes,No" }}
+                  {% if entry.specific_fuel or entry.specific_fuel_cat %}
+                      ({% firstof entry.specific_fuel.name entry.specific_fuel_cat.name %})
+                  {% endif %}
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Pax must stay aboard:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.pax_must_stay_aboard|yesno:"Yes,No" }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Flight Destination:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.geographic_flight_type }}</span>
+                </td>
+              </tr>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Applies to Fees:</td>
+                <td>
+                                    <span class="fw-bold">{{ entry.applies_to_fees|yesno:"Yes,No" }}
+                                      {% if entry.specific_fee_category %}
+                                        ({{ entry.specific_fee_category.name }})
+                                      {% endif %}
+                                    </span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Tech stop exempt:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.waived_for_tech_stop|yesno:"Yes,No" }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="pe-3">Operated as:</td>
+                {% if entry.applies_to_private and entry.applies_to_commercial %}
+                  <td><span class="fw-bold">Commercial, Private</span>
+                    {% else %}
+                  <td><span class="fw-bold">{{ entry.applies_to_private|yesno:"Private,Commercial" }}</span>
+                {% endif %}
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not entry.band_1_type or entry.band_2_type %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Application Logic</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="row">
+        {% if entry.band_1_type and entry.band_2_type %}
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Condition One Type:</td>
+                {% if entry.band_1_type.name|length >= 45 %}
+                  <td><span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="{{ entry.band_1_type }}">{{ entry.band_1_type|truncatechars:45 }}</span>
+                    {% else %}
+                  <td><span class="fw-bold">{{ entry.band_1_type }}</span>
+                {% endif %}
+              </tr>
+              <tr>
+                <td class="pe-3">Condition One Band:</td>
+                <td>
+                  <span
+                    class="fw-bold">{{ entry.band_1_start|floatformat:"2" }} - {{ entry.band_1_end|floatformat:"2" }}</span>
+                </td>
+              </tr>
+              {% for related_entry in related_entries %}
+                <tr>
+                  <td class="pe-3">Condition One Band:</td>
+                  <td>
+                    <span
+                      class="fw-bold">{{ related_entry.band_1_start|floatformat:"2" }} - {{ related_entry.band_1_end|floatformat:"2" }}</span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Condition Two Type:</td>
+                {% if entry.band_2_type.name|length >= 45 %}
+                  <td><span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="{{ entry.band_2_type }}">{{ entry.band_2_type|truncatechars:45 }}</span>
+                    {% else %}
+                  <td><span class="fw-bold">{{ entry.band_2_type }}</span>
+                {% endif %}
+              </tr>
+              <tr>
+                <td class="pe-3">Condition Two Band:</td>
+                <td>
+                  <span
+                    class="fw-bold">{{ entry.band_2_start|floatformat:"2" }} - {{ entry.band_2_end|floatformat:"2" }}</span>
+                </td>
+              </tr>
+              {% for related_entry in related_entries %}
+                <tr>
+                  <td class="pe-3">Condition Two Band:</td>
+                  <td>
+                    <span
+                      class="fw-bold">{{ related_entry.band_2_start|floatformat:"2" }} - {{ related_entry.band_2_end|floatformat:"2" }}</span>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+        {% elif entry.band_1_type or entry.band_2_type %}
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                {% if entry.band_1_type %}
+                  <td class="pe-3">Condition One Type:</td>
+                  {% if entry.band_1_type.name|length >= 45 %}
+                    <td><span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="top"
+                              title="{{ entry.band_1_type }}">{{ entry.band_1_type|truncatechars:45 }}</span>
+                      {% else %}
+                    <td><span class="fw-bold">{{ entry.band_1_type }}</span>
+                  {% endif %}
+                {% elif entry.band_2_type %}
+                  <td class="pe-3">Condition One Type:</td>
+                  {% if entry.band_2_type.name|length >= 45 %}
+                    <td><span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="top"
+                              title="{{ entry.band_2_type }}">{{ entry.band_2_type|truncatechars:45 }}</span>
+                      {% else %}
+                    <td><span class="fw-bold">{{ entry.band_2_type }}</span>
+                  {% endif %}
+                {% endif %}
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                {% if entry.band_1_type %}
+                  <tr>
+                    <td class="pe-3">Condition One Band:</td>
+                    <td>
+                      <span
+                        class="fw-bold">{{ entry.band_1_start|floatformat:"2" }} - {{ entry.band_1_end|floatformat:"2" }}</span>
+                    </td>
+                  </tr>
+                  {% for related_entry in related_entries %}
+                    <tr>
+                      <td class="pe-3">Condition One Band:</td>
+                      <td>
+                        <span
+                          class="fw-bold">{{ related_entry.band_1_start|floatformat:"2" }} - {{ related_entry.band_1_end|floatformat:"2" }}</span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+
+
+                {% elif entry.band_2_type %}
+                  <tr>
+                    <td class="pe-3">Condition Two Band:</td>
+                    <td>
+                      <span
+                        class="fw-bold">{{ entry.band_2_start|floatformat:"2" }} - {{ entry.band_2_end|floatformat:"2" }}</span>
+                    </td>
+                  </tr>
+                  {% for related_entry in related_entries %}
+                    <tr>
+                      <td class="pe-3">Condition Two Band:</td>
+                      <td>
+                        <span
+                          class="fw-bold">{{ related_entry.band_2_start|floatformat:"2" }} - {{ related_entry.band_2_end|floatformat:"2" }}</span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+
+                {% endif %}
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+        {% endif %}
+
+        <div class="col pt-2 ps-4 mb-2">
+          <table class="borderless">
+            <tbody>
+            {% if entry.band_1_type and entry.band_2_type %}
+              <tr class="empty-tr"></tr>
+            {% endif %}
+            <tr>
+              <td class="pe-3">Rate:</td>
+              <td>
+                {% if entry.tax_percentage is not None %}
+                  <span class="fw-bold">{{ entry.tax_percentage }}%</span>
+                {% else %}
+                  <span class="fw-bold">{{ entry.tax_unit_rate }}</span>
+                  {% if not entry.tax_application_method.fuel_pricing_unit %}
+                    <span class="fw-bold">{{ entry.tax.applicable_country.currency.code }}</span>
+                  {% endif %}
+                {% endif %}
+
+                {% if entry.tax_application_method %}
+                  {% if entry.tax_application_method.fixed_cost_application_method %}
+                    <span class="fw-bold">{{ entry.tax_application_method.fixed_cost_application_method.name_override }}
+                                        </span>
+                  {% else %}
+                    <span class="fw-bold">{{ entry.tax_application_method.fuel_pricing_unit.description }}
+                                        </span>
+                  {% endif %}
+                {% else %}
+                  <span class="fw-bold">{{ entry.tax_rate_percentage.tax_rate }}</span>
+                {% endif %}
+
+                {% if entry.taxable_tax %}
+                  <span
+                    class="fw-bold">({{ entry.taxable_tax.tax_rate_percentage.tax_percentage }}% Official VAT)</span>
+                {% endif %}
+
+                {% if entry.taxable_exception %}
+                  <span class="fw-bold">({{ entry.taxable_exception.tax_percentage }}% Exception Tax)</span>
+                {% endif %}
+
+              </td>
+            </tr>
+            {% for related_entry in related_entries %}
+              <tr>
+                <td class="pe-3">Rate:</td>
+                <td>
+                  {% if related_entry.tax_percentage %}
+                    <span class="fw-bold">{{ related_entry.tax_percentage }}%</span>
+                  {% else %}
+                    <span class="fw-bold">{{ related_entry.tax_unit_rate }}</span>
+                    {% if not related_entry.tax_application_method.fuel_pricing_unit %}
+                      <span class="fw-bold">{{ related_entry.tax.applicable_country.currency.code }}</span>
+                    {% endif %}
+                  {% endif %}
+
+                  {% if related_entry.tax_application_method %}
+                    {% if related_entry.tax_application_method.fixed_cost_application_method %}
+                      <span
+                        class="fw-bold">{{ related_entry.tax_application_method.fixed_cost_application_method.name_override }}
+                                        </span>
+                    {% else %}
+                      <span class="fw-bold">{{ related_entry.tax_application_method.fuel_pricing_unit.description }}
+                                        </span>
+                    {% endif %}
+                  {% endif %}
+
+                  {% if entry.taxable_tax %}
+                    <span
+                      class="fw-bold">({{ entry.taxable_tax.tax_rate_percentage.tax_percentage }}% Official VAT)</span>
+                  {% endif %}
+
+                  {% if entry.taxable_exception %}
+                    <span class="fw-bold">({{ entry.taxable_exception.tax_percentage }}% Exception Tax)</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Validity</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Valid From:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.valid_from|date:'Y-m-d' }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Valid To:</td>
+                <td><span class="fw-bold">
+                                    {% if entry.valid_ufn %}
+                                      Until Further Notice
+                                    {% else %}
+                                      {{ entry.valid_to|date:'Y-m-d' }}
+                                    {% endif %}
+                                    </span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col pt-2">
+            <table class="borderless">
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not entry.comments %} card-header-empty-section {% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Comments</h2>
+        </div>
+
+      </div>
+    </div>
+    {% if entry.comments %}
+      <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td>
+                  <span class="pre-wrap">{{ entry.comments|safe }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not entry.tax_source %} card-header-empty-section {% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Source</h2>
+        </div>
+
+      </div>
+    </div>
+    {% if entry.tax_source %}
+      <div class="row">
+      <div class="col">
+        <div class="row">
+          {% if entry.tax_source.name %}
+            <div class="col pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">Name:</td>
+                  <td>
+                    <span class="fw-bold">{{ entry.tax_source.name }}</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+
+          {% if entry.tax_source.web_url %}
+            <div class="col pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">Website:</td>
+                  <td>
+                    <span class="fw-bold"><a href={{ entry.tax_source.web_url }}>Link</a></span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+
+          {% if entry.tax_source.file_url %}
+            <div class="col pt-2 ps-4 mb-2">
+              <table class="borderless">
+                <tbody>
+                <tr>
+                  <td class="pe-3">File:</td>
+                  <td>
+                    <span class="fw-bold"><a href={{ entry.tax_source.file_url }}>Link</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    {% endif %}
+
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Latest Update</h2>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="row">
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">Date:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.updated_at|date:'Y-m-d H:i' }}</span>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+          <div class="col pt-2 ps-4 mb-2">
+            <table class="borderless">
+              <tbody>
+              <tr>
+                <td class="pe-3">User:</td>
+                <td>
+                  <span class="fw-bold">{{ entry.updated_by.details.fullname }}</span>
+                </td>
+              </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+{% endblock javascripts %}

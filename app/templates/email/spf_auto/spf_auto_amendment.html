@@ -1,0 +1,170 @@
+{% extends "email/base.html" %}
+{% load spf_auto_tags %}
+{% load tz %}
+
+{% block stylesheets %}
+    <style>
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        th {
+            background: #b3bdc6;
+        }
+        table td, table th {
+            padding: 5px;
+        }
+        tbody td, th {
+            border-style: solid;
+            border-color: #b3bdc6;
+        }
+        .info-table th {
+            width: 30%;
+            text-align: start;
+        }
+        .info-table td {
+            width: 60%;
+        }
+        .new-detail {
+            background: #9ae3cb;
+        }
+        .old-detail {
+            text-decoration: line-through;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% autoescape on %}
+    {% block content %}
+        <p>Dear {{ handling_request.handling_agent.details.registered_name }},</p>
+
+        {% if amendment_session.is_departure_update_after_arrival %}
+            <p>
+            Please note that the following amendment has been made to the departure movement for {{ amendment_session.get_callsign }}
+                that is currently scheduled to depart at
+                {{ amendment_session.get_departure_date|date:'H:i' }}Z on
+                {{ amendment_session.get_departure_date|date:'M-d-Y' }}:
+            </p>
+        {% else %}
+            <p>
+            Please note that the following amendment has been made to the itinerary for {{ amendment_session.get_callsign }}
+                that is booked in to arrive with you at
+                {{ amendment_session.get_arrival_date|date:'H:i' }}Z on
+                {{ amendment_session.get_arrival_date|date:'M-d-Y' }}:
+            </p>
+        {% endif %}
+
+        <ul>
+        {% if amendment_session.callsign != handling_request.callsign %}
+            <li>
+            Callsign: <span class="old-detail">{{ amendment_session.callsign }}</span> >>>
+                <span class="new-detail">{{ handling_request.callsign }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.tail_number != handling_request.tail_number %}
+            <li>
+            Tail Number: <span class="old-detail">{{ amendment_session.tail_number }}</span> >>>
+                <span class="new-detail">{{ handling_request.tail_number }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.aircraft_type != handling_request.aircraft_type %}
+            <li>
+            Aircraft Type: <span class="old-detail">{{ amendment_session.aircraft_type }}</span> >>>
+                <span class="new-detail">{{ handling_request.aircraft_type }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.arrival_date != handling_request.arrival_movement.date %}
+            <li>
+            Arrival Date: <span class="old-detail">{{ amendment_session.arrival_date|date:'M-d-Y H:i' }}Z</span> >>>
+                <span class="new-detail">{{ handling_request.arrival_movement.date|date:'M-d-Y H:i' }}Z</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.arrival_airport != handling_request.arrival_movement.airport %}
+            <li>
+            Arrival From: <span class="old-detail">{{ amendment_session.arrival_airport.short_repr|default:'None' }}</span> >>>
+                <span class="new-detail">{{ handling_request.arrival_movement.airport.short_repr|default:'None' }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.is_arrival_passengers_amended %}
+            <li>
+            Arrival Passengers: <span class="old-detail">{{ amendment_session.arrival_passengers_full_repr }}</span> >>>
+                <span class="new-detail">{{ handling_request.arrival_movement.passengers_full_repr }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.departure_date != handling_request.departure_movement.date %}
+            <li>
+            Departure Date: <span class="old-detail">{{ amendment_session.departure_date|date:'M-d-Y H:i' }}Z</span> >>>
+                <span class="new-detail">{{ handling_request.departure_movement.date|date:'M-d-Y H:i' }}Z</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.departure_airport != handling_request.departure_movement.airport %}
+            <li>
+            Departure To: <span class="old-detail">{{ amendment_session.departure_airport.short_repr }}</span> >>>
+                <span class="new-detail">{{ handling_request.departure_movement.airport.short_repr }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.is_departure_passengers_amended %}
+            <li>
+            Departure Passengers: <span class="old-detail">{{ amendment_session.departure_passengers_full_repr }}</span> >>>
+                <span class="new-detail">{{ handling_request.departure_movement.passengers_full_repr }}</span>
+            </li>
+        {% endif %}
+
+        {% if amendment_session.is_arrival_services_amended %}
+            <li> Arrival Services:
+            {% for session_service in amendment_session.get_arrival_services %}
+                <span class="{% if session_service.is_added %}new-detail{% elif session_service.is_removed %}old-detail{% endif %}">
+                    {{ session_service.service.name }}{{ session_service.amendment_repr|safe }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+            {% endfor %}
+            </li>
+        {% endif %}
+
+        {% if amendment_session.is_departure_services_amended %}
+            <li> Departure Services:
+            {% for session_service in amendment_session.get_departure_services %}
+                <span class="{% if session_service.is_added %}new-detail{% elif session_service.is_removed %}old-detail{% endif %}">
+                    {{ session_service.service.name }}{{ session_service.amendment_repr|safe }}</span>{% if not forloop.last %}, {% else %}.{% endif %}
+            {% endfor %}
+            </li>
+        {% endif %}
+
+        </ul>
+
+        <p>Please acknowledge this amendment request and advise once the updated handling booking has been confirmed.</p>
+        <p>
+            Very respectfully,<br><br>
+        </p>
+        <p>
+            {{ requester_person.fullname }}
+            {% if requester_position %}
+                <br>{% if requester_position.organisation.trading_or_registered_name %}
+                    {{ requester_position.organisation.trading_or_registered_name }} |
+                {% endif %}
+                {{ requester_position.job_title }}
+                <br>
+                {% if requester_position.contact_phone %}
+                    <br>Mobile / WhatsApp: {{ requester_position.contact_phone }}
+                {% endif %}
+                <br>Ops: +1-786-220-1154 | ops@amlglobal.net
+                {% if requester_position.contact_email %}
+                    <br>Email: {{ requester_position.contact_email }}
+                {% endif %}
+
+            {% endif %}
+        </p>
+
+    {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

@@ -1,0 +1,42 @@
+<div class="card my-3">
+    <div class="card-header border-bottom d-flex align-items-center justify-content-between">
+        <h2 class="fs-5 fw-bold mb-0 me-auto">Recurrence</h2>
+    </div>
+    <div id="recurrence_section" class="card-body">
+        <div class="row">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col-xxl-2 col-xl-2 mb-3">
+                        {% include 'includes/_form_field.html' with field=form.enable_recurrence %}
+                    </div>
+                </div>
+
+                <div id="recurrence_details_section" class="">
+                    <div class="row">
+                        <div class="col-xxl-12 col-xl-12 mb-3">
+                            {% include 'includes/_form_field.html' with field=form.specific_recurrence_dates %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xxl-12 col-xl-12 mb-3">
+                            {% include 'includes/_form_field.html' with field=form.operating_days %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xxl-6 col-xl-6 mb-3">
+                            {% include 'includes/_form_field.html' with field=form.final_recurrence_date %}
+                        </div>
+                        <div class="col-xxl-6 col-xl-6 mb-3">
+                            {% include 'includes/_form_field.html' with field=form.weeks_of_recurrence %}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

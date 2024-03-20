@@ -1,0 +1,87 @@
+{% load custom_tags %}
+
+<div class="card border-0 mb-3">
+    <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+            <h2 class="fs-5 fw-bold mb-0 me-auto">Taxes</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                {% if taxes %}
+                {% for tax, rules in taxes.items %}
+                {% any_has_prop_with_value rules 'source' 'official' as has_official_rows %}
+                {% any_has_prop_with_value rules 'source' 'supplier' as has_supplier_rows %}
+                <div class="card expandable-card">
+                    <div class="expandable-section-header bg-primary d-flex align-items-center justify-content-between px-2 py-1"
+                            data-bs-toggle="collapse" data-bs-target="#section-{{ tax }}">
+                        <span class="fs-6 fw-bold mb-0 me-auto">{{ rules.0.tax_name }}</span>
+                        <span class="link-arrow">
+                            <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        </span>
+                    </div>
+                    <div class="expandable-section collapse {% if has_supplier_rows and has_official_rows %}taxes-warning{% endif %}"
+                            role="list" id="section-{{ tax }}" aria-expanded="false">
+                        <table class="borderless w-100 p-2">
+                            <thead>
+                                <tr class="bg-gray-300">
+                                    <td class="w-5 ps-1 pe-3 py-3">Source</td>
+                                    <td class="w-25 ps-1 pe-3 py-3">Flight Type</td>
+                                    <td class="w-15 ps-1 pe-3 py-3">Destination</td>
+                                    <td class="w-15 ps-1 pe-3 py-3">First Band</td>
+                                    <td class="w-15 ps-1 pe-3 py-3">Second Band</td>
+                                    <td class="w-25 ps-1 pe-3 py-3">Rate</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for rule in rules %}
+                            <tr>
+                                <td class="ps-1 pe-3 py-2">
+                                    <span class="fw-bold">{{ rule.source|title }}</span>
+                                </td>
+                                <td class="ps-1 pe-3 py-2">
+                                    <span class="fw-bold">{{ rule.applicable_flight_type }}</span>
+                                </td>
+                                <td class="ps-1 pe-3 py-2">
+                                    <span class="fw-bold">{{ rule.geographic_flight_type }}</span>
+                                </td>
+                                <td class="ps-1 pe-3 py-2">
+                                    <span class="fw-bold">
+                                        {% if rule.band_1_type %}
+                                            {{ rule.band_1_type }}:<br>
+                                            {{ rule.band_1_string }}
+                                        {% else %}
+                                            --
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td class="ps-1 pe-3 py-2">
+                                    <span class="fw-bold">
+                                        {% if rule.band_2_type %}
+                                            {{ rule.band_2_type }}:<br>
+                                            {{ rule.band_2_string }}
+                                        {% else %}
+                                            --
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td class="ps-1 pe-3 py-2">
+                                    <span class="fw-bold">
+                                        {{ rule.tax_rate_string|default:'0.00%' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="col mx-4 my-3">
+                No applicable taxes found.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

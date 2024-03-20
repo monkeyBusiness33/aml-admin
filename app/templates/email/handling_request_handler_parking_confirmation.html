@@ -1,0 +1,20 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+
+    {% block content %}
+        <p>Dear {{ handling_request.handling_agent.details.registered_name }},</p>
+
+        <p>
+            Please advise the assigned parking stand and apron for {{ callsign }} ({{ aircraft_type }}) arriving with you on {{ arrival_date }}
+            at {{ arrival_time }} UTC. If not known at this time, please advise when able.
+        </p>
+
+        <p>Very Respectfully,</p>
+        <p>The AML Global Operations Team</p>
+
+    {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

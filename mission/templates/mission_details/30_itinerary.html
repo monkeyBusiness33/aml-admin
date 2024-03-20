@@ -1,0 +1,181 @@
+{% load filters %}
+
+<style>
+  #mission_itinerary_section .table td, #mission_itinerary_section .table th {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+</style>
+{% with mission.active_legs.exists as mission_active_legs_exists %}
+
+<div class="card border-0 shadow mb-2">
+  <div
+    class="card-header p-1 bg-primary text-white {% if not mission_active_legs_exists %}card-header-empty-section{% endif %}">
+    <div class="row align-items-center">
+
+      <div class="col">
+        <h2 class="fs-6 ps-2 fw-bold mb-0">Mission Itinerary</h2>
+      </div>
+
+      <div class="col text-end">
+        {% if request.app_mode == 'ops_portal' %}
+          <a
+            class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button {% if not perms.mission.change_mission or not mission.is_editable %}disabled{% endif %}"
+            href="{% url 'admin:missions_update' mission.pk %}">Add Flight Leg
+          </a>
+        {% endif %}
+        {% if request.app_mode == 'dod_portal' %}
+          <a
+            class=" btn btn-sm btn-link p-0 pe-1 card-header-text-action-button {% if not mission.is_editable %}disabled{% endif %}"
+            href="{% url 'dod:missions_update' mission.pk %}">Add Flight Leg
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  {% if mission_active_legs_exists %}
+    <div id="mission_itinerary_section" class="table-responsive">
+      <table class="table table-centered table-nowrap mb-0 rounded">
+        <thead class="thead-light">
+        <tr>
+          <th class="text-center"></th>
+          <th class="text-center"></th>
+          <th class="text-center border-start" colspan="3">Departure</th>
+          <th class="text-center border-start"></th>
+          <th class="text-center border-start" colspan="3">Arrival</th>
+          <th class="text-center border-start" colspan="3">Servicing (Arrival)</th>
+          <th class="text-center border-start" colspan="3"></th>
+          <th class="text-center border-start"></th>
+        </tr>
+        <tr>
+          <th class="text-center">Leg</th>
+          <th class="text-center">Callsign</th>
+
+          <th class="text-center border-start">From</th>
+          <th class="text-center">Date</th>
+          <th class="text-center">Dip Clr</th>
+
+          <th class="text-center border-start">ETE</th>
+
+          <th class="text-center border-start">To</th>
+          <th class="text-center">Date</th>
+          <th class="text-center">Dip Clr</th>
+
+          <th class="text-center border-start">AML Servicing</th>
+          <th class="text-center">Fueling</th>
+          <th class="text-center">GH</th>
+
+          <th class="text-center border-start">Crew</th>
+          <th class="text-center">Pax</th>
+          <th class="text-center">Cargo</th>
+
+          <th class="text-center border-start"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for mission_leg in mission.active_legs %}
+          <tr>
+            <td class="text-center align-middle">{{ mission_leg.sequence_id }}</td>
+            <td class="text-center align-middle">
+              {{ mission_leg.get_callsign }}
+            </td>
+
+            <td class="text-center align-middle border-start">{{ mission_leg.departure_location.short_repr }}</td>
+            <td class="text-center align-middle">{{ mission_leg.departure_datetime|date:'M-d-Y H:i' }}</td>
+            <td class="text-center align-middle">
+              {{ mission_leg.departure_diplomatic_clearance|default:'--'|clipped_text:10 }}</td>
+
+            <td class="text-center align-middle border-start">{{ mission_leg.ete }}</td>
+
+            <td class="text-center align-middle border-start">{{ mission_leg.arrival_location.short_repr }}</td>
+            <td class="text-center align-middle">{{ mission_leg.arrival_datetime|date:'M-d-Y H:i' }}</td>
+            <td class="text-center align-middle">
+              {{ mission_leg.arrival_diplomatic_clearance|default:'--'|clipped_text:10 }}</td>
+
+            <td class="text-center align-middle border-start">
+              {% if mission_leg.next_leg %}
+                {{ mission_leg.arrival_aml_service|yesno_icon }}
+                {% if mission_leg.arrival_aml_service and mission_leg.turnaround.handling_request %}
+                  <a class="fw-bold link-icon-before position-absolute" target="_blank"
+                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                     title="Open S&F Request Details Page"
+                     href="
+                       {% if request.app_mode == 'ops_portal' %}{{ mission_leg.turnaround.sfr_url_ops }}{% else %}{{ mission_leg.turnaround.sfr_url_dod }}{% endif %}"></a>
+                {% endif %}
+              {% else %}
+                N/A
+              {% endif %}
+            </td>
+            <td class="text-center align-middle">{{ mission_leg.sfr_fuel_status_badge|default:'--'|safe }}</td>
+            <td class="text-center align-middle">{{ mission_leg.sfr_gh_status_badge|default:'--'|safe }}</td>
+
+            <td class="text-center align-middle border-start">{{ mission_leg.pob_crew }}</td>
+            <td class="text-center align-middle">{{ mission_leg.get_pob_pax_display }}</td>
+            <td class="text-center align-middle">{{ mission_leg.get_cob_lbs_display }}</td>
+
+            <td class="text-center align-middle">
+              {% if request.app_mode == 'ops_portal' %}
+                <button
+                  class="modal_button_validation btn text-primary fw-bolder p-0 me-2 fas fa-edit"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:missions_leg_quick_edit' mission_leg.pk %}"
+                  {% if not perms.mission.change_mission or not mission.is_editable %}disabled{% endif %}>
+                </button>
+
+                <button
+                  class="modal_button_validation btn text-primary fw-bolder p-0 me-2 fas fa-trash-alt"
+                  type="button" name="button" data-modal="#modal-lg"
+                  data-form-url="{% url 'admin:missions_leg_cancel' mission_leg.pk %}"
+                  {% if not perms.mission.change_mission or not mission.is_editable %}disabled{% endif %}>
+                </button>
+
+                <button
+                  class="modal_button_validation btn text-primary fw-bolder p-0 me-2 fas fa-fighter-jet {% if mission_leg.aircraft_type_override or mission_leg.aircraft_override %}text-danger{% endif %}"
+                  type="button" name="button"
+                  {% if mission_leg.aircraft_type_override or mission_leg.aircraft_override %}
+                  data-bs-toggle="tooltip" data-bs-placement="top"
+                  title="{{ mission_leg.aircraft_override }} - {{ mission_leg.aircraft_type_override }}"
+                  {% endif %}
+                  data-form-url="{% url 'admin:missions_leg_change_aircraft' mission_leg.pk %}"
+                  {% if not perms.mission.change_mission or not mission.is_editable %}disabled{% endif %}>
+                </button>
+              {% endif %}
+
+              {% if request.app_mode == 'dod_portal' %}
+                <button
+                  class="modal_button_validation btn text-primary fw-bolder p-0 me-2 fas fa-edit"
+                  type="button" name="button"
+                  data-form-url="{% url 'dod:missions_leg_quick_edit' mission_leg.pk %}"
+                  {% if not mission.is_editable %}disabled{% endif %}>
+                </button>
+
+                <button
+                  class="modal_button_validation btn text-primary fw-bolder p-0 me-2 fas fa-trash-alt"
+                  type="button" name="button" data-modal="#modal-lg"
+                  data-form-url="{% url 'dod:missions_leg_cancel' mission_leg.pk %}"
+                  {% if not mission.is_editable %}disabled{% endif %}>
+                </button>
+
+                <button
+                  class="modal_button_validation btn text-primary fw-bolder p-0 me-2 fas fa-fighter-jet {% if mission_leg.aircraft_type_override or mission_leg.aircraft_override %}text-danger{% endif %}"
+                  type="button" name="button"
+                  {% if mission_leg.aircraft_type_override or mission_leg.aircraft_override %}
+                  data-bs-toggle="tooltip" data-bs-placement="top"
+                  title="{{ mission_leg.aircraft_override }} - {{ mission_leg.aircraft_type_override }}"
+                  {% endif %}
+                  data-form-url="{% url 'dod:missions_leg_change_aircraft' mission_leg.pk %}"
+                  {% if not mission.is_editable %}disabled{% endif %}>
+                </button>
+              {% endif %}
+            </td>
+
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endwith %}

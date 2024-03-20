@@ -1,0 +1,104 @@
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0">{{ document.pld_name }}</h2>
+    </div>
+
+    <div class="col text-end">
+        <a href="{% url 'admin:fuel_pricing_market_documents' %}" class = "datatable-buttons btn btn-outline-primary ms-1">Back</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Document Details</h2>
+            </div>
+
+            <div class="col text-end">
+                <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:fuel_pricing_market_documents_edit' document.pk %}"
+                        data-modal="#modal-lg"
+                        {% if not perms.pricing.p_update %} disabled {% endif %}>Edit</button>
+                {% if document.is_published %}
+                 <span class="card-header-text-action-button-separator">/</span>
+                 <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:fuel_pricing_market_documents_alter_publication_status' pk=document.pk action='unpublish' %}"
+                        data-modal="#modal-lg"
+                        {% if not perms.pricing.p_publish %} disabled {% endif %}>Unpublish</button>
+
+                {% elif not document.is_published and document.pld_status == 'OK' or document.pld_status == 'Partial Pricing Expiry' %}
+                <span class="card-header-text-action-button-separator">/</span> <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:fuel_pricing_market_documents_alter_publication_status' pk=document.pk action='publish' %}"
+                        data-modal="#modal-lg"
+                        {% if not perms.pricing.p_publish %} disabled {% endif %}>Publish</button>
+                {% else %}
+                <span class="card-header-text-action-button-separator">/</span> <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button publish-disabled"
+                        type="button" name="button" disabled>Publish</button>
+                {% endif %}
+                {% if document.is_current %}
+                <span class="card-header-text-action-button-separator">/</span> <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+                        {% if not perms.pricing.p_create %} disabled {% endif %}"
+                        type="button" name="button"
+                        href="{% url 'admin:fuel_pricing_market_documents_supersede_pricing' document.pk %}">
+                  Supersede</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row {{ document.supplier.details.operational_status.text_color }}">
+        <div class="col">
+            <div class="row">
+                <div class="col pt-2 ps-4 mb-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Location(s):</td>
+                                <td>
+                                    {% for pld_location in document.pld_at_location.all %}
+                                    <a class="fw-bold" href="{% url 'admin:airport' pld_location.location %}">{{ pld_location.location.airport_details.icao_iata|default:'' }}{% if not forloop.last %},{% endif %}</a>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="pe-3">Priority:</td>
+                                <td>{{ document.get_priority_display }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col pt-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Status:</td>
+                                <td><span class="fw-bold">{{ document.pld_status|default:'' }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col pt-2">
+                    <table class="borderless">
+                        <tbody>
+                            <tr>
+                                <td class="pe-3">Updated:</td>
+                                <td><span class="fw-bold">{{ document.updated_at|date:'Y-m-d' }} by {{ document.updated_by.details.fullname|default:'' }}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

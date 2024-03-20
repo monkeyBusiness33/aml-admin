@@ -1,0 +1,70 @@
+- model: core.unitofmeasurement
+  pk: 1
+  fields:
+    description: "US Gallon"
+    description_plural: "US Gallons"
+    code: "USG"
+    is_fluid_uom: true
+    is_volume_uom: true
+
+- model: core.unitofmeasurement
+  pk: 2
+  fields:
+    description: "Litre"
+    description_plural: "Litres"
+    code: "L"
+    is_fluid_uom: true
+    is_volume_uom: true
+
+- model: core.unitofmeasurement
+  pk: 3
+  fields:
+    description: "Metric Tonne"
+    description_plural: "Metric Tonnes"
+    code: "MT"
+    is_fluid_uom: true
+    is_mass_uom: true
+
+- model: core.unitofmeasurement
+  pk: 4
+  fields:
+    description: "Cubic Metre"
+    description_plural: "Cubic Metres"
+    code: "M3"
+    is_fluid_uom: true
+    is_volume_uom: true
+
+- model: core.unitofmeasurement
+  pk: 5
+  fields:
+    description: "Pound"
+    description_plural: "Pounds"
+    code: "LB"
+    is_fluid_uom: true
+    is_mass_uom: true
+
+- model: core.unitofmeasurement
+  pk: 6
+  fields:
+    description: "Kilogram"
+    description_plural: "Kilograms"
+    code: "KG"
+    is_fluid_uom: true
+    is_mass_uom: true
+
+- model: core.unitofmeasurement
+  pk: 7
+  fields:
+    description: "Fixed Fee per Uplift"
+    code: "PU"
+    is_fluid_uom: false
+
+- model: core.unitofmeasurementsource
+  pk: 1
+  fields:
+    code: "STD"
+
+- model: core.unitofmeasurementsource
+  pk: 2
+  fields:
+    code: "HIFA"

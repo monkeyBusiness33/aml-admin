@@ -1,0 +1,21 @@
+{% load static %}
+{% if request.app_mode == 'ops_portal' and handling_request.is_in_retrospective_grace %}
+  {% if not handling_request.status == 2 and not handling_request.status == 4 %}
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <i class="fas fa-exclamation-triangle me-3"></i>
+      <div>
+        This S&F Request is in "Retrospective Grace Period". You need submit all details to make it "COMPLETED" until
+        timer is runs out.
+        <br>
+        Time remaining: <span id="retrospective_sfr_timer" class="fw-bold"></span>
+      </div>
+    </div>
+    {% block javascripts %}
+      <script type="text/javascript">
+        retrospective_grace_period = "{{ handling_request.retrospective_grace_period|date:'U' }}"
+        retrospective_datetime_now = "{{ retrospective_datetime_now|date:'U' }}"
+      </script>
+      <script type="text/javascript" charset="utf8" src="{% static 'js/sfr_retrospective_timer.js' %}"></script>
+    {% endblock javascripts %}
+  {% endif %}
+{% endif %}

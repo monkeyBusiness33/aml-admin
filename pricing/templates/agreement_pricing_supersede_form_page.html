@@ -1,0 +1,901 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% load currency_uom_tags %}
+{% block title %} Supersede Fuel Pricing for {{ document.pld_name }} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form method="POST" id="form-container" class="pb-5">
+    {% csrf_token %}
+    {{ pricing_formset_formula.management_form }}
+    {{ pricing_formset_formula.media.css }}
+    {{ pricing_formset_discount.management_form }}
+    {{ pricing_formset_discount.media.css }}
+    <div class="row align-items-center mb-3">
+      <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0 header-name-container">Supersede Fuel Pricing - {{ document }}
+          <i class="ms-1 fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+             data-bs-original-title="Be advised that leaving the fee and tax form untouched will set a new
+                valid from date to the agreement's start date">
+          </i>
+        </h2>
+      </div>
+
+      <div class="col text-end">
+        <a href="{% url 'admin:fuel_agreement' document.pk %}"
+           class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow mb-4 form-body">
+      <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+          <div class="col">
+            <h2 class="fs-6 ps-2 fw-bold mb-0">Existing Formula Pricing</h2>
+          </div>
+        </div>
+      </div>
+
+      <table id='formula_pricing_table' class='table table-flush table-hover align-middle supersede-table'>
+        {% if pricing_formset_formula|length == 0 %}
+          <td>No existing formula pricing to display</td>
+        {% else %}
+          <div class="header-date-setting">
+          </div>
+
+          <thead>
+          <th class="first">Location and IPA</th>
+          <th>
+            <span class="required">Fuel</span>, <span class="required">Delivery Method(s)</span>,
+            Handler and Apron
+          </th>
+          <th><span class="required">Flight</span>, <span class="required">Destination Type</span>, Client
+            and Hookup Method</th>
+          <th class="required">Applies to</th>
+          <th class="required">Band and Pricing Unit</th>
+          <th></th>
+          <th class="last">Actions</th>
+          </thead>
+
+          <tbody class="table-form-body">
+          {{ pricing_formset_formula.non_field_errors }}
+          {{ pricing_formset_formula.non_form_errors }}
+          {% for form in pricing_formset_formula %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mx-3" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        {{ error|safe }}
+                    </div>
+                </div>
+            {% endfor %}
+          {% endfor %}
+
+          {% for form in pricing_formset_formula %}
+            <tr class="form-row form-{{ forloop.counter0 }} main">
+              <td>
+                <div class="stacked-input">
+                  <div class="stacked-input-element pt-1">
+                  {{ form.location }}
+                  </div>
+                  <div class="stacked-input-element pt-1">
+                    <i class="" data-hidden-value="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-html="true"
+                       data-bs-original-title="{{ form.ipa.help_text }}">
+                    {{form.ipa}}
+                    </i>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {{ form.fuel }}
+                  {{ form.delivery_methods }}
+                  {{ form.specific_handler }}
+                  {{ form.specific_apron }}
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {{ form.flight_type }}
+                  {{ form.destination_type }}
+                  {{ form.client }}
+                  {{ form.specific_hookup_method }}
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input white">
+                  <div class="space-apart">Commercial {{ form.applies_to_commercial }}</div>
+                  <div class="space-apart">Private {{ form.applies_to_private }}</div>
+              </td>
+              <td>
+                <div class="stacked-input">{{ form.band_uom }} {{ form.differential_pricing_unit }}</div>
+              </td>
+              <td></td>
+              <td>
+                <button class="btn p-0 text-primary fw-bolder fas fa-gas-pump"
+                        data-bs-toggle="modal" data-bs-target="#modal-index-details-{{ forloop.counter }}-formula"
+                        type="button"></button>
+                <button class="btn p-0 text-primary fw-bolder fas fa-file-invoice-dollar"
+                        data-bs-toggle="modal" data-bs-target="#modal-inc-taxes-{{ forloop.counter }}-formula"
+                        type="button"></button>
+                <button class="btn p-0 text-primary fw-bolder fas fa-edit"
+                        data-bs-toggle="modal" data-bs-target="#modal-optional-{{ forloop.counter }}-formula"
+                        type="button"></button>
+                <button class="btn p-0 text-primary fw-bolder fas fa-trash text-danger hide-row"
+                        value='{{ forloop.counter }}' type="button"></button>
+              </td>
+              <td class='d-none'>{{ form.DELETE }}</td>
+
+              {{ form.id.as_hidden }}
+            </tr>
+            <tr class="form-row form-{{ forloop.counter0 }} sub">
+              <td>
+                <div class="add-col">
+                  <button class="fas fa-plus text-success add-row supersede-add" id='{{ forloop.counter0 }}-add'
+                          type="button"></button>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-large">
+                  <div>
+                    <label for="id_existing-formula-pricing-{{ forloop.counter0 }}-band_start">Band Start</label>
+                    {{ form.band_start }}
+                  </div>
+                  <div>
+                    <label for="id_existing-formula-pricing-{{ forloop.counter0 }}-band_end">Band End</label>
+                    {{ form.band_end }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-small">
+                  <div>
+                    <label for="id_existing-formula-pricing-{{ forloop.counter0 }}-differential_value_old">Current
+                      Differential</label>
+                    {{ form.differential_value_old }}
+                  </div>
+                  <div>
+                    <label for="id_existing-formula-pricing-{{ forloop.counter0 }}-differential_value">New
+                      Differential</label>
+                    {{ form.differential_value }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-small tax-info">
+                  <div class="tax-column-flex">
+                    <label>Applicable Tax</label>
+                    {% for instance in form.instance.get_fuel_tax %}
+                      {% if forloop.first %}
+                        <div class='tax-tooltip tax-text'>Tax Applicable
+                        <div class='tooltiptext'>
+                      {% endif %}
+
+                    {% if instance.tax %}
+                      <div class='tax-tooltip-text'><span class='tax-name'>{{ instance.tax.local_name }}</span> <br>
+                    {% else %}
+                      <div class='tax-tooltip-text'>
+                      <span class='tax-name'>{{ instance.tax_rate_percentage.tax.local_name }}</span> <br>
+                    {% endif %}
+
+                    {% if instance.tax_unit_rate %}
+                      {{ instance.tax_unit_rate }} {{ instance.tax.applicable_country.currency }} <br>
+                      {% if instance.tax_application_method.fixed_cost_application_method %}
+                        {{ instance.tax_application_method.fixed_cost_application_method.name_override }} <br>
+                      {% else %}
+                        {{ instance.tax_application_method.fuel_pricing_unit.description }} <br>
+                      {% endif %}
+
+                    {% else %}
+                      {{ instance.tax_rate_percentage.tax_percentage }}% <br>
+                    {% endif %}
+
+                    {% if instance.band_1_type is not None and instance.band_2_type is not None %}
+                      {{ instance.band_1_start }} - {{ instance.band_1_end }} {{ instance.band_1_type }} <br>
+                      {{ instance.band_2_start }} - {{ instance.band_2_end }} {{ instance.band_2_type }}
+
+                    {% elif instance.band_1_type is not None or instance.band_2_type is not None %}
+                      {{ instance.band_1_start|default_if_none:instance.band_2_start }} -
+                      {{ instance.band_1_end|default_if_none:instance.band_2_end }}
+                      {{ instance.band_1_type|default_if_none:instance.band_2_type }}
+
+                    {% endif %}
+
+                    {% if not forloop.last %}
+                      <hr>
+                    {% endif %}
+                    </div>
+
+                    {% if forloop.last %}
+                      </div>
+                      </div>
+                    {% endif %}
+
+                    {% empty %}
+                      <div class='tax-text'>-</div>
+                    {% endfor %}
+                    </div>
+                  </div>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+
+            </tr>
+            {% with forloop.counter0 as main_counter %}
+              {% for field_name, field in form.fields.items %}
+                {% if "band_start-additional" in field_name %}
+                  <tr class="form-row form-{{ main_counter }} sub">
+                  <td>
+                    <div class="deletion-col">
+                      <button class="fas fa-minus text-danger delete-row supersede-delete" type="button"></button>
+                    </div>
+                  </td>
+                  <td>
+                  <div class="pricing-flex-large">
+                  {{ form|get_form_field:field_name }}
+
+                {% endif %}
+
+              {% if "band_end-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+              {% endif %}
+
+                {% if "differential_value_old-additional" in field_name %}
+                  <td>
+                  <div class="pricing-flex-small">
+                  {{ form|get_form_field:field_name }}
+
+                {% endif %}
+
+              {% if "band_differential_value-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+              {% endif %}
+                {% if "id-additional" in field_name %}
+                  <td>
+                    <div class='d-none'>
+                      {% with form|get_form_field:field_name as field %}
+                        {{ field }}
+                        </div>
+                        <div class="tax-info">
+                          {% for instance in related_entries %}
+                            {% if instance.pk|slugify == field.value|slugify %}
+                              {% for entry in instance.get_fuel_tax %}
+                                {% if forloop.first %}
+                                  <div class='tax-tooltip tax-text'>Tax Applicable
+                                  <div class='tooltiptext'>
+                                {% endif %}
+
+                              {% if entry.tax %}
+                                <div class='tax-tooltip-text'><span class='tax-name'>{{ entry.tax.local_name }}</span>
+                                <br>
+                              {% else %}
+                                <div class='tax-tooltip-text'>
+                                <span class='tax-name'>{{ entry.tax_rate_percentage.tax.local_name }}</span> <br>
+                              {% endif %}
+
+                              {% if entry.tax_unit_rate %}
+                                {{ entry.tax_unit_rate }} {{ entry.tax.applicable_country.currency }} <br>
+                                {% if entry.tax_application_method.fixed_cost_application_method %}
+                                  {{ entry.tax_application_method.fixed_cost_application_method.name_override }} <br>
+                                {% else %}
+                                  {{ entry.tax_application_method.fuel_pricing_unit.description }} <br>
+                                {% endif %}
+
+                              {% else %}
+                                {{ entry.tax_rate_percentage.tax_percentage }}% <br>
+                              {% endif %}
+
+                              {% if entry.band_1_type is not None and entry.band_2_type is not None %}
+                                {{ entry.band_1_start }} - {{ entry.band_1_end }} {{ entry.band_1_type }} <br>
+                                {{ entry.band_2_start }} - {{ entry.band_2_end }} {{ entry.band_2_type }}
+
+                              {% elif entry.band_1_type is not None or entry.band_2_type is not None %}
+                                {{ entry.band_1_start|default_if_none:entry.band_2_start }} -
+                                {{ entry.band_1_end|default_if_none:entry.band_2_end }}
+                                {{ entry.band_1_type|default_if_none:entry.band_2_type }}
+
+                              {% endif %}
+
+                              {% if not forloop.last %}
+                                <hr>
+                              {% endif %}
+                              </div>
+
+                              {% if forloop.last %}
+                                </div>
+                                </div>
+                              {% endif %}
+                              {% empty %}
+                                <div class='tax-text'>-</div>
+                              {% endfor %}
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            {% endif %}
+                          {% endfor %}
+                          </div>
+                        </div>
+                        </td>
+                      {% endwith %}
+                {% endif %}
+
+              {% endfor %}
+            {% endwith %}
+          </tr>
+
+            <tr class="form-{{ forloop.counter0 }} insert-before-band"></tr>
+            {% if not forloop.last %}
+              <tr class="empty-section">
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+              </tr>
+            {% endif %}
+
+            <div class='form-modal'>
+              <div class="modal fade" id="modal-index-details-{{ forloop.counter }}-formula"
+                   aria-labelledby="indexModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="indexModalLabel">Fuel Pricing Index Details</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group mb-3">
+                        {{ form.fuel_index.label }}
+                        {{ form.fuel_index }}
+                        {% if form.fuel_index.errors %}
+                          {% for error in form.fuel_index.errors %}
+                            <div class="invalid-feedback d-block">
+                              {{ error|escape }}
+                            </div>
+                          {% endfor %}
+                        {% endif %}
+                      </div>
+                      <div class="form-group mb-3">
+                        {{ form.pricing_index.label }}
+                        {{ form.pricing_index }}
+                        {% if form.pricing_index.errors %}
+                          {% for error in form.pricing_index.errors %}
+                            <div class="invalid-feedback d-block">
+                              {{ error|escape }}
+                            </div>
+                          {% endfor %}
+                        {% endif %}
+                      </div>
+                      <div class="form-group d-flex mb-3">
+                        <div class="w-50 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.index_period_is_lagged %}
+                        </div>
+                        <div class="w-50 mb-3">
+                          {% include 'includes/_form_field.html' with field=form.index_period_is_grace %}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Editing</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='form-modal'>
+              <div class="modal fade" id="modal-inc-taxes-{{ forloop.counter }}-formula"
+                   aria-labelledby="exampleModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Inclusive Taxes</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group mb-3">
+                        {{ form.inclusive_taxes.label }}
+                        {{ form.inclusive_taxes }}
+                        {% if form.inclusive_taxes.errors %}
+                          {% for error in form.inclusive_taxes.errors %}
+                            <div class="invalid-feedback d-block">
+                              {{ error|escape }}
+                            </div>
+                          {% endfor %}
+                        {% endif %}
+                      </div>
+                      <div class="form-group mb-3">
+                        {{ form.cascade_to_fees.label }}
+                        {{ form.cascade_to_fees }}
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Editing</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='form-modal'>
+              <div class="modal fade" id="modal-optional-{{ forloop.counter }}-formula" aria-labelledby="modalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalLabel">Optional Details</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {% comment %}
+                      <div class="form-group mb-3">
+                        <label for="{{ form.volume_conversion_ratio_override.id_for_label }}">
+                          {{ form.volume_conversion_ratio_override.label }}
+                          <i class="ms-1 fa fa-info-circle"
+                             data-bs-toggle="tooltip"
+                             data-bs-placement="top"
+                             data-bs-original-title="The exchange rate is going to be used to convert the fuel index
+                                                    volume unit into the volume unit of the differential."></i><br>
+                          <small class="volume-ratio-units-default"></small>
+                        </label>
+                        {{ form.volume_conversion_ratio_override }}
+                      </div>
+                      {% endcomment %}
+                      <div class="form-group mb-3">
+                        {{ form.comment.label }}
+                        {{ form.comment }}
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Editing</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </tbody>
+        {% endif %}
+      </table>
+    </div>
+
+
+    <div class="card border-0 shadow mb-4 form-body">
+      <div class="card-header p-1 bg-primary text-white">
+        <div class="row align-items-center">
+
+          <div class="col">
+            <h2 class="fs-6 ps-2 fw-bold mb-0">Existing Discount Pricing</h2>
+          </div>
+        </div>
+      </div>
+
+      <table id='discount_pricing_table' class='table table-flush table-hover align-middle supersede-table'>
+        {% if pricing_formset_discount|length == 0 %}
+          <td>No existing discount pricing to display</td>
+        {% else %}
+          <div class="header-date-setting">
+          </div>
+
+          <thead>
+          <th class="first">Location and IPA</th>
+          <th><span class="required">Fuel</span>, <span class="required">Delivery Method(s)</span>,
+            Handler and Apron
+          </th>
+          <th><span class="required">Flight</span>, <span class="required">Destination Type</span>, Client
+            and Hookup Method</th>
+          <th class="required">Applies to</th>
+          <th class="required">Discount Type, Band and Pricing Unit</th>
+          <th></th>
+          <th class="last">Actions</th>
+          </thead>
+
+          <tbody class="table-form-body">
+          {{ pricing_formset_discount.non_field_errors }}
+          {{ pricing_formset_discount.non_form_errors }}
+          {% for form in pricing_formset_discount %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger d-flex align-items-center is-invalid mx-3" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        {{ error|safe }}
+                    </div>
+                </div>
+            {% endfor %}
+          {% endfor %}
+
+          {% for form in pricing_formset_discount %}
+            <tr class="form-row form-{{ forloop.counter0 }} main">
+              <td>
+                <div class="stacked-input">
+                  <div class="stacked-input-element">
+                    {{form.location}}
+                  </div>
+                  <div class="stacked-input-element pt-1">
+                    <i class="" data-hidden-value="" data-bs-toggle="tooltip" data-bs-placement="bottom" title="" data-bs-html="true"
+                       data-bs-original-title="{{ form.ipa.help_text }}">
+                    {{form.ipa}}
+                    </i>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {{ form.fuel }}
+                  {{ form.delivery_methods }}
+                  {{ form.specific_handler }}
+                  {{ form.specific_apron }}
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {{ form.flight_type }}
+                  {{ form.destination_type }}
+                  {{ form.client }}
+                  {{ form.specific_hookup_method }}
+                </div>
+              </td>
+              <td>
+                <div class="stacked-input white">
+                  <div class="space-apart">Commercial {{ form.applies_to_commercial }}</div>
+                  <div class="space-apart">Private {{ form.applies_to_private }}</div>
+              </td>
+              <td>
+                <div class="stacked-input">
+                  {% include 'includes/_form_field.html' with field=form.is_percentage hide_label=True %}
+                  <div class="stacked-input">{{ form.band_uom }} {{ form.pricing_discount_unit }}</div>
+                </div>
+              </td>
+              <td></td>
+              <td>
+                <button class="btn p-0 text-primary fw-bolder fas fa-file-invoice-dollar"
+                        data-bs-toggle="modal" data-bs-target="#modal-inc-taxes-{{ forloop.counter }}-discount"
+                        type="button"></button>
+                <button class="btn p-0 text-primary fw-bolder fas fa-edit"
+                        data-bs-toggle="modal" data-bs-target="#modal-optional-{{ forloop.counter }}-discount"
+                        type="button"></button>
+                <button class="btn p-0 text-primary fw-bolder fas fa-trash text-danger hide-row"
+                        value='{{ forloop.counter }}' type="button"></button>
+              </td>
+              <td class='d-none'>{{ form.DELETE }}</td>
+
+              {{ form.id.as_hidden }}
+            </tr>
+            <tr class="form-row form-{{ forloop.counter0 }} sub">
+              <td>
+                <div class="add-col">
+                  <button class="fas fa-plus text-success add-row supersede-add" id='{{ forloop.counter0 }}-add'
+                          type="button"></button>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-large">
+                  <div>
+                    <label for="id_existing-discount-pricing-{{ forloop.counter0 }}-band_start">Band Start</label>
+                    {{ form.band_start }}
+                  </div>
+                  <div>
+                    <label for="id_existing-discount-pricing-{{ forloop.counter0 }}-band_end">Band End</label>
+                    {{ form.band_end }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-small">
+                  <div>
+                    <label>Current Discount</label>
+                    {{ form.discount_amount_old }}
+                    {{ form.discount_percentage_old }}
+                  </div>
+                  <div>
+                    <label>New Discount</label>
+                    {{ form.pricing_discount_amount }}
+                    {{ form.pricing_discount_percentage }}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="pricing-flex-small tax-info">
+                  <div class="tax-column-flex">
+                    <label>Applicable Tax</label>
+                    {% for instance in form.instance.get_fuel_tax %}
+                      {% if forloop.first %}
+                        <div class='tax-tooltip tax-text'>Tax Applicable
+                        <div class='tooltiptext'>
+                      {% endif %}
+
+                    {% if instance.tax %}
+                      <div class='tax-tooltip-text'><span class='tax-name'>{{ instance.tax.local_name }}</span> <br>
+                    {% else %}
+                      <div class='tax-tooltip-text'>
+                      <span class='tax-name'>{{ instance.tax_rate_percentage.tax.local_name }}</span> <br>
+                    {% endif %}
+
+                    {% if instance.tax_unit_rate %}
+                      {{ instance.tax_unit_rate }} {{ instance.tax.applicable_country.currency }} <br>
+                      {% if instance.tax_application_method.fixed_cost_application_method %}
+                        {{ instance.tax_application_method.fixed_cost_application_method.name_override }} <br>
+                      {% else %}
+                        {{ instance.tax_application_method.fuel_pricing_unit.description }} <br>
+                      {% endif %}
+
+                    {% else %}
+                      {{ instance.tax_rate_percentage.tax_percentage }}% <br>
+                    {% endif %}
+
+                    {% if instance.band_1_type is not None and instance.band_2_type is not None %}
+                      {{ instance.band_1_start }} - {{ instance.band_1_end }} {{ instance.band_1_type }} <br>
+                      {{ instance.band_2_start }} - {{ instance.band_2_end }} {{ instance.band_2_type }}
+
+                    {% elif instance.band_1_type is not None or instance.band_2_type is not None %}
+                      {{ instance.band_1_start|default_if_none:instance.band_2_start }} -
+                      {{ instance.band_1_end|default_if_none:instance.band_2_end }}
+                      {{ instance.band_1_type|default_if_none:instance.band_2_type }}
+
+                    {% endif %}
+
+                    {% if not forloop.last %}
+                      <hr>
+                    {% endif %}
+                    </div>
+
+                    {% if forloop.last %}
+                      </div>
+                      </div>
+                    {% endif %}
+
+                    {% empty %}
+                      <div class='tax-text'>-</div>
+                    {% endfor %}
+                    </div>
+                  </div>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+
+            </tr>
+            {% with forloop.counter0 as main_counter %}
+              {% for field_name, field in form.fields.items %}
+                {% if "band_start-additional" in field_name %}
+                  <tr class="form-row form-{{ main_counter }} sub">
+                  <td>
+                    <div class="deletion-col">
+                      <button class="fas fa-minus text-danger delete-row supersede-delete" type="button"></button>
+                    </div>
+                  </td>
+                  <td>
+                  <div class="pricing-flex-large">
+                  {{ form|get_form_field:field_name }}
+
+                {% endif %}
+
+              {% if "band_end-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+              {% endif %}
+
+                {% if "discount_amount_old-additional" in field_name %}
+                  <td>
+                  <div class="pricing-flex-small">
+                  {{ form|get_form_field:field_name }}
+                {% endif %}
+
+                {% if "discount_percentage_old-additional" in field_name %}
+                  {{ form|get_form_field:field_name }}
+                {% endif %}
+
+              {% if "discount_amount-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+              {% endif %}
+
+              {% if "discount_percentage-additional" in field_name %}
+                {{ form|get_form_field:field_name }}
+                </div>
+                </td>
+              {% endif %}
+                {% if "id-additional" in field_name %}
+                  <td>
+                    <div class='d-none'>
+                      {% with form|get_form_field:field_name as field %}
+                        {{ field }}
+                        </div>
+                        <div class="tax-info">
+                          {% for instance in related_entries %}
+                            {% if instance.pk|slugify == field.value|slugify %}
+                              {% for entry in instance.get_fuel_tax %}
+                                {% if forloop.first %}
+                                  <div class='tax-tooltip tax-text'>Tax Applicable
+                                  <div class='tooltiptext'>
+                                {% endif %}
+
+                              {% if entry.tax %}
+                                <div class='tax-tooltip-text'><span class='tax-name'>{{ entry.tax.local_name }}</span>
+                                <br>
+                              {% else %}
+                                <div class='tax-tooltip-text'>
+                                <span class='tax-name'>{{ entry.tax_rate_percentage.tax.local_name }}</span> <br>
+                              {% endif %}
+
+                              {% if entry.tax_unit_rate %}
+                                {{ entry.tax_unit_rate }} {{ entry.tax.applicable_country.currency }} <br>
+                                {% if entry.tax_application_method.fixed_cost_application_method %}
+                                  {{ entry.tax_application_method.fixed_cost_application_method.name_override }} <br>
+                                {% else %}
+                                  {{ entry.tax_application_method.fuel_pricing_unit.description }} <br>
+                                {% endif %}
+
+                              {% else %}
+                                {{ entry.tax_rate_percentage.tax_percentage }}% <br>
+                              {% endif %}
+
+                              {% if entry.band_1_type is not None and entry.band_2_type is not None %}
+                                {{ entry.band_1_start }} - {{ entry.band_1_end }} {{ entry.band_1_type }} <br>
+                                {{ entry.band_2_start }} - {{ entry.band_2_end }} {{ entry.band_2_type }}
+
+                              {% elif entry.band_1_type is not None or entry.band_2_type is not None %}
+                                {{ entry.band_1_start|default_if_none:entry.band_2_start }} -
+                                {{ entry.band_1_end|default_if_none:entry.band_2_end }}
+                                {{ entry.band_1_type|default_if_none:entry.band_2_type }}
+
+                              {% endif %}
+
+                              {% if not forloop.last %}
+                                <hr>
+                              {% endif %}
+                              </div>
+
+                              {% if forloop.last %}
+                                </div>
+                                </div>
+                              {% endif %}
+                              {% empty %}
+                                <div class='tax-text'>-</div>
+                              {% endfor %}
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            {% endif %}
+                          {% endfor %}
+                          </div>
+                        </div>
+                        </td>
+                      {% endwith %}
+                {% endif %}
+
+              {% endfor %}
+            {% endwith %}
+          </tr>
+
+            <tr class="form-{{ forloop.counter0 }} insert-before-band"></tr>
+            {% if not forloop.last %}
+              <tr class="empty-section">
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+                <td class="empty-table-spacer"></td>
+              </tr>
+            {% endif %}
+
+            <div class='form-modal'>
+              <div class="modal fade" id="modal-inc-taxes-{{ forloop.counter }}-discount" aria-labelledby="modalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalLabel">Inclusive Taxes</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group mb-3">
+                        {{ form.inclusive_taxes.label }}
+                        {{ form.inclusive_taxes }}
+                        {% if form.inclusive_taxes.errors %}
+                          {% for error in form.inclusive_taxes.errors %}
+                            <div class="invalid-feedback d-block">
+                              {{ error|escape }}
+                            </div>
+                          {% endfor %}
+                        {% endif %}
+                      </div>
+                      <div class="form-group mb-3">
+                        {{ form.cascade_to_fees.label }}
+                        {{ form.cascade_to_fees }}
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Editing</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='form-modal'>
+              <div class="modal fade" id="modal-optional-{{ forloop.counter }}-discount"
+                   aria-labelledby="exampleModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Optional Details</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-group mb-3">
+                        {{ form.comment.label }}
+                        {{ form.comment }}
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue Editing</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </tbody>
+        {% endif %}
+      </table>
+    </div>
+
+    <input type="hidden" name='button-pressed' class="button-pressed-input" value="">
+
+    <div class="button-row">
+      <button type="submit" value='taxes'
+              class="btn btn-primary {% if supplier_defined_tax_saved %}already-saved{% endif %}"
+        {% if supplier_defined_tax_saved %} disabled {% endif %}>Supplier-Defined Taxes
+      </button>
+      <button type="submit" value='associated-fees'
+              class="btn btn-primary {% if associated_fee_saved %}already-saved{% endif %}"
+        {% if associated_fee_saved %} disabled {% endif %}>Associated Fees
+      </button>
+      <button type="submit" value='supersede' class="btn btn-primary">Supersede</button>
+    </div>
+
+  </form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ pricing_formset_formula.media.js }}
+  {{ pricing_formset_discount.media.js }}
+  {{ document_new_pricing_formset.media.js }}
+  <script>
+    let default_volume_conversion_ratio_url = '{{ metacontext.default_volume_conversion_ratio_url }}'
+  </script>
+  <script type="text/javascript" charset="utf8"
+          src="{% static 'js/fuel_pricing_agreement_supersede.js' %}"></script>
+{% endblock javascripts %}
+
+
+
+
+
+
+

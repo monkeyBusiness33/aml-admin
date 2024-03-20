@@ -1,0 +1,34 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not organisation.documents.exists %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Document</h2>
+            </div>
+
+            <div class="col text-end">
+                <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:fuel_pricing_market_documents_document_create' document.id %}"
+                        {% if not perms.core.p_contacts_update %} disabled {% endif %}>Add Document</button>
+            </div>
+
+        </div>
+    </div>
+    {% if document.pld_document.exists %}
+    <div class="{{ document.supplier.details.operational_status.text_color }}">
+
+        <div id="organisation_documents_list" class="card {{ metacontext.page_css_class }} compact_datatable">
+            <div class="table-responsive ajax-datatable-container pt-0">
+                <table id="organisation_documents_list_datatable" width="100%" class="table table-flush table-hover ajax-datatable align-middle nowrap">
+                </table>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+<script language="javascript">
+    /* Reusing the org_documents_datatable */
+    var organisation_documents_datatable_uri = "{% url 'admin:fuel_pricing_market_documents_document_ajax' document.pk %}"
+</script>

@@ -1,0 +1,48 @@
+{% load static %}
+{% if request.app_mode == 'ops_portal' and perms.handling.p_dod_comms or request.app_mode == 'dod_portal' %}
+  <div class="card border-0 shadow mb-2">
+    <div
+      class="card-header p-3 {% if not handling_request.chat_conversations.exists %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Communications</h2>
+        </div>
+
+        <div class="col text-end">
+          {% if not handling_request.chat_conversations.exists %}
+
+            {% if request.app_mode == 'ops_portal' %}
+              <button class="modal_button_validation bs-modal btn btn-outline-primary"
+                      type="button" name="button"
+                      data-form-url="{% url 'admin:handling_request_chat_create' handling_request.pk %}"
+                {% if metacontext.button_perm not in perms %} disabled {% endif %}>
+                Start Conversation
+              </button>
+            {% endif %}
+            {% if request.app_mode == 'dod_portal' %}
+              <button class="modal_button_validation bs-modal btn btn-outline-primary"
+                      type="button" name="button"
+                      data-form-url="{% url 'dod:handling_request_chat_create' handling_request.pk %}">
+                Start Conversation
+              </button>
+            {% endif %}
+
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+    {% if handling_request.chat_conversations.exists %}
+
+      <script type="module" crossorigin src="{% static 'chat/index.js' %}"></script>
+      <link rel="stylesheet" href="{% static 'chat/index.css' %}">
+      <div id="chat-app"></div>
+      <script>
+        window.conversation_id = "{{ handling_request.chat_conversations.first.pk }}"
+      </script>
+
+    {% endif %}
+  </div>
+{% endif %}
+

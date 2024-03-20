@@ -1,0 +1,70 @@
+{% extends "email/base.html" %}
+{% load spf_auto_tags %}
+{% load tz %}
+
+{% block stylesheets %}
+    <style>
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+        th {
+            background: #b3bdc6;
+        }
+        table td, table th {
+            padding: 5px;
+        }
+        tbody td, th {
+            border-style: solid;
+            border-color: #b3bdc6;
+        }
+        .info-table th {
+            width: 30%;
+            text-align: start;
+        }
+        .info-table td {
+            width: 60%;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% autoescape on %}
+    {% block content %}
+        <p>Dear {{ handling_request.auto_spf.sent_to.details.registered_name }},</p>
+
+        <p>
+        Please cancel the ground handling booking for {{ handling_request.callsign }} that is scheduled
+            to arrive with you at
+            {{ handling_request.arrival_movement.date|date:'H:i' }}Z on
+            {{ handling_request.arrival_movement.date|date:'M-d-Y' }}.
+        </p>
+
+        <p>
+            Very respectfully,<br><br>
+        </p>
+        <p>
+            {{ requester_person.fullname }}
+            {% if requester_position %}
+                <br>{% if requester_position.organisation.trading_or_registered_name %}
+                    {{ requester_position.organisation.trading_or_registered_name }} |
+                {% endif %}
+                {{ requester_position.job_title }}
+                <br>
+                {% if requester_position.contact_phone %}
+                    <br>Mobile / WhatsApp: {{ requester_position.contact_phone }}
+                {% endif %}
+                <br>Ops: +1-786-220-1154 | ops@amlglobal.net
+                {% if requester_position.contact_email %}
+                    <br>Email: {{ requester_position.contact_email }}
+                {% endif %}
+
+            {% endif %}
+        </p>
+
+    {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

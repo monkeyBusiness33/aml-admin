@@ -1,0 +1,368 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %} Supersede Supplier-Taxes for {{ document.pld_name }} {% endblock %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+<form method="POST" id="form-container">
+    {% csrf_token %}
+    {{ tax_rule_exception_formset.management_form }}
+    {{ tax_rule_exception_formset.media.css }}
+
+    <div class="row align-items-center mb-3">
+        <div class="col-8">
+            <h2 class="fs-5 fw-bold mb-0 header-name-container">Supplier-Defined Taxes - {% firstof document.pld_name new_document %}</h2>
+        </div>
+
+        <div class="col text-end">
+            {% if document_type == 'pld' %}
+              <button class="datatable-buttons btn btn-outline-primary ms-1 create-new" type="submit" value='supplier-tax-create'>
+              Create New
+              </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card border-0 shadow mb-4 form-body">
+        <div class="card-header p-1 bg-primary text-white">
+            <div class="row align-items-center">
+
+                <div class="col">
+                    <h2 class="fs-6 ps-2 fw-bold mb-0">Existing Supplier Taxes</h2>
+                </div>
+            </div>
+        </div>
+
+        <table class='table table-flush table-hover align-middle supersede-table margin-top-5'>
+        {% if tax_rule_exception_formset|length == 0 %}
+            <td>No existing fees to display</td>
+        {% else %}
+            <div class="header-date-setting">
+                <span>Apply date for all rows?</span>
+                    {{update_date_form.apply_to_all}}
+                    {{update_date_form.valid_from}}
+            </div>
+            <thead>
+                <tr>
+                    <th class="first">Details</th>
+                    <th>Specific Fuel, Fuel Cat. or Service</th>
+                    <th class="required">Flight<span class="required"></span> and Destination Type</th>
+                    <th class="set-width"><span class="required">Charging</span> and Application Method</th>
+                    <th class="set-width required">Operated as</th>
+                    <th class="set-width required">New Valid From</th>
+                    <th class="align-text-middle">No Changes?</th>
+                    <th class="last align-text-middle"></th>
+                </tr>
+            </thead>
+            <tbody class="table-form-body">
+                {% for form in tax_rule_exception_formset%}
+                    <tr class="form-row form-{{forloop.counter0}} main">
+                        <td class="white"><div class='mb-1'>{{form.instance.tax.local_name}}</div>
+                            {{form.instance.tax.category}}<br>
+                            ({{form.instance.exception_airport.airport_details.icao_iata}})
+                        </td>
+                        <td>
+                        {% if form.instance.applies_to_fuel and form.instance.applies_to_fees %}
+                        <div class="stacked-input">
+                            {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fuel_cat %}
+                            {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fuel %}
+                            {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fee_category %}
+                        </div>
+                        {% elif form.instance.applies_to_fuel %}
+                        <div class="stacked-input">
+                            {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fuel_cat %}
+                            {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fuel %}
+                        </div>
+                        {% elif form.instance.applies_to_fees %}
+                            {% include 'pricing_pages_includes/_table_form_field.html' with field=form.specific_fee_category %}
+                        {% endif %}
+
+                        {{form.applies_to_fees.as_hidden}}
+                        {{form.applies_to_fuel.as_hidden}}
+                        {{form.exception_airport.as_hidden}}
+                        {{form.pax_must_stay_aboard.as_hidden}}
+                        {{form.waived_for_tech_stop.as_hidden}}
+                        {{form.taxable_tax.as_hidden}}
+                        {{form.taxable_exception.as_hidden}}
+                        </td>
+                        <td>
+                            <div class="stacked-input">
+                                {% include 'pricing_pages_includes/_table_form_field.html' with field=form.applicable_flight_type %}
+                                {% include 'pricing_pages_includes/_table_form_field.html' with field=form.geographic_flight_type %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="stacked-input">
+                                {% include 'pricing_pages_includes/_table_form_field.html' with field=form.charging_method %}
+                                <div class="flat-method d-none">
+                                    {% include 'pricing_pages_includes/_table_form_field.html' with field=form.application_method %}
+                                </div>
+                                <div class="fuel-method">
+                                    {% include 'pricing_pages_includes/_table_form_field.html' with field=form.fuel_pricing_unit %}
+                                </div>
+                              </div>
+                        </td>
+                        <td><div class="stacked-input white">
+                            <div class="space-apart">
+                                Commercial {% include 'pricing_pages_includes/_table_form_field.html' with field=form.applies_to_commercial %}
+                            </div>
+                            <div class="space-apart">
+                                Private {% include 'pricing_pages_includes/_table_form_field.html' with field=form.applies_to_private %}
+                            </div>
+                        </td>
+                        <td>{% include 'pricing_pages_includes/_table_form_field.html' with field=form.valid_from %}</td>
+                        <td><div class="checkbox-align">{% include 'pricing_pages_includes/_table_form_field.html' with field=form.no_change %}</div></td>
+                        <td class="align-text-middle">
+                            <button class="btn p-0 text-primary fw-bolder fas fa-trash text-danger hide-row" value='{{forloop.counter0}}'
+                            data-bs-toggle="modal" data-bs-target="#modal-expiration-{{forloop.counter0}}" type="button"></button>
+                            {% if fuel_fee_rate_formset.non_form_errors %}
+                            <i class="fas fa-exclamation text-danger"></i>
+                            {% endif %}
+                        </td>
+                        <td class='d-none'>
+                            {{form.DELETE}}
+                            {{form.confirm_checkbox}}
+                        </td>
+                        {{form.id.as_hidden}}
+                    </tr>
+                    <tr class="form-row form-{{forloop.counter0}} sub">
+                        <td></td>
+                        <td>
+                            <div class="column-flex">
+                                <label for="id_tax-rule-exception-{{forloop.counter0}}-band_1_type">Condition One Type</label>
+                                {% include 'pricing_pages_includes/_table_form_field.html' with field=form.band_1_type %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="column-flex">
+                                <label for="id_tax-rule-exception-{{forloop.counter0}}-band_2_type">Condition One Type</label>
+                                {% include 'pricing_pages_includes/_table_form_field.html' with field=form.band_2_type %}
+                            </div>
+                        </td>
+                        <td></td><td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr class="form-row form-{{forloop.counter0}} sub">
+                        <td>
+                            <div class="add-col">
+                                <button class="fas fa-plus text-success add-row supersede-add" id="{{forloop.counter0}}-add" type="button"></button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pricing-flex-small">
+                                <div>
+                                    <label for="id_tax-rule-exception-{{forloop.counter0}}-band_1_start">Condition One Start</label>
+                                    {{ form.band_1_start }}
+                                </div>
+                                <div>
+                                    <label for="id_tax-rule-exception-{{forloop.counter0}}-band_1_end">Condition One End</label>
+                                    {{ form.band_1_end }}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pricing-flex-small">
+                                <div>
+                                    <label for="id_tax-rule-exception-{{forloop.counter0}}-band_2_start">Condition Two Start</label>
+                                    {{ form.band_2_start }}
+                                </div>
+                                <div>
+                                    <label for="id_tax-rule-exception-{{forloop.counter0}}-band_2_end">Condition Two End</label>
+                                    {{ form.band_2_end }}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pricing-flex-small">
+                                <div>
+                                    <label for="id_tax-rule-exception-{{forloop.counter0}}-current_tax_rate">Old Rate</label>
+                                    {{ form.current_tax_rate }}
+                                </div>
+                                <div>
+                                    <label for="id_tax-rule-exception-{{forloop.counter0}}-band_pricing_amount">New Rate</label>
+                                    {{ form.band_pricing_amount }}
+                                </div>
+                            </div>
+                        </td>
+
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    {% with forloop.counter0 as main_counter %}
+                    {% for field_name, field in form.fields.items %}
+                    {% if "band_1_start-additional" in field_name %}
+                    <tr class="form-row form-{{main_counter}} sub">
+                        <td>
+                            <div class="deletion-col">
+                                <button class="fas fa-minus text-danger delete-row supersede-delete" type="button"></button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pricing-flex-small">
+                                {{ form|get_form_field:field_name }}
+                    {% endif %}
+
+                    {% if "band_1_end-additional" in field_name %}
+                                {{ form|get_form_field:field_name }}
+                            </div>
+                        </td>
+                    {% endif %}
+
+                    {% if "band_2_start-additional" in field_name %}
+                    <td>
+                        <div class="pricing-flex-small">
+                            {{ form|get_form_field:field_name }}
+                    {% endif %}
+
+                    {% if "band_2_end-additional" in field_name %}
+                            {{ form|get_form_field:field_name }}
+                        </div>
+                    </td>
+                    {% endif %}
+
+                    {% if "current_tax_rate-additional" in field_name %}
+                    <td>
+                        <div class="pricing-flex-small">
+                                {{ form|get_form_field:field_name }}
+                    {% endif %}
+
+                    {% if "band_pricing_amount-additional" in field_name %}
+                                {{ form|get_form_field:field_name }}
+                        </div>
+                    </td>
+                    <td></td><td></td><td></td><td></td>
+                    {% endif %}
+
+                    {% endfor %}
+                    {% endwith %}
+                    </tr>
+
+                    <tr class="form-{{forloop.counter0}} insert-before-band"></tr>
+                    {% if not forloop.last %}
+                    <tr class="empty-section">
+                        <td class ="empty-table-spacer"></td><td class ="empty-table-spacer"></td><td class ="empty-table-spacer"></td>
+                        <td class ="empty-table-spacer"></td><td class ="empty-table-spacer"></td><td class ="empty-table-spacer"></td>
+                        <td class ="empty-table-spacer"></td><td class ="empty-table-spacer"></td>
+                    </tr>
+                    {% endif %}
+
+                    <div class='form-modal'>
+                        <div class="modal fade" id="modal-expiration-{{forloop.counter0}}" data-bs-backdrop="static" aria-labelledby="modalExpirationLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="modalExpirationLabel">Specify the fee's expiration date</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group mb-3">
+                                        {% include 'includes/_form_field.html' with field=form.valid_to field_title='Validity End Date' %}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+
+    {% if show_modal %}
+    <div class="modal fade" id="notificationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="notificationModalLabel">
+                Changes in Taxed Taxes due to different core details of tax(es)
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="modal-text">
+
+                {% if exception_entity_list %}
+                <p>Modification in the following rows will cause the loss of taxable tax association for the following taxes:</p>
+                {% for row, entity_list in exception_entity_list.items %}
+                <ul>
+                    <li>Row {{row}}:
+                    {% for entry in entity_list %}
+                        <a class="text-danger underline"
+                        href="{{ entry.details_url }}"
+                        target="_blank">
+                        {{entry.tax.local_name|default_if_none:entry.tax.short_name}} - {{entry.tax.category}} - {{entry.exception_airport.airport_details.icao_iata}}</a>
+                        {% if not forloop.last %} / {% endif %}
+                    {% endfor %}
+                    </li>
+                </ul>
+
+                {% endfor %}
+                {% endif %}
+
+                {% if official_mismatch %}
+                <p>The following tax(es) will lose their associated official taxes after supersede:</p>
+                {% for row, entry in official_mismatch.items %}
+                <ul>
+                    <li>Row {{row}}:
+                    <a class="text-danger underline"
+                    href="{{ entry.details_url }}"
+                    target="_blank">
+                    {{entry.tax.local_name|default_if_none:entry.tax.short_name}} - {{entry.tax.category}} - {{entry.exception_airport.airport_details.icao_iata}}</a>
+                    {% if not forloop.last %} / {% endif %}
+                    </li>
+                 </ul>
+                {% endfor %}
+                {% endif %}
+
+                {% if exception_mismatch %}
+                <p>The following tax(es) will lose their associated supplier-defined taxes after supersede:</p>
+                {% for row, entry in exception_mismatch.items %}
+                <ul>
+                    <li>Row {{row}}:
+                    <a class="text-danger underline"
+                    href="{{ entry.details_url }}"
+                    target="_blank">
+                    {{entry.tax.local_name|default_if_none:entry.tax.short_name}} - {{entry.tax.category}} - {{entry.exception_airport.airport_details.icao_iata}}</a>
+                    {% if not forloop.last %} / {% endif %}
+                    </li>
+                 </ul>
+                {% endfor %}
+                {% endif %}
+
+              </p>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary add-new-row" data-bs-dismiss="modal">Go Back</button>
+              <button type="submit" value="save" class="btn btn-secondary confirm-deletion">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    <input type="hidden" name='button-pressed' class="button-pressed-input" value="">
+
+    <div class="button-row">
+        <button type="submit" value='fuel-pricing' class="btn btn-primary">Fuel Pricing</button>
+        <button type="submit" value='associated-fees' class="btn btn-primary {% if associated_fee_saved %}already-saved{% endif %}"
+            {% if associated_fee_saved %} disabled {% endif %}>Associated Fees
+        </button>
+        <button type="submit" value='save' class="btn btn-primary">Save</button>
+    </div>
+
+</form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+{{ tax_rule_exception_formset.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'js/fuel_pricing_market_supersede_supplier_defined_taxes.js' %}"></script>
+{% endblock javascripts %}

@@ -1,0 +1,28 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not metacontext.regional_taxes %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Regional Taxes</h2>
+            </div>
+
+            <div class="col text-end">
+                <a class="btn btn-sm btn-link p-0 pe-1 card-header-text-action-button
+                {% if not perms.pricing.p_create %} disabled {% endif %}"
+                type="button" name="button" href="{% url 'admin:tax_rule_create' pk=country.id type='regional' %}">
+                  Add Regional Tax</a>
+            </div>
+
+        </div>
+    </div>
+    {% if metacontext.regional_taxes %}
+        <div id="regional_tax_list" class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+            <div class="table-responsive ajax-datatable-container pt-0">
+                <table id="regional_tax_list_datatable" width="100%" class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact datatable-clickable"
+                    data-datatable-url="{% url 'admin:regional_tax_list_ajax' country.pk %}">
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+

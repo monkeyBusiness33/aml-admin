@@ -1,0 +1,40 @@
+version: '3'
+services:
+  aml_app:
+    container_name: aml_app
+    build:
+      context: .
+      dockerfile: .docker/app/Dockerfile
+    image: aml_app
+    restart: always
+    env_file: .env
+    security_opt:
+      - 'seccomp:unconfined'
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 3G
+    environment:
+        DB_HOST: docker.for.mac.host.internal
+        REDIS_HOST: docker.for.mac.host.internal
+        DEBUG: 0
+    ports:
+      - "7018:8000"
+
+  aml_nginx:
+    depends_on:
+        - aml_app
+    container_name: aml_nginx
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+      args:
+        APP_IMAGE: aml_app
+    image: aml_nginx
+    restart: always
+    env_file: .env
+    security_opt:
+      - 'seccomp:unconfined'
+    ports:
+        - "7008:80"

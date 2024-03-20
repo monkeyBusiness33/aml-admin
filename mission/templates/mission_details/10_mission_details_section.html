@@ -1,0 +1,18 @@
+<div class="card mb-2">
+{#  <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">#}
+{#    <h2 class="fs-5 fw-bold mb-0 me-auto">Mission Details</h2>#}
+{#  </div>#}
+
+  <div id="handling_request_details_header" class="card-body pb-1">
+    {% include 'mission_details/12_mission_details_body.html' %}
+  </div>
+
+  {% if request.app_mode == 'ops_portal' %}
+    {% include 'mission_details/17_ops_portal_buttons.html' %}
+  {% endif %}
+
+  {% if request.app_mode == 'dod_portal' %}
+    {% include 'mission_details/18_dod_portal_buttons.html' %}
+  {% endif %}
+
+</div>

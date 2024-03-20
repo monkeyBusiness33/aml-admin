@@ -1,0 +1,60 @@
+{% extends "email/base.html" %}
+
+{% block stylesheets %}
+  <style>
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #b3bdc6;
+    }
+
+    table td, table th {
+      padding: 5px;
+    }
+
+    tbody td, th {
+      border-style: solid;
+      border-color: #b3bdc6;
+    }
+
+  </style>
+{% endblock stylesheets %}
+
+{% autoescape on %}
+  {% block content %}
+    <p>
+      Dear {% for position in authorising_people %}
+      {{ position.person.full_repr }},
+      {% endfor %}
+    </p>
+
+    <p>
+      Please find attached a copy of the invoice for ground services provided for {{ handling_request.callsign }}
+      at {{ handling_request.location_short_repr }} with an arrival date of {{ handling_request.arrival_movement.date|date:'M-d-Y' }}
+      and departure date of {{ handling_request.departure_movement.date|date:'M-d-Y' }},
+      which was signed by {{ document.recent_file.signed_by.full_repr }} at {{ document.recent_file.signed_at|date:'M-d-Y' }}.
+    </p>
+
+    <p>
+      If you have any questions about this invoice please reply to this email or contact the
+      AML Global Operations Team directly using the contact details below.
+    </p>
+
+    <p>
+      Very respectfully,
+      <br><br><br><br>
+      The AML Global Operations Team
+      <br><br>
+      Ops: +1-786-220-1154 | ops@amlglobal.net
+    </p>
+
+  {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

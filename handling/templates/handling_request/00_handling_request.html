@@ -1,0 +1,130 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} S&F Request #{{ handling_request.id }} {% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<span class="badge hr_status_{{ handling_request.status }} w-100 fs-3 text-uppercase text-start px-3 mb-3">
+    <span class="align-middle">
+        {{ handling_request.callsign }}  -  {{ handling_request.airport.tiny_repr }}  -  {{ handling_request.eta_date.date|date:'Y-m-d' }} / {{ handling_request.etd_date.date|date:'Y-m-d' }} - {{ handling_request.get_full_status.detail }}
+    </span>
+    {% if request.app_mode == 'ops_portal' and handling_request.cancelled and handling_request.is_standalone %}
+        <button class="modal_button_validation bs-modal btn btn-sm btn-outline-white align-items-center float-end"
+                type="button" name="button" style="height:33px;"
+                data-form-url="{% url 'admin:handling_request_reinstate' handling_request.id %}">
+                Reinstate Mission</button>
+    {% endif %}
+    {% if request.app_mode == 'dod_portal' and handling_request.cancelled and handling_request.is_standalone and handling_request in managed_sfr_list %}
+        <button class="modal_button_validation bs-modal btn btn-sm btn-outline-white align-items-center float-end"
+                type="button" name="button" style="height:33px;"
+                data-form-url="{% url 'dod:handling_request_reinstate' handling_request.id %}">
+                    Reinstate Mission</button>
+    {% endif %}
+</span>
+
+  {% include 'handling_request/02_retrospective_sfr_banner.html' %}
+
+  {% if request.app_mode == 'ops_portal' %}
+    {% include 'handling_request/07_mil_team_notes.html' with entity=handling_request entity_slug="handling_request" %}
+    {% include 'handling_request/08_ops_checklist.html' with entity=handling_request %}
+  {% endif %}
+  {% include 'handling_request/07_dod_unable_to_support_msg.html' with handling_request=handling_request %}
+
+    <div class="card mb-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+            <h2 class="fs-5 fw-bold mb-0 me-auto">Request Details
+                {% if handling_request.recurrence_groups_membership.exists %}
+                    <i class="fas fa-redo me-1 small" data-bs-toggle="tooltip" data-bs-placement="right" title=""
+                       data-bs-original-title="This S&amp;F Request is a part of recurrence group"
+                       aria-label="This S&amp;F Request is a part of recurrence group"></i>
+
+                    {% if handling_request.is_cancelable %}
+                        {% if request.app_mode == 'ops_portal' %}
+                            <a class="modal_button_validation btn-link btn-sm small align-top p-0 mt-1" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Edit existing recurrence sequence" data-modal="#modal-xl"
+                               data-form-url="{% url 'admin:handling_request_update_recurrence' handling_request.recurrence_groups_membership.first.recurrence.pk %}">
+                                Edit Recurrence
+                            </a>
+                        {% endif %}
+
+                        {% if request.app_mode == 'dod_portal' %}
+                            <a class="modal_button_validation btn-link btn-sm small align-top p-0 mt-1" type="button"
+                               data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                               title="Edit existing recurrence sequence" data-modal="#modal-xl"
+                               data-form-url="{% url 'dod:handling_request_update_recurrence' handling_request.recurrence_groups_membership.first.recurrence.pk %}">
+                                Edit Recurrence
+                            </a>
+                        {% endif %}
+
+                    {% endif %}
+
+                {% endif %}
+            </h2>
+
+            {% include 'handling_request/12_details_header_actions.html' with handling_request=handling_request %}
+        </div>
+
+        <div id="handling_request_details_header" class="card-body pb-1">
+            {% include 'handling_request/10_request_details.html' with handling_request=handling_request %}
+        </div>
+
+        {% if request.app_mode == 'ops_portal' %}
+            {% include 'handling_request/17_details_buttons_ops.html' with handling_request=handling_request %}
+        {% endif %}
+
+        {% if request.app_mode == 'dod_portal' %}
+            {% include 'handling_request/18_details_buttons_dod.html' with handling_request=handling_request %}
+        {% endif %}
+
+    </div>
+
+  {% include 'handling_request/20_communications.html' with handling_request=handling_request %}
+
+    <div class="card mb-2">
+        <div class="card-header border-bottom">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="fs-5 fw-bold mb-0">Itinerary</h2>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    {% for movement in handling_request.movement.all %}
+                    {% if movement.direction_id == 'ARRIVAL' %}
+                        {% include 'handling_request/31_itinerary_header.html' with movement=movement handling_request=handling_request %}
+                        {% include 'handling_request/32_itinerary_table.html' with movement=movement handling_request=handling_request %}
+                    {% elif movement.direction_id == 'DEPARTURE' %}
+                        {% include 'handling_request/31_itinerary_header.html' with movement=movement handling_request=handling_request %}
+                        {% include 'handling_request/32_itinerary_table.html' with movement=movement handling_request=handling_request %}
+                    {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if request.app_mode == 'ops_portal' %}
+        {% include 'handling_request/41_documents_ops.html' with handling_request=handling_request %}
+        {% if handling_request.is_details_editable and handling_request.is_legacy_spf_v1 %}
+          {% include 'handling_request/50_spf.html' with handling_request=handling_request %}
+        {% endif %}
+      {% if not handling_request.is_legacy_spf_v1 %}
+      	{% include 'handling_request/53_spf_v2_services.html' with handling_request=handling_request %}
+      {% endif %}
+    {% elif request.app_mode == 'dod_portal' %}
+        {% include 'handling_request/42_documents_dod.html' with handling_request=handling_request %}
+    {% endif %}
+
+    {% include '_activity_log.html' with entity_slug='handling_request' entity=handling_request %}
+
+{% endblock content %}
+
+{% block javascripts %}
+    <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+    <script type="text/javascript" charset="utf8" src="{% static 'assets/js/notes_dashboard.js' %}"></script>
+    <script type="text/javascript" charset="utf8" src="{% static 'js/sfr_ops_checklist.js' %}"></script>
+{% endblock javascripts %}

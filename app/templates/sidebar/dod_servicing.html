@@ -1,0 +1,195 @@
+{% load filters %}
+
+{% if perms.handling %}
+  <li class="nav-item">
+    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center"
+          data-bs-toggle="collapse" data-bs-target="#handling-section"
+          aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'handling_request,handling_requests,handling_request_create,handling_request_update,handling_services,handling_service,handling_dla_services,handling_requests_calendar,handling_spf_to_reconcile,staff_chat,missions_list,missions_calendar,missions_create,missions_details,missions_update' %}true{% else %}false{% endif %}">
+      <span>
+        <span class="sidebar-icon"><span class="icon icon-xs me-2 fas fa-fighter-jet"></span></span>
+        <span class="sidebar-text">DoD Servicing</span>
+      </span>
+      <span class="link-arrow">
+        <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd"></path>
+        </svg>
+      </span>
+    </span>
+
+    <div
+      class="multi-level top-tier collapse {% if request.resolver_match.url_name|is_url_name_in:'handling_request,handling_requests,handling_requests_calendar,handling_request_create,handling_request_update,handling_services,handling_service,handling_dla_services,handling_requests_calendar,handling_spf_to_reconcile,staff_chat,missions_list,missions_calendar,missions_create,missions_details,missions_update' %} show {% endif %}"
+      role="list" id="handling-section" aria-expanded="false">
+      <ul class="flex-column nav">
+
+        {% if perms.handling.p_view %}
+          <li class="nav-item">
+            <span class="nav-link collapsed d-flex justify-content-between align-items-center"
+                  data-bs-toggle="collapse" data-bs-target="#sfr-section"
+                  aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'handling_request,handling_requests,handling_requests_calendar,handling_request_create,handling_request_update' %}true{% else %}false{% endif %}">
+                    <span>
+                        <span class="sidebar-text-contracted">S</span>
+                        <span class="sidebar-text">S&F Requests</span>
+                    </span>
+                    <span class="link-arrow">
+                        <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                             xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+            </span>
+            <div
+              class="multi-level collapse {% if request.resolver_match.url_name|is_url_name_in:'handling_request,handling_requests,handling_requests_calendar,handling_request_create,handling_request_update' %} show {% endif %}"
+              role="list" id="sfr-section" aria-expanded="false">
+              <ul class="flex-column nav">
+                <li
+                  class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'handling_request,handling_requests,handling_request_create,handling_request_update' %} active {% endif %}">
+                  <a class="nav-link" href="{% url 'admin:handling_requests' %}">
+                    <span class="sidebar-text-contracted">S</span>
+                    <span class="sidebar-text">S&F Requests List</span>
+                  </a>
+                </li>
+                <li
+                  class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'handling_request,handling_request_create,handling_request_update,handling_requests_calendar' %} active {% endif %}">
+                  <a class="nav-link" href="{% url 'admin:handling_requests_calendar' %}">
+                    <span class="sidebar-text-contracted">C</span>
+                    <span class="sidebar-text">S&F Requests Calendar</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <span class="nav-link collapsed d-flex justify-content-between align-items-center"
+                  data-bs-toggle="collapse" data-bs-target="#users-section"
+                  aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'missions_list,missions_calendar,missions_create,missions_details,missions_update' %}true{% else %}false{% endif %}">
+            <span>
+              <span class="sidebar-text-contracted">M</span>
+              <span class="sidebar-text">Missions</span>
+            </span>
+              <span class="link-arrow">
+                <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd"></path>
+                </svg>
+              </span>
+            </span>
+            <div
+              class="multi-level collapse {% if request.resolver_match.url_name|is_url_name_in:'missions_list,missions_calendar,missions_create,missions_details,missions_update' %} show {% endif %}"
+              role="list" id="users-section" aria-expanded="false">
+              <ul class="flex-column nav">
+
+                <li
+                  class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'missions_list,missions_create,missions_details,missions_update' %} active {% endif %}">
+                  <a class="nav-link" href="{% url 'admin:missions_list' %}">
+                    <span class="sidebar-text-contracted">L</span>
+                    <span class="sidebar-text">Mission List</span>
+                  </a>
+                </li>
+                <li
+                  class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'missions_calendar' %} active {% endif %}">
+                  <a class="nav-link" href="{% url 'admin:missions_calendar' %}">
+                    <span class="sidebar-text-contracted">R</span>
+                    <span class="sidebar-text">Mission Calendar</span>
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+          </li>
+        {% endif %}
+
+      {% if perms.handling.p_spf_v2_reconcile %}
+          <li class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'handling_spf_to_reconcile,' %} active {% endif %}">
+            <a class="nav-link" href="{% url 'admin:handling_spf_to_reconcile' %}">
+              <span class="sidebar-text-contracted">C</span>
+              <span class="sidebar-text">SPFs To Reconcile</span>
+              <span class="badge badge-sm bg-danger badge-pill mt-1 float-end spf_to_reconcile_counter"></span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% if perms.handling.p_dod_comms %}
+          <li class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'staff_chat,' %} active {% endif %}">
+            <a class="nav-link" href="{% url 'admin:staff_chat' %}">
+              <span class="sidebar-text-contracted">C</span>
+              <span class="sidebar-text">DoD Comms</span>
+              <span class="badge badge-sm bg-danger badge-pill mt-1 float-end chat_unread_messages_counter_raw"></span>
+            </a>
+          </li>
+        {% endif %}
+
+          {% if perms.handling.p_sfr_export_data %}
+          <li
+            class="nav-item{% if request.resolver_match.url_name|is_url_name_in:'missions_export,' %} active {% endif %}">
+            <a class="nav-link d-flex align-items-center justify-content-between modal_button_validation bs-modal"
+               data-form-url="{% url 'admin:missions_export' %}">
+              <span class="sidebar-text-contracted">E</span>
+              <span class="sidebar-text">Export Data</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% if perms.handling.p_dla_services_view %}
+          <li class="nav-item">
+            <span class="nav-link collapsed d-flex justify-content-between align-items-center"
+                  data-bs-toggle="collapse" data-bs-target="#services-section"
+                  aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'handling_services,handling_service,handling_dla_services' %}true{% else %}false{% endif %}">
+            <span>
+              <span class="sidebar-text-contracted">M</span>
+              <span class="sidebar-text">Services Management</span>
+            </span>
+              <span class="link-arrow">
+                <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd"></path>
+                </svg>
+              </span>
+            </span>
+            <div
+              class="multi-level collapse {% if request.resolver_match.url_name|is_url_name_in:'handling_services,handling_service,handling_dla_services' %} show {% endif %}"
+              role="list" id="services-section" aria-expanded="false">
+              <ul class="flex-column nav">
+
+              <li
+                  class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'handling_dla_services' %} active {% endif %}">
+                  <a class="nav-link" href="{% url 'admin:handling_dla_services' %}">
+                    <span class="sidebar-text-contracted">R</span>
+                    <span class="sidebar-text">DLA Services</span>
+                  </a>
+                </li>
+                <li
+                  class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'handling_services,handling_service' %} active {% endif %}">
+                  <a class="nav-link" href="{% url 'admin:handling_services' %}">
+                    <span class="sidebar-text-contracted">S</span>
+                    <span class="sidebar-text">Non-DLA Services</span>
+                  </a>
+                </li>
+
+              </ul>
+            </div>
+          </li>
+        {% endif %}
+
+        {% if perms.handling.p_manage_sfr_ops_checklist_settings %}
+          <li
+            class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'ops_checklist_settings' %} active {% endif %}">
+            <a class="nav-link" href="{% url 'admin:sfr_ops_checklist_settings' %}">
+              <span class="sidebar-text-contracted">O</span>
+              <span class="sidebar-text">Ops Checklist Settings</span>
+            </a>
+          </li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </li>
+{% endif %}

@@ -1,0 +1,4 @@
+- model: handling.handlingrequestdocumenttype
+  pk: 1
+  fields:
+    name: "General"

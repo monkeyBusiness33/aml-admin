@@ -1,0 +1,476 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load filters %}
+{% block title %}
+  Edit Supplier Tax {% endblock %}
+
+{% block stylesheets %}
+
+  {{ tax_formset.media.css }}
+  {{ tax_rule_exception_formset.media.css }}
+  {{ tax_source_formset.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-12 col-xl-12">
+      <div class="card border-0 shadow mb-4">
+
+        <div class="card-header p-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <h2 class="fs-5 fw-bold mb-0 form-title">
+                Edit Supplier-Defined Tax for {% firstof doc_instance.pld_name doc_instance %}
+              </h2>
+            </div>
+            <div class="col text-end">
+              <a href="{{ metacontext.back_url }}" class="datatable-buttons btn btn-outline-primary ms-1">Back</a>
+            </div>
+          </div>
+        </div>
+
+        <form id="tax_form" method="post" enctype="multipart/form-data">
+          {{ tax_formset.management_form }}
+          {{ tax_rule_exception_formset.management_form }}
+          {{ tax_source_formset.management_form }}
+          {% csrf_token %}
+          {% for form in tax_rule_exception_formset %}
+            {% with forloop.counter0 as counter %}
+              {{ form.id }}
+
+              {% if counter != 0 and not form.errors and not tax_rule_exception_formset.counter.errors %}
+                <div class="d-none form-section form-{{ counter }}">
+              {% else %}
+                <div class="form-section form-{{ counter }}">
+              {% endif %}
+
+              <hr class="header-start-line">
+              <div class="card-body pt-3">
+              <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                    Specific Location
+                </span>
+
+              <div class="airport row">
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.exception_airport field_title='Airport' %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.exception_country field_title='Country' %}
+                </div>
+                <span class="mb-3"></span>
+              </div>
+
+              <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                    Applicable Tax
+                </span>
+
+              {% for tax_form in tax_formset %}
+                {% if forloop.counter0 == counter %}
+                  {{ tax_form.id }}
+
+                  <div class="tax-form row form-{{ counter }}">
+                    <div class="col-md-4 mb-3 existing-tax">
+                      {% include 'includes/_form_field.html' with field=tax_form.tax_instance field_title='Existing Tax' %}
+                    </div>
+                    <div class="mb-3 add-new-tax">
+                      <div class="new-tax-text">Add New Tax Definition</div>
+                      <button class="new-tax-button" id="new-{{ forloop.counter0 }}" type='button'><i
+                        class='fas fa-plus new-tax-icon text-success'></i></button>
+                    </div>
+                  </div>
+
+                  <div class="tax-form row new-tax-row form-{{ counter }} d-none">
+                  <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=tax_form.category field_title='Category' %}
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=tax_form.local_name field_title='Local Name' %}
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=tax_form.short_name field_title='Short Name' %}
+                  </div>
+
+                {% endif %}
+              {% endfor %}
+
+            <span class="mb-3"></span>
+            </div>
+
+              {% for error in tax_rule_exception_formset.non_field_errors %}
+                <p class="text-danger">{{ error }}</p>
+              {% endfor %}
+
+              {% for error in tax_rule_exception_formset.non_form_errors %}
+                <p class="text-danger">{{ error }}</p>
+              {% endfor %}
+
+
+              <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                    Application Logic
+                </span>
+
+              <div class="row">
+                <div class="col-10">
+                  <div class="row">
+                    <div class="col-md-3 ps-4 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.applies_to_fuel field_title='Applies to Fuel?' %}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.applies_to_fees field_title='Applies to Fees?' %}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.applies_to_private field_title='Applies to Private Flights?' %}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.applies_to_commercial field_title='Applies to Commercial Flights?' %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-10">
+                  <div class="row">
+                    <div class="col-md-3 ps-4 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.pax_must_stay_aboard %}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.waived_for_tech_stop %}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.is_taxed_by_vat %}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.is_taxed_by_exception %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-10">
+                  <div class="row">
+                    <div class="col-md-3 ps-4 mb-3">
+                      {% include 'includes/_form_field.html' with field=form.exemption_available_with_cert %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr>
+
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.applicable_flight_type %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.geographic_flight_type %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  <div>
+                    <label for="id_new-tax-rule-exception-{{ counter }}-valid_from">{{ form.valid_from.label }}<span
+                      class='required'></span>
+                      <i class="ms-1 fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                         data-bs-original-title="Only 'Valid From' can be set, as 'Valid To' will be
+                                                        automatically set on supersede based on the next entry's 'Valid From' date minus a day."></i>
+                    </label>
+                    {{ form.valid_from }}
+                    {% if form.valid_from.errors %}
+                      {% for error in form.valid_from.errors %}
+                        <div class="invalid-feedback d-block">
+                          {{ error|escape }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.specific_fuel_cat %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.specific_fuel %}
+                </div>
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.specific_fee_category %}
+                </div>
+              </div>
+
+              <div class="row charging-methods">
+                <div class="col-md-4 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.charging_method field_title='Charging Method' %}
+                </div>
+                <div class="col-md-4 mb-3 application-method">
+                  {% include 'includes/_form_field.html' with field=form.application_method field_title='Application Method' %}
+                </div>
+                <div class="col-md-4 mb-3 fuel-application-method d-none">
+                  {% include 'includes/_form_field.html' with field=form.fuel_pricing_unit field_title='Application Method' %}
+                </div>
+                <div class="col-md-4 mb-3 default-pricing fixed-rate d-none">
+                  {% include 'includes/_form_field.html' with field=form.tax_unit_rate %}
+                </div>
+                <div class="col-md-4 mb-3 default-pricing percentage-rate">
+                  {% include 'includes/_form_field.html' with field=form.tax_percentage %}
+                </div>
+                <span class="mb-3"></span>
+              </div>
+
+              <div class="taxable-taxes d-none">
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.taxable_tax field_title='Official VAT' %}
+                </div>
+              </div>
+
+              <div class="taxable-exceptions d-none">
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.taxable_exception field_title='Exception VAT' %}
+                </div>
+              </div>
+
+              <div class="accordion" id="bandAccordion-{{ counter }}">
+                <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseBandAccordion-{{ counter }}"
+                        aria-expanded="true" aria-controls="collapseOne">
+                  <div class="flex-space-between">
+                    <span>Conditions</span>
+                    <span class="accordion-arrow">&#x25BC;</span>
+                  </div>
+                </button>
+
+                {% if 'band_1_start' in form.errors or 'band_1_end' in form.errors or 'band_2_start' in form.errors or 'band_2_end' in form.errors or 'band_1_type' in form.errors or 'band_2_type' in form.errors or 'band_pricing_amount' in form.errors or form.band_pricing_amount.initial != None %}
+                  <div id="collapseBandAccordion-{{ counter }}" class="accordion-collapse collapse show"
+                       data-bs-parent="#bandAccordion-{{ counter }}">
+                {% else %}
+                  <div id="collapseBandAccordion-{{ counter }}" class="accordion-collapse collapse"
+                       data-bs-parent="#bandAccordion-{{ counter }}">
+                {% endif %}
+
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.band_1_type field_title='Condition One Type' %}
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.band_2_type field_title='Condition Two Type' %}
+                  </div>
+                </div>
+
+                <div class="band-row row">
+                  <div class="col-md-2 mb-3 band-1 band-1-start">
+                    {% include 'includes/_form_field.html' with field=form.band_1_start field_title='Condition One Band Start' %}
+                  </div>
+                  <div class="col-md-2 mb-3 band-1 band-1-end">
+                    {% include 'includes/_form_field.html' with field=form.band_1_end field_title='Condition One Band End' %}
+                  </div>
+                  <div class="col-md-2 mb-3 band-2 band-2-start">
+                    {% include 'includes/_form_field.html' with field=form.band_2_start field_title='Condition Two Band Start' %}
+                  </div>
+                  <div class="col-md-2 mb-3 band-2 band-2-end">
+                    {% include 'includes/_form_field.html' with field=form.band_2_end field_title='Condition Two Band End' %}
+                  </div>
+                  <div class="col-md-2 mb-3 band-pricing d-none">
+                    {% include 'includes/_form_field.html' with field=form.band_pricing_amount field_title='Tax Percentage' %}
+                  </div>
+                </div>
+
+                {% for field_name, field in form.fields.items %}
+                  {% if "band_1_start-additional" in field_name %}
+                    <div class="row band-row">
+                    <div class="col-md-2 mb-3 band-1 band-1-start">
+                      <div>
+                        {{ form|get_form_field:field_name }}
+                      </div>
+                    </div>
+                  {% endif %}
+                {% if "band_1_end-additional" in field_name %}
+                  <div class="col-md-2 mb-3 band-1 band-1-end">
+                    <div>
+                      {{ form|get_form_field:field_name }}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if "band_2_start-additional" in field_name %}
+                  <div class="col-md-2 mb-3 band-2 band-2-start">
+                    <div>
+                      {{ form|get_form_field:field_name }}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if "band_2_end-additional" in field_name %}
+                  <div class="col-md-2 mb-3 band-2 band-2-end">
+                    <div>
+                      {{ form|get_form_field:field_name }}
+                    </div>
+                  </div>
+                {% endif %}
+                {% if "band_pricing_amount-additional" in field_name %}
+                  <div class="col-md-2 mb-3 band-pricing">
+                    <div>
+                      {{ form|get_form_field:field_name }}
+                    </div>
+                  </div>
+                  <div class="col md-4 mb-3 deletion-col">
+                    <button class="fas fa-minus text-danger delete-row" type="button"></button>
+                  </div>
+                  </div>
+                {% endif %}
+                {% endfor %}
+
+                <hr class="insert-before-band">
+                <button class="btn btn-primary mt-2 animate-up-2 new-band-button" id="form-{{ counter }}" type='button'>
+                  Add New Band
+                </button>
+                <button class="btn btn-primary mt-2 animate-up-2 revert-button" id="form-{{ counter }}" type='button'>
+                  Revert to Default
+                </button>
+                <div class="mb-3"></div>
+
+                </div>
+                </div>
+
+              <div class="accordion" id="commentsAccordion-{{ counter }}">
+                <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed"
+                        type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseCommentsAccordion-{{ counter }}" aria-expanded="true"
+                        aria-controls="collapseComments">
+                  <div class="flex-space-between">
+                    <span>Comments</span>
+                    <span class="accordion-arrow">&#x25BC;</span>
+                  </div>
+                </button>
+
+                {% if form.comments.value or 'comments' in form.errors %}
+                  <div id="collapseCommentsAccordion-{{ counter }}" class="accordion-collapse collapse show"
+                       data-bs-parent="#commentsAccordion-{{ counter }}">
+                {% else %}
+                  <div id="collapseCommentsAccordion-{{ counter }}" class="accordion-collapse collapse"
+                       data-bs-parent="#commentsAccordion-{{ counter }}">
+                {% endif %}
+
+                <div class="source-form row form-{{ counter }}">
+                  <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.comments %}
+                  </div>
+                  <span class="mb-3"></span>
+                </div>
+                </div>
+                </div>
+
+                {% for source_form in tax_source_formset %}
+                  {% if counter == forloop.counter0 %}
+                    {{ source_form.id }}
+
+                    <div class="accordion" id="sourceAccordion-{{ counter }}">
+                    <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed"
+                            type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSourceAccordion-{{ counter }}" aria-expanded="true"
+                            aria-controls="collapseSource">
+                      <div class="flex-space-between">
+                        <span>Source</span>
+                        <span class="accordion-arrow">&#x25BC;</span>
+                      </div>
+                    </button>
+
+                    {% if 'name' in source_form.errors or 'web_url' in source_form.errors or 'file_url' in source_form.errors %}
+                      <div id="collapseSourceAccordion-{{ counter }}" class="accordion-collapse collapse show"
+                           data-bs-parent="#sourceAccordion-{{ counter }}">
+                    {% else %}
+                      <div id="collapseSourceAccordion-{{ counter }}" class="accordion-collapse collapse"
+                           data-bs-parent="#sourceAccordion-{{ counter }}">
+                    {% endif %}
+
+                  <div class="source-form row form-{{ counter }}">
+                    <div class="col-md-4 mb-3">
+                      {% include 'includes/_form_field.html' with field=source_form.name %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      {% include 'includes/_form_field.html' with field=source_form.web_url %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      {% include 'includes/_form_field.html' with field=source_form.file_url %}
+                    </div>
+                    <span class="mb-3"></span>
+                  </div>
+                  </div>
+                  </div>
+                  {% endif %}
+                {% endfor %}
+
+                </div>
+              </div>
+            {% endwith %}
+          {% endfor %}
+
+          <hr class="footer-start-line">
+          <input type="hidden" name='button-pressed' class="button-pressed" value="">
+          <div class="pld-form-footer flex-space-between">
+            <button class="btn btn-primary mt-2 animate-up-2" type="submit">Save</button>
+          </div>
+
+          {% if show_modal %}
+            <div class="modal fade" id="notificationModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                 tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="notificationModalLabel">
+                      Changes in Taxed Taxes due to modified entry
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p class="modal-text">
+                      {% if conflicting_exception_taxes %}
+
+                        {% if conflicting_exception_taxes|length > 1 %}
+                          <p>The following 'Supplier-Defined Taxes' will no longer be taxed after saving this tax.</p>
+                        {% else %}
+                          <p>The following 'Supplier-Defined Tax' will no longer be taxed after saving this tax.</p>
+                        {% endif %}
+
+                        {% for entry in conflicting_exception_taxes %}
+                          <li><a class="text-danger underline"
+                                 href="{{ entry.details_url }}"
+                                 target="_blank">
+                            {{ entry.source_doc_name }} - {{ entry.get_tax_representation }}</a>
+                          </li>
+                        {% endfor %}
+                        <p></p>
+                      {% endif %}
+                    <p>You need to edit these taxes to conform with the current tax if they are still taxed by the
+                      current tax.</p>
+                    </p>
+                    <div class="d-none">
+                      {{ tax_rule_exception_formset.0.confirm_checkbox }}
+                    </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary add-new-row" data-bs-dismiss="modal">Go Back</button>
+                    <button type="submit" class="btn btn-secondary confirm-deletion" form="tax_form">Confirm</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+  {{ tax_formset.media.js }}
+  {{ tax_rule_exception_formset.media.js }}
+  {{ tax_source_formset.media.js }}
+
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script type="text/javascript" charset="utf8"
+          src="{% static 'js/fuel_pricing_market_supplier_defined_taxes_edit.js' %}"></script>
+{% endblock javascripts %}

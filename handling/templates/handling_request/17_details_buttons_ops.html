@@ -1,0 +1,205 @@
+<div class="d-sm-flex flex-wrap justify-content-end mb-1 mx-3">
+
+{#    Fuel Confirmation#}
+    {% if handling_request.fuel_required %}
+        {% if not handling_request.fuel_booking %}
+            <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:handling_request_fuel_booking_staff_update' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+                <i class="fas fa-gas-pump"></i> Confirm Fuel Uplift
+            </button>
+        {% elif handling_request.fuel_booking and not handling_request.fuel_booking.is_confirmed %}
+            <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:handling_request_fuel_booking_staff_update' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+                <i class="fas fa-gas-pump"></i> Confirm Fuel Uplift
+            </button>
+        {% elif handling_request.fuel_booking and handling_request.fuel_booking.is_confirmed %}
+            <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:handling_request_fuel_booking_staff_update' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+                <i class="fas fa-gas-pump"></i> Update Fuel Uplift
+            </button>
+        {% endif %}
+    {% endif %}
+
+    {# Handler Confirmation #}
+    {% if not handling_request.handling_agent and handling_request.is_ground_handling_confirmation_applicable %}
+        <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+                type="button" name="button"
+                data-form-url="{% url 'admin:handling_request_set_handler' handling_request.id %}"
+                {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+            <i class="fas fa-exclamation-triangle"></i> Select Ground Handler
+        </button>
+    {% endif %}
+
+    {% if handling_request.handling_agent and not handling_request.auto_spf %}
+        {% if not handling_request.is_ground_handling_request_can_be_sent %}
+        <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
+              title="GH Request could be sent after fuel confirmation">
+        {% endif %}
+            <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:send_handling_request' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_services_editable or not handling_request.is_ground_handling_request_can_be_sent %}disabled{% endif %}>
+                <i class="fas fa-exclamation-triangle"></i> Send Handling Request
+            </button>
+        {% if not handling_request.is_ground_handling_request_can_be_sent %}
+        </span>
+        {% endif %}
+    {% endif %}
+
+    {% if handling_request.handling_agent and handling_request.auto_spf and not handling_request.cancelled and handling_request.opened_gh_amendment_session and not handling_request.opened_gh_amendment_session.is_gh_sent %}
+        {% if handling_request.opened_gh_amendment_session.is_departure_update_after_arrival %}
+            <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:send_handling_request' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_departure_services_editable %}disabled{% endif %}>
+                <i class="fas fa-exclamation-triangle"></i> Send Departure Update to GH
+            </button>
+        {% else %}
+            <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:send_handling_request' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_services_editable %}
+                    disabled
+                    {% endif %}>
+                <i class="fas fa-exclamation-triangle"></i> Send Handling Booking Amendment
+            </button>
+        {% endif %}
+    {% elif handling_request.handling_agent and handling_request.is_ground_handling_can_be_cancelled %}
+        <button class="modal_button_validation bs-modal btn btn-outline-danger d-inline-flex align-items-center me-2"
+                type="button" name="button"
+                data-form-url="{% url 'admin:handling_request_ground_handling_cancellation' handling_request.id %}"
+                {% if not perms.handling.p_update %}
+                disabled
+                {% endif %}>
+            <i class="fas fa-exclamation-triangle"></i> Send Handling Booking Cancellation
+        </button>
+    {% elif handling_request.handling_agent and handling_request.handling_agent and handling_request.auto_spf %}
+        {% if handling_request.is_awaiting_departure_update_confirmation %}
+            <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:handling_request_ground_handling_confirmation' handling_request.id %}"
+                    {% if not perms.handling.p_update %} disabled {% endif %}>
+                <i class="fas fa-exclamation-triangle"></i> GH Confirmed Departure Update
+            </button>
+        {% else %}
+            <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center me-2"
+                    type="button" name="button"
+                    data-form-url="{% url 'admin:handling_request_ground_handling_confirmation' handling_request.id %}"
+                    {% if not perms.handling.p_update or not handling_request.is_services_editable or handling_request.is_handling_confirmed %}
+                    disabled
+                    {% endif %}>
+                <i class="fas fa-exclamation-triangle"></i> Ground Handling Confirmed
+            </button>
+        {% endif %}
+    {% endif %}
+
+  {% if handling_request.status == 4 %}
+    <button class="modal_button_validation bs-modal btn {{ handling_request.is_gh_signed_spf_request_can_be_sent|yesno:'btn-outline-warning,btn-outline-success' }} d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'admin:handling_request_request_signed_spf' handling_request.pk %}"
+      {% if not perms.handling.p_request_signed_spf or not handling_request.is_gh_signed_spf_request_can_be_sent %} disabled {% endif %}>
+      <i class="fas fa-exclamation-triangle"></i> Request Signed SPF
+    </button>
+  {% endif %}
+
+{#    Parking Confirmation #}
+    <button class="modal_button_validation bs-modal btn btn-outline-success d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'admin:handling_request_confirm_parking' handling_request.pk %}"
+            {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+        <i class="fas fa-parking"></i> {% if not handling_request.parking_apron %}Confirm Parking {% else %}Update
+        Parking {% endif %}</button>
+
+{#    AIR Card Confirmation #}
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'admin:handling_request_air_card_details' handling_request.id %}"
+            {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+        <i class="fas fa-credit-card"></i> AIR Card Details
+    </button>
+
+{#    PPR Confirmation #}
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'admin:handling_request_update_ppr' handling_request.id %}"
+            {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+        <i class="fas fa-credit-card"></i>{% if handling_request.is_ppr_number_set %}Update PPR {% else %}Confirm
+        PPR{% endif %}</button>
+
+</div>
+
+<div class="d-sm-flex flex-wrap justify-content-end mb-2 mx-3">
+
+  {% if handling_request.is_details_editable %}
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button" data-modal="#modal-xxl"
+            data-form-url="{% url 'admin:handling_request_payload' handling_request.id %}"
+            {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+      <i class="fas fa-luggage-cart"></i> Manage Payload
+    </button>
+
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button" data-modal="#modal-xl"
+            data-form-url="{% url 'admin:handling_request_change_person' handling_request.id %}"
+            {% if not perms.handling.p_update or not handling_request.is_services_editable %}disabled{% endif %}>
+      <i class="fas fa-user"></i> Manage Assigned Crew
+    </button>
+  {% endif %}
+
+  <a
+    class="btn btn-outline-primary d-inline-flex align-items-center me-2 {% if not perms.handling.p_create %}disabled{% endif %}"
+    href="{% url 'admin:handling_request_copy' handling_request.pk %}">
+    <i class="fas fa-copy"></i>
+    Copy S&F Request
+  </a>
+
+  {% if perms.handling.p_update %}
+
+    {% if not handling_request.is_aog %}
+      <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+              type="button" name="button"
+              data-form-url="{% url 'admin:handling_request_set_aog' handling_request.pk %}"
+        {% if not handling_request.is_aog_available %}
+              disabled
+        {% endif %}>
+        <i class="fas fa-tools"></i>
+        AOG
+      </button>
+    {% endif %}
+
+    {% if handling_request.is_aog %}
+      <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+              type="button" name="button"
+              data-form-url="{% url 'admin:handling_request_aircraft_serviceable' handling_request.departure_movement.pk %}">
+        <i class="fas fa-tools"></i>
+        Aircraft Serviceable
+      </button>
+    {% endif %}
+
+    <button class="modal_button_validation bs-modal btn btn-outline-danger d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'admin:handling_request_unable_to_support' handling_request.id %}"
+      {% if not handling_request.status == 10 and not handling_request.status == 1 %}
+            disabled
+      {% endif %}>
+      <i class="fas fa-ban"></i>
+      Unable to Support
+    </button>
+  {% endif %}
+
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'admin:handling_request_cancel' handling_request.id %}"
+            {% if not perms.handling.p_update or not handling_request.is_standalone or handling_request.cancelled or handling_request.spf_v2.is_reconciled %}
+            disabled
+            {% endif %}>
+        <i class="fas fa-ban"></i>
+        Cancel S&F Request
+    </button>
+</div>

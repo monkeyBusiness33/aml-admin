@@ -1,0 +1,61 @@
+{% load static %}
+{{form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+    <div class="modal-body">
+        {% if metacontext.text %}
+        {% autoescape off %}
+        <p>{{ metacontext.text }}</p>
+        {% endautoescape %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-4">
+                <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.air_card_prefix %}
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="col-md-12 mb-3">
+                    {% include 'includes/_form_field.html' with field=form.air_card_number %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            {% include 'includes/_form_field.html' with field=form.air_card_expiration %}
+        </div>
+
+        {% if form.instance.air_card_photo %}
+            <div style="height:390px">
+                <label> AIR Card Photo</label>
+                <img src="{{ form.instance.air_card_photo.url }}"
+                class="rounded img-thumbnail" alt="AIR Card Photo" height="350px" >
+            </div>
+        {% endif %}
+
+    </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}" data-bs-dismiss="modal">Close</button>
+    <button type="submit" class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">{% if metacontext.action_button_text %}{{ metacontext.action_button_text }}{% else %}Save{% endif %}</button>
+  </div>
+
+</form>
+
+{{form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/cleave.min.js' %}"></script>
+<script type="text/javascript" charset="utf8">
+var cleave = new Cleave('#id_air_card_expiration', {
+    date: true,
+    datePattern: ['m', 'y']
+});
+</script>

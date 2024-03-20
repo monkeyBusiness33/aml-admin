@@ -1,0 +1,222 @@
+{% load static %}
+
+<span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+  Organisation Details
+</span>
+
+{{ organisation_details_form.management_form }}
+{{ organisation_details_form.non_field_errors }}
+{{ organisation_restricted_form.non_field_errors }}
+
+<div class="row">
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_details_form.registered_name field_title='Registered / Legal Name' %}
+  </div>
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_details_form.trading_name field_title='Trading Name' field_subtitle='(if different)' %}
+  </div>
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_details_form.department_of field_title='Parent Organisation' field_subtitle='(if applicable)' %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_details_form.country field_title='Country of Registration' %}
+  </div>
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_details_form.tax_number field_title='Tax Number / ID' %}
+  </div>
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_restricted_form.invoiceable_organisation field_title='Invoiceable Organisation' field_subtitle='(if applicable)' %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mb-3">
+
+    <label class="{% if organisation_logo_motto_form.logo.required %}required{% endif %}"
+           for="{{ organisation_logo_motto_form.logo.id_for_label }}">
+      {{ organisation_logo_motto_form.logo.label }}
+    </label>
+
+    {# Field label checkbox #}
+    <div class="d-inline-block float-end">
+    <span>Cascade Logo/Motto to Departments
+      <label class="form-check-label mb-0 text-end" style="margin-bottom: -4px !important;">
+        {{ organisation_logo_motto_form.cascade_to_departments }}
+        <span class="form-check-sign">{{ field.label }}</span>
+      </label>
+      </span>
+    </div>
+
+    {{ organisation_logo_motto_form.logo }}
+    {% if organisation_logo_motto_form.logo.help_text %}
+      <small class="form-text text-muted">{{ organisation_logo_motto_form.logo.help_text|safe }}</small>
+    {% endif %}
+    {% if organisation_logo_motto_form.logo.errors %}
+      {% for error in organisation_logo_motto_form.logo.errors %}
+        <div class="invalid-feedback">
+          {{ error|escape }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+  </div>
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_logo_motto_form.motto %}
+  </div>
+  <div class="col-md-4 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_details_form.supplier_organisation %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_customer %}
+  </div>
+
+  <div class="col-md-2 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_fuel_seller %}
+  </div>
+
+  <div class="col-md-2 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_service_supplier %}
+  </div>
+
+  <div class="col-md-2 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_competitor %}
+  </div>
+
+  <div class="col-md-2 mb-3">
+    {% include 'includes/_form_field.html' with field=organisation_restricted_form.is_invoiceable %}
+  </div>
+
+  <span class="mb-3"></span>
+
+</div>
+
+{% if context == 'Create' %}
+  <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+    Organisation Type(s)
+  </span>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      {% include 'includes/_form_field.html' with field=organisation_details_form.type %}
+    </div>
+    <div class="col-md-8 mb-3">
+      {% include 'includes/_form_field.html' with field=organisation_details_form.secondary_types %}
+    </div>
+
+    <span class="mb-3"></span>
+
+  </div>
+{% endif %}
+
+<span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+    Addresses
+</span>
+
+{{ organisation_address_formset.management_form }}
+{{ organisation_address_formset.non_field_errors }}
+{{ organisation_address_formset.non_form_errors }}
+
+
+{% for form in organisation_address_formset %}
+  <div id="id_{{ form.prefix }}_card"
+       class="card mb-2 address_form{% if forloop.counter > 1 and not form.line_1.value %} d-none{% endif %}">
+    <div class="card-header p-2">
+
+      <div class="row align-items-center">
+        <div class="col">
+          Address {{ forloop.counter }}
+        </div>
+        <div class="col text-end">
+          <span class="d-none">{{ form.DELETE }}</span>
+          <button data-address-form-pre="{{ form.prefix }}"
+                  class="btn btn-sm btn-outline-danger del_organisation_address_btn" type="button">Delete
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="card-body p-2 px-3">
+      {{ form.management_form }}
+      {{ form.non_field_errors }}
+
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.line_1 %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.line_2 %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.line_3 %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.town_city %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.state %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.post_zip_code %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.country %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.airport %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.email field_title='Address-Specific Email' field_subtitle='(if applicable)' %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.phone field_title='Address-Specific Phone' field_subtitle='(if applicable)' %}
+        </div>
+        <div class="col-md-4 mb-3">
+          {% include 'includes/_form_field.html' with field=form.fax field_title='Address-Specific Fax' field_subtitle='(if applicable)' %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          {% include 'includes/_form_field.html' with field=form.is_primary_address %}
+        </div>
+        <div class="col-md-3 mb-3">
+          {% include 'includes/_form_field.html' with field=form.is_postal_address %}
+        </div>
+        <div class="col-md-3 mb-3">
+          {% include 'includes/_form_field.html' with field=form.is_physical_address %}
+        </div>
+        <div class="col-md-3 mb-3">
+          {% include 'includes/_form_field.html' with field=form.is_billing_address %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% endfor %}
+<div class="mt-2">
+  <button id="add_another_address_btn" type="button" class="btn btn-outline-success">Add Another Address</button>
+</div>
+<hr>
+<div class="mt-3">
+  <button class="btn btn-primary mt-2 animate-up-2" type="submit">Save</button>
+</div>

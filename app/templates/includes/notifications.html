@@ -1,0 +1,12 @@
+{% load static %}
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/notyf.js' %}"></script>
+
+{% for message in messages %}
+    <script>
+    notyf.open({
+        type: '{{message.tags}}',
+        message: '{{message}}'
+        });
+    </script>
+{% endfor %}

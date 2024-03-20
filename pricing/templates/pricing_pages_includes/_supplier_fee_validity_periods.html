@@ -1,0 +1,70 @@
+{% load filters %}
+
+<div class="accordion dynamic-section-container" id="validityAccordion-{{ forloop.counter0 }}">
+  <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+          data-bs-toggle="collapse" data-bs-target="#collapseValidityAccordion-{{ forloop.counter0 }}"
+          aria-expanded="true" aria-controls="collapseOne">
+    <div class="flex-space-between">
+      <span>Validity Period Details</span>
+      <span class="accordion-arrow">&#x25BC;</span>
+    </div>
+  </button>
+
+  {% if 'valid_from_dow' in form.errors or 'valid_to_dow' in form.errors or 'valid_from_time' in form.errors or 'valid_to_time' in form.errors or form.valid_from_dow.value %}
+    <div id="collapseValidityAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse show"
+         data-bs-parent="#validityAccordion-{{ forloop.counter0 }}">
+  {% else %}
+    <div id="collapseValidityAccordion-{{ forloop.counter0 }}" class="accordion-collapse collapse"
+         data-bs-parent="#validityAccordion-{{ forloop.counter0 }}">
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-3 mb-3 validity-time-type">
+      {% include 'includes/_form_field.html' with field=form.is_local %}
+    </div>
+  </div>
+  <div class="row validity-period-row">
+    <div class="col-md-3 mb-3">
+      {% include 'includes/_form_field.html' with field=form.valid_from_dow %}
+    </div>
+    <div class="col-md-3 mb-3">
+      {% include 'includes/_form_field.html' with field=form.valid_to_dow %}
+    </div>
+    <div class="col-md-2 mb-3">
+      {% include 'includes/_form_field.html' with field=form.valid_from_time %}
+    </div>
+    <div class="col-md-2 mb-3">
+      {% include 'includes/_form_field.html' with field=form.valid_to_time %}
+    </div>
+    <div class="col-md-1 mb-3">
+      {% include 'includes/_form_field.html' with field=form.valid_all_day %}
+    </div>
+  </div>
+
+  {% regroup form by field.group as rows %}
+  {% for row in rows %}
+    {% if 'additional-period-row' in row.grouper %}
+      <div class="row validity-period-row">
+        {% for field in row.list %}
+          <div class="{{ field.field.wrapper_classes }}">
+            {% include 'includes/_form_field.html' with field=field hide_label=True %}
+          </div>
+        {% endfor %}
+        <div class="col md-4 mb-3 deletion-col">
+          <button class="fas fa-minus text-danger delete-period-row" type="button"></button>
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+
+  <hr class="insert-before-validity-period">
+  <button class="btn btn-primary mt-2 animate-up-2 new-validity-period-button" type='button'>
+    Add New Period
+  </button>
+  <button class="btn btn-primary mt-2 animate-up-2 revert-validity-periods-button" type='button'>
+    Revert to Always Valid
+  </button>
+  <div class="mb-3"></div>
+  </div>
+  </div>

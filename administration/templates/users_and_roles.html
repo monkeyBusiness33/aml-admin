@@ -1,0 +1,80 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ metacontext.title }} {% endblock %}
+
+{% block content %}
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-3">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h5 class="ps-2 fw-bold mb-0">Staff Users</h5>
+        </div>
+
+        <div class="col text-end">
+
+        <button class="modal_button_validation bs-modal btn btn-sm btn-outline-primary"
+                  type="button" name="button" data-modal="#modal-lg"
+                  data-form-url="{% url 'admin:staff_user_invite' %}"
+            {% if 'administration.p_staff_user_invite' not in perms %} disabled {% endif %}>
+            <i class="fas fa-plus"></i>Invite New User
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="">
+      <div id="staff_users_list"
+           class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+        <div class="table-responsive ajax-datatable-container pt-0">
+          <table id="staff_users_list_datatable"
+                 class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                 data-datatable-url="{% url 'admin:staff_users_ajax' %}">
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow mb-4">
+    <div class="card-header p-3">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h5 class="ps-2 fw-bold mb-0">Staff Roles</h5>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation bs-modal btn btn-sm btn-outline-primary"
+                  type="button" name="button"
+                  data-form-url="{% url 'admin:users_roles_add' %}"
+            {% if 'administration.p_staff_role_create' not in perms %} disabled {% endif %}>
+            <i class="fas fa-plus"></i>Create Role
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="">
+      <div id="staff_roles_list"
+           class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+        <div class="table-responsive ajax-datatable-container pt-0">
+          <table id="staff_roles_list_datatable"
+                 class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                 data-datatable-url="{% url 'admin:staff_roles_ajax' %}">
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock content %}
+
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

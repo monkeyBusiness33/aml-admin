@@ -1,0 +1,70 @@
+{% autoescape on %}
+{% load static %}
+
+  <html lang="en">
+  <head>
+    <style>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      body {
+        font-family: Lato, serif !important;
+        font-size: 13px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .signature-table {
+        width: 540px;
+        margin-top: 50px;
+        margin-left: 45px;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .signature-table td {
+        padding: 3px;
+        border: #0a0a0a 2px solid;
+      }
+
+      .signature-text {
+        font-size: 12px;
+        font-style: italic;
+      }
+
+      .signature-image {
+        height: 70px;
+      }
+      .p-0 {
+        padding: 0 !important;
+      }
+    </style>
+  </head>
+  <body>
+
+  <table class="signature-table">
+    <tbody>
+
+    <tr>
+      <td rowspan="2" class="p-0">
+        <img class="signature-image" src="file://{{ signature_file }}" alt="Signature">
+      </td>
+      <td colspan="2" class="signature-text">
+        Please sign this invoice to confirm that the services listed were delivered and to the specified quantities.
+        If there is a discrepancy in the invoice or you wish to query it, please contact the AML Operations
+        team using the in-app chat functionality.
+      </td>
+    </tr>
+    <tr>
+      <td>{{ author.full_repr }}</td>
+      <td>{{ signing_datetime }}</td>
+    </tr>
+
+    </tbody>
+  </table>
+
+  </body>
+
+  </html>
+{% endautoescape %}

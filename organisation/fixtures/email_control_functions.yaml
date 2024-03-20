@@ -1,0 +1,35 @@
+- model: organisation.EmailFunction
+  pk: 1
+  fields:
+    name: "Ground Handling Confirmation"
+    codename: ground_handling_request
+
+- model: organisation.EmailFunction
+  pk: 2
+  fields:
+    name: "Ground Handling Amendment"
+    codename: ground_handling_request_amendment
+
+- model: organisation.EmailFunction
+  pk: 3
+  fields:
+    name: "Ground Handling Cancellation"
+    codename: ground_handling_request_cancellation
+
+- model: organisation.EmailFunction
+  pk: 4
+  fields:
+    name: "Ground Handler Parking Confirmation"
+    codename: ground_handler_parking_confirmation
+
+- model: organisation.EmailFunction
+  pk: 5
+  fields:
+    name: "Ground Handling Invoice (signed)"
+    codename: ground_handling_invoice_signed
+
+- model: organisation.EmailFunction
+  pk: 6
+  fields:
+    name: "Ground Handling Invoice (signable)"
+    codename: ground_handling_invoice_signable

@@ -1,0 +1,34 @@
+<div class="card border-0 shadow mb-2">
+    <div class="card-header p-3 {% if not handling_request.documents.exists %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">S&F Request Documents</h2>
+            </div>
+
+            <div class="col text-end">
+                <button class="modal_button_validation bs-modal btn btn-outline-primary"
+                        type="button" name="button"
+                        data-form-url="{% url 'dod:request_documents_create' handling_request.pk %}"
+                        {% if metacontext.button_perm not in perms %} disabled {% endif %}>Create Document</button>
+            </div>
+
+        </div>
+    </div>
+    {% if handling_request.documents.exists %}
+    <div>
+
+        <div id="handling_request_documents_list"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+            <div class="table-responsive ajax-datatable-container pt-0">
+                <table id="handling_request_documents_list_datatable" width="100%"
+                       class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                       data-datatable-url="{% url 'dod:request_documents_ajax' handling_request.pk %}">
+                </table>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+

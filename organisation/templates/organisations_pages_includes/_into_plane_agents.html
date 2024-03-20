@@ -1,0 +1,26 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not organisation.ipas_here.exists %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Into-Plane Agents</h2>
+            </div>
+
+        </div>
+    </div>
+    {% if organisation.ipas_here.exists %}
+    <div class="{{ organisation.operational_status.text_color }}">
+
+        <div id="airport_ipa_list" class="card {{ metacontext.page_css_class }} datatable-clickable compact_datatable">
+            <div class="table-responsive ajax-datatable-container pt-0">
+                <table id="airport_ipa_list_datatable" width="100%" class="table table-flush table-hover ajax-datatable align-middle nowrap">
+                </table>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+<script language="javascript">
+    var airport_ipa_list_datatable_uri = "{% url 'admin:airport_ipa_ajax' organisation.pk %}"
+</script>

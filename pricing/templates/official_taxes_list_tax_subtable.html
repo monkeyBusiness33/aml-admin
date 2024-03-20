@@ -1,0 +1,11 @@
+{% load static %}
+{% load filters %}
+
+<div id="{{table_name}}_child_list_{{object.pk}}" class="{{ metacontext.page_css_class }} datatable-clickable compact_datatable datatable_auto_compact_subtable_div">
+    <div class="table-responsive ajax-datatable-container pt-0">
+        <table id="{{table_name}}_child_list_datatable_{{object.pk}}" width="100%" class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_embed datatable_auto_compact_subtable sub-table"
+            data-datatable-url="{% url 'admin:official_taxes_children_ajax' object.pk %}" data-level="1">
+        </table>
+    </div>
+</div>
+<script type="text/javascript" charset="utf8" src="{% static 'js/datatables_official_taxes_embed.js' %}"></script>

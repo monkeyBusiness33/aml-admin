@@ -1,0 +1,7 @@
+{% load currency_uom_tags %}
+
+{% if tax_dets.percentage %}
+  {{ tax_dets.percentage }}%
+{% elif tax_dets.unit_price %}
+  {% as_currency tax_dets.unit_price tax_dets.original_currency tax_dets.original_pricing_unit.currency_division_used 4 %} {% price_unit_repr tax_dets short_desc %}
+{% endif %}

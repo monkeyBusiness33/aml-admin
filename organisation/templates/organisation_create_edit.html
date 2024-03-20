@@ -1,0 +1,52 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if organisation.pk %}
+    Edit Organisation Details: {{ organisation.details.registered_name }}
+  {% else %}
+    Add New Organisation
+  {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+  {{ organisation_address_formset.0.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+  <form id="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card border-0 shadow mb-4">
+
+          <div class="card-header p-3">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="fs-5 fw-bold mb-0">{% if organisation.pk %}Edit Organisation Details:
+                  {{ organisation.details.registered_name }}{% else %}Add New Organisation{% endif %}</h2>
+              </div>
+
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            {% include 'organisations_pages_includes/_organisation_form_org_details.html' with organisation=organisation%}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  <script language="javascript">
+    var organisation_duplicate_search_url = "{% url 'admin:organisation_duplicate_checker' %}"
+  </script>
+
+  {{ organisation_address_formset.0.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script src="{% static "js/organisation_create_edit.js" %}"></script>
+{% endblock javascripts %}

@@ -1,0 +1,93 @@
+{% load currency_uom_tags %}
+
+<div>
+  {% if results %}
+    <div class="card expandable-card">
+      <table class="borderless w-100 p-2 small">
+        <thead>
+        <tr class="bg-gray-300">
+          <th class="w-20 px-1 py-3 nowrap">Fuel</th>
+          <th class="w-20 px-1 py-3 nowrap">Supplier</th>
+          <th class="w-15 px-1 py-3 nowrap">IPA</th>
+          <th class="w-20 px-1 py-3 nowrap">Delivery Method</th>
+          <th class="w-20 px-1 py-3 nowrap">Apron</th>
+          <th class="w-20 px-1 py-3 nowrap">Pricing Type</th>
+          <th class="w-20 px-1 py-3 nowrap">Client-specific?</th>
+          <th class="w-20 px-1 py-3 nowrap">Fuel Price</th>
+          <th class="w-25 px-1 py-3 nowrap">Fees</th>
+          <th class="w-25 px-1 py-3 nowrap">Taxes</th>
+          <th class="w-25 px-1 py-3 nowrap">Total Uplift Cost</th>
+          <th class="w-25 px-1 py-3"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for rates in results %}
+          <tr class="results-{{ rates.status }} {{ rates.additional_classes }}">
+            <td class="px-1 py-2">
+              <span class="">{{ rates.fuel_type.name }}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="">{{ rates.supplier.trading_and_registered_name }}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="">{{ rates.ipa.trading_and_registered_name|default:'TBC / Confirmed on Order' }}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="">{{ rates.delivery_method_str|safe }}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="">{{ rates.apron_specific_str }}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="">{{ rates.fuel_price.pricing_link|safe }}
+                {% if rates.fuel_price.base_pricing_url %}
+                  <br>(<a href="{{ rates.fuel_price.base_pricing_url }}">Base Market Pricing</a>)
+                {% endif %}
+              </span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="">{{ rates.client_specific_pricing|yesno:'Yes,No' }}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="nowrap">{% as_currency rates.fuel_price.amount rates.currency %}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="nowrap">{% as_currency rates.fees.total rates.currency %}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="nowrap">{% as_currency rates.taxes.total rates.currency %}</span>
+            </td>
+            <td class="px-1 py-2">
+              <span class="nowrap">{% as_currency rates.total rates.currency %}</span>
+            </td>
+            <td>
+              <div class="px-1 py-2 d-flex h-100">
+                {{ rates.view_btn|safe|default:'' }}
+                <div class="align-middle text-primary">
+                  {{ rates.caution_icon|safe|default:'' }}
+                </div>
+                <div class="align-middle text-primary">
+                  {{ rates.handler_icon|safe|default:'' }}
+                </div>
+                <div class="align-middle text-primary">
+                  {{ rates.apron_icon|safe|default:'' }}
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="col px-4 py-3 expandable-card">
+      No applicable pricing found.
+    </div>
+  {% endif %}
+</div>
+
+{% block javascripts %}
+  <script>
+    load_modal_buttons();
+  </script>
+{% endblock javascripts %}

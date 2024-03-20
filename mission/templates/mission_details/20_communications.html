@@ -1,0 +1,49 @@
+{% load static %}
+{% with mission.chat_conversations.exists as chat_conversations_exists %}
+  {% if request.app_mode == 'ops_portal' and perms.handling.p_dod_comms or request.app_mode == 'dod_portal' %}
+    <div class="card border-0 shadow mb-2">
+      <div
+        class="card-header p-1 bg-primary text-white {% if not chat_conversations_exists %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+          <div class="col">
+            <h2 class="fs-6 ps-2 fw-bold mb-0">Communications</h2>
+          </div>
+
+          <div class="col text-end">
+            {% if not chat_conversations_exists %}
+
+              {% if request.app_mode == 'ops_portal' %}
+                <button class="modal_button_validation btn card-header-text-action-button"
+                        type="button" name="button"
+                        data-form-url="{% url 'admin:mission_chat_create' mission.pk %}"
+                  {% if not perms.mission.change_mission %} disabled {% endif %}>
+                  Start Conversation
+                </button>
+              {% endif %}
+              {% if request.app_mode == 'dod_portal' %}
+                <button class="modal_button_validation btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                        type="button" name="button"
+                        data-form-url="{% url 'dod:mission_chat_create' mission.pk %}">
+                  Start Conversation
+                </button>
+              {% endif %}
+
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+      {% if chat_conversations_exists %}
+
+        <script type="module" crossorigin src="{% static 'chat/index.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'chat/index.css' %}">
+        <div id="chat-app"></div>
+        <script>
+          window.conversation_id = "{{ mission.chat_conversation_id }}"
+        </script>
+
+      {% endif %}
+    </div>
+  {% endif %}
+{% endwith %}

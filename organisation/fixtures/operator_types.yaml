@@ -1,0 +1,288 @@
+- model: organisation.operatortype
+  pk: 1
+  fields:
+    name: "Airline (Passenger)"
+    operates_private_flights: false
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: true
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: true
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 2
+  fields:
+    name: "Airline (Cargo)"
+    operates_private_flights: false
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: true
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: true
+
+- model: organisation.operatortype
+  pk: 3
+  fields:
+    name: "Airline (Charter Passenger)"
+    operates_private_flights: false
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: true
+    operates_non_scheduled_passenger_flights: true
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 4
+  fields:
+    name: "Airline (Passenger & Cargo)"
+    operates_private_flights: false
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: true
+    operates_scheduled_cargo_flights: true
+    operates_non_scheduled_passenger_flights: true
+    operates_non_scheduled_cargo_flights: true
+
+- model: organisation.operatortype
+  pk: 5
+  fields:
+    name: "Private Aircraft Owner"
+    operates_private_flights: true
+    operates_public_transport_flights: false
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 6
+  fields:
+    name: "Business Aviation (AOC / Charter)"
+    operates_private_flights: true
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: true
+    operates_non_scheduled_cargo_flights: true
+
+- model: organisation.operatortype
+  pk: 7
+  fields:
+    name: "Business Aviation (AOC / Special Mission)"
+    operates_private_flights: true
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: true
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: true
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: true
+    operates_non_scheduled_cargo_flights: true
+
+- model: organisation.operatortype
+  pk: 8
+  fields:
+    name: "Business Aviation (Part-NCC / Private)"
+    operates_private_flights: true
+    operates_public_transport_flights: false
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 9
+  fields:
+    name: "Business Aviation (AOC / Air Ambulance)"
+    operates_private_flights: true
+    operates_public_transport_flights: true
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: true
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: true
+    operates_non_scheduled_cargo_flights: true
+
+- model: organisation.operatortype
+  pk: 10
+  fields:
+    name: "General Aviation (Aircraft Delivery)"
+    operates_private_flights: true
+    operates_public_transport_flights: false
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: true
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 11
+  fields:
+    name: "Emergency Services"
+    operates_private_flights: true
+    operates_public_transport_flights: false
+    operates_government_flights: true
+    operates_military_flights: false
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: true
+    operates_special_mission_flights: true
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 12
+  fields:
+    name: "Flight Training Organisation"
+    operates_private_flights: true
+    operates_public_transport_flights: false
+    operates_government_flights: false
+    operates_military_flights: false
+    operates_training_flights: true
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 13
+  fields:
+    name: "Military (Front-Line)"
+    operates_private_flights: false
+    operates_public_transport_flights: false
+    operates_government_flights: false
+    operates_military_flights: true
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 14
+  fields:
+    name: "Military (Airlift)"
+    operates_private_flights: false
+    operates_public_transport_flights: false
+    operates_government_flights: true
+    operates_military_flights: true
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: true
+
+- model: organisation.operatortype
+  pk: 15
+  fields:
+    name: "Military (VIP)"
+    operates_private_flights: false
+    operates_public_transport_flights: false
+    operates_government_flights: true
+    operates_military_flights: true
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: false
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 16
+  fields:
+    name: "Military (Special Mission)"
+    operates_private_flights: false
+    operates_public_transport_flights: false
+    operates_government_flights: false
+    operates_military_flights: true
+    operates_training_flights: false
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: true
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false
+
+- model: organisation.operatortype
+  pk: 17
+  fields:
+    name: "Military (Training)"
+    operates_private_flights: false
+    operates_public_transport_flights: false
+    operates_government_flights: true
+    operates_military_flights: true
+    operates_training_flights: true
+    operates_air_work_flights: false
+    operates_air_ambulance_flights: false
+    operates_special_mission_flights: true
+    operates_scheduled_passenger_flights: false
+    operates_scheduled_cargo_flights: false
+    operates_non_scheduled_passenger_flights: false
+    operates_non_scheduled_cargo_flights: false

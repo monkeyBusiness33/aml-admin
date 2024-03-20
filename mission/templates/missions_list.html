@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ metacontext.title }} {% endblock %}
+
+{% block stylesheets %}
+{% if metacontext.multiple_select_filters %}
+<link type="text/css" href="{% static 'assets/vendor/select2/select2.min.css' %}" rel="stylesheet">
+{% endif %}
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div id="{{ metacontext.page_id }}" class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_div">
+        <div class="table-responsive ajax-datatable-container">
+            <table id="{{ metacontext.page_id }}_datatable" width="100%" class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto"
+            data-datatable-uri="{% url metacontext.datatable_uri %}">
+            </table>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script language="javascript">
+var page_title = "{{ metacontext.title }}"
+var datatable_id = "{{ metacontext.page_id }}_datatable"
+var datatable_uri = "{% url metacontext.datatable_uri %}"
+var header_button_url = "{% if perms.metacontext.button_perm and metacontext.button_url %}{% url metacontext.button_url %}{% endif %}"
+var header_button_text = "{{ metacontext.button_text }}"
+var header_button_modal = "{{ metacontext.button_modal }}"
+var header_button_modal_size = "{{ metacontext.button_modal_size }}"
+const header_buttons_list = '{{ metacontext.header_buttons_list|safe }}'
+const header_checkbox_list = '{{ metacontext.header_checkbox_list|safe }}'
+</script>
+{% if metacontext.multiple_select_filters %}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/select2/select2.min.js' %}"></script>
+{% endif %}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/handling_requests_list_datatable_utils.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+{% endblock javascripts %}

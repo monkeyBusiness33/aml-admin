@@ -1,0 +1,104 @@
+{% load currency_uom_tags %}
+
+<div class="w-100 px-3 d-flex {{ tax.row_highlight_class }}">
+  {% if tax.official %}
+
+    <div class="w-50 border-right-black d-flex flex-column">
+      <div class="d-flex justify-content-between">
+        {% if tax.official.components|length > 1 %}
+          <span class="tax-name">{{ name }}</span>
+          <div class="fw-bolder pe-3 nowrap">{% as_currency tax.official.amount results_row.currency %}</div>
+        {% else %}
+          <div class="tax-label-long {% if forloop.last %}pb-1{% endif %}">
+            <span class="ms-2">{{ tax.official.components.0.notes_icon|safe|default:'' }}</span>
+            <span class="tax-name">{{ name }}{% if not tax.official.components.0.inc_in_pricing %},{% endif %}</span>
+            <span class="tax-unit">
+              {% for comp in tax.official.components %}
+                {% if not comp.inc_in_pricing %}
+                  {% include "pricing_pages_includes/_tax_unit.html" with tax_dets=comp short_desc=True %}
+                {% else %}
+                  (Included in fuel price)
+                {% endif %}
+              {% endfor %}
+            </span>
+          </div>
+          <div class="fw-bolder pe-3 nowrap">{% as_currency tax.official.amount results_row.currency %}</div>
+        {% endif %}
+      </div>
+
+      {% if tax.official.components|length > 1 %}
+        <ul class="mb-0 ps-3">
+          {% for comp in tax.official.components %}
+            <div class="d-flex w-100 justify-content-between">
+              <span class="tax-unit">
+                {% if not comp.inc_in_pricing %}
+                  {{ comp.notes_icon|safe|default:'' }}
+                  - {% include "pricing_pages_includes/_tax_unit.html" with tax_dets=comp short_desc=True %}
+                {% else %}
+                  - (Included in fuel price)
+                {% endif %}
+              </span>
+              <div class="pe-3 nowrap tax-component-total">{% as_currency comp.amount results_row.currency %}</div>
+            </div>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+  {% else %}
+
+    <div class="w-50 border-right-black pe-3">--</div>
+
+  {% endif %}
+  {% if tax.supplier %}
+
+    <div class="w-50 d-flex flex-column">
+      <div class="ps-3 d-flex justify-content-between">
+        {% if tax.supplier.components|length > 1 %}
+          <span class="tax-name">{{ name }}</span>
+          <div class="fw-bolder nowrap">{% as_currency tax.supplier.amount results_row.currency %}</div>
+        {% else %}
+          <div class="tax-label-long">
+            <span class="ms-2">{{ tax.supplier.components.0.notes_icon|safe|default:'' }}</span>
+            <span class="tax-name">{{ name }}{% if not tax.supplier.components.0.inc_in_pricing %},{% endif %}</span>
+            <span class="tax-unit">
+              {% for comp in tax.supplier.components %}
+                {% if not comp.inc_in_pricing %}
+                  {% include "pricing_pages_includes/_tax_unit.html" with tax_dets=comp short_desc=True %}
+                {% else %}
+                  (Included in fuel price)
+                {% endif %}
+              {% endfor %}
+            </span>
+          </div>
+          <div class="fw-bolder nowrap">{% as_currency tax.supplier.amount results_row.currency %}</div>
+        {% endif %}
+      </div>
+
+      {% if tax.supplier.components|length > 1 %}
+        <ul class="mb-0">
+          {% for comp in tax.supplier.components %}
+            <li class="d-flex w-100 justify-content-between">
+              <span class="tax-unit">
+                {% if not comp.inc_in_pricing %}
+                  {{ comp.notes_icon|safe|default:'' }}
+                  - {% include "pricing_pages_includes/_tax_unit.html" with tax_dets=comp short_desc=True %}
+                {% else %}
+                  - (Included in fuel price)
+                {% endif %}
+              </span>
+              <div class="nowrap tax-component-total">{% as_currency comp.amount results_row.currency %}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+  {% else %}
+
+    <div class="w-50 border-left-black">--</div>
+
+  {% endif %}
+</div>
+{% if forloop.last %}
+  <div class="w-50 border-right-black font-small pt-2"></div>{% endif %}

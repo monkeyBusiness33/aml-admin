@@ -1,0 +1,65 @@
+<div class="d-sm-flex flex-wrap justify-content-end mb-3 mx-3">
+
+<a
+  class="btn d-inline-flex align-items-center me-2 {% if mission.packet_pdf_details.is_full %}btn-outline-success{% else %}btn-outline-warning{% endif %} {% if not mission.packet_pdf_details.is_available %}disabled{% endif %}"
+  href="{% url 'dod:mission_packet_pdf' mission.pk %}">
+  <i class="fas fa-edit"></i>Get Mission Packet
+  {% if mission.packet_pdf_details.docs_total > 0 %}{{ mission.packet_pdf_details.docs_available }}/
+    {{ mission.packet_pdf_details.docs_total }}{% endif %}
+</a>
+
+  <button
+    class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+    type="button" name="button" data-form-url="{% url 'dod:mission_amend_timings' mission.pk %}"
+    {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}>
+    <i class="far fa-clock"></i> Amend Mission Timings
+  </button>
+
+  {% if not mission.is_confirmed %}
+    <button
+      class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+      type="button" name="button" data-form-url="{% url 'dod:missions_confirm' mission.pk %}"
+      {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}>
+      <i class="fas fa-check"></i> Confirm Drafted Mission
+    </button>
+  {% endif %}
+
+  <button
+    class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+    type="button" name="button" data-form-url="{% url 'dod:missions_update_crew' mission.pk %}"
+    data-modal="#modal-xxl"
+    {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}>
+    <i class="fas fa-users"></i> Manage Mission Crew
+  </button>
+
+  <button
+    class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+    type="button" name="button" data-form-url="{% url 'dod:missions_update_passengers' mission.pk %}"
+    data-modal="#modal-xxl"
+    {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}>
+    <i class="fas fa-users"></i> Manage Passengers
+  </button>
+
+  <button
+    class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+    type="button" name="button" data-form-url="{% url 'dod:missions_update_cargo' mission.pk %}"
+    data-modal="#modal-xxl"
+    {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}>
+    <i class="fas fa-cart-flatbed-suitcase"></i> Manage Cargo
+  </button>
+
+
+  <a
+    class="btn btn-outline-primary d-inline-flex align-items-center me-2 {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}"
+    href="{% url 'dod:missions_update' mission.pk %}">
+    <i class="fas fa-edit"></i>Update Mission
+  </a>
+
+  <button
+    class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+    type="button" name="button" data-form-url="{% url 'dod:missions_cancel' mission.pk %}"
+    {% if not mission.is_editable or not mission in managed_missions_list %}disabled{% endif %}>
+    <i class="fas fa-ban"></i> Cancel Mission
+  </button>
+
+</div>

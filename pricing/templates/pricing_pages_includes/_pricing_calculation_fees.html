@@ -1,0 +1,35 @@
+{% load currency_uom_tags %}
+
+<div class="border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+          <h2 class="fs-6 fw-bold mx-auto my-0">Fees</h2>
+        </div>
+        <div class="col pt-2 px-4 mb-2">
+          <table class="borderless">
+            <tbody>
+            {% if fees.list %}
+              <table class="w-100">
+                <tbody>
+                {% for id, fee in fees.list.items %}
+                  <tr class="d-flex justify-content-between">
+                    <td>{{ fee.notes_icon|safe|default:'' }}<span>{{ fee.display_name }},
+                      {% as_currency fee.unit_price fee.original_currency fee.original_pricing_unit.currency_division_used 4 %}
+                      {% price_unit_repr fee %}</span></td>
+                    <td class="fw-bolder nowrap">{% as_currency fee.amount results_row.currency %}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              No applicable fees found.
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

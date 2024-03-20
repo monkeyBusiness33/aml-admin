@@ -1,0 +1,235 @@
+
+body {
+    font-family: FuturaBookBT, serif !important;
+    font-size: 11px;
+    -webkit-font-smoothing: antialiased;
+    padding: 0;
+}
+
+div.break {
+    page-break-before:always;
+}
+
+.aml_bg {
+    background-color: #515d8a;
+    color: white;
+}
+
+.header {
+    margin-top: -95px;
+    padding-left: 35px;
+    padding-right: 35px;
+    font-weight: 500;
+    height: 90px;
+
+    top: 0;
+    position: fixed;
+    width: 100%;
+}
+
+.header_details {
+    padding-top: 30px;
+}
+
+.organisation_logo_container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.organisation_logo_container img {
+    width: 60px;
+    height: auto;
+}
+
+.organisation_logo_image {
+    width: auto;
+    height: auto;
+}
+
+.footer {
+    padding-top: 5px;
+    padding-left: 35px;
+    padding-right: 35px;
+    font-weight: 400;
+
+    margin-bottom: -45px;
+
+    bottom: 0;
+    position: fixed;
+    height: 45px;
+    width: 100%;
+}
+
+.footer_company_name_div {
+    padding-top: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.aml_logo_image_container {
+    padding-top: 6px;
+    vertical-align: middle;
+}
+
+.header_mission_number_value {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.aml_logo_image {
+    max-width: 70px;
+}
+
+.details_body {
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+.general_details {
+    text-align: center;
+    margin-bottom: -5px;
+}
+
+.details_title {
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 6px;
+}
+
+.details_title_handling_request {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.details_card {
+    margin-top: 7px;
+    break-inside: avoid-page;
+}
+
+.card-header {
+    font-weight: 700;
+    font-size: 0.75rem;
+    border-bottom: none;
+    padding: 3px;
+}
+
+.details_card table th {
+    font-weight: 200;
+    background-color: #eaecef;
+}
+
+.details_card table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.details_card td, .details_card th {
+    padding: 3px;
+}
+
+.details_card table th {
+    vertical-align: middle;
+}
+
+.details_card table th {
+    font-weight: bold;
+    text-align: center;
+}
+
+.details_card table td {
+    text-align: center;
+}
+
+.details_card table {
+    border-color: #515d8a;
+}
+
+.details_card .col_leg {
+    width: 30px;
+}
+
+.details_card .col_time {
+    width: 45px;
+}
+
+.border_bold {
+    border-left: #515d8a .090rem solid !important;
+}
+
+/*
+    Passenger Manifest Table
+*/
+
+.pax_payload_pax_num {
+    width: 40px;
+}
+
+.pax_payload_rank {
+    width: 50px;
+}
+
+.pax_payload_pax_name {
+    width: 200px;
+}
+
+.pax_payload_pax_weight {
+    width: 65px;
+}
+
+.pax_payload_pax_arr, .pax_payload_pax_dep {
+    width: 40px;
+    text-align: center;
+}
+
+.pax_payload_pax_note_div {
+    overflow: hidden;
+    height: 14px !important;
+}
+
+.pax_payload_total_weight {
+    text-align: right !important;
+}
+
+/*
+    Cargo Manifest Table
+*/
+
+.cargo_payload_qty {
+    width: 40px;
+}
+
+.cargo_payload_description_div {
+    overflow: hidden;
+    height: 14px !important;
+}
+
+.cargo_payload_dimensions {
+    width: 50px;
+}
+
+.cargo_payload_weight {
+    width: 50px;
+}
+
+.cargo_payload_dg, .cargo_payload_arr, .cargo_payload_dep {
+    width: 40px;
+    text-align: center;
+}
+
+/*
+    Payload Weight Table
+*/
+
+.payload_weight_vertical_th {
+    width: 120px;
+}
+
+.payload_flight_leg_col {
+    width: 20px;
+}
+
+.signature_card_body {
+    border-bottom: 1px #515d8a solid;
+}

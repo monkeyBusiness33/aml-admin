@@ -1,0 +1,121 @@
+- model: core.FuelEquipmentType
+  pk: 1
+  fields:
+    name: "Tank"
+- model: core.FuelEquipmentType
+  pk: 2
+  fields:
+    name: "Hydrant Dispenser"
+- model: core.FuelEquipmentType
+  pk: 3
+  fields:
+    name: "Hydrant Pit"
+- model: core.FuelEquipmentType
+  pk: 4
+  fields:
+    name: "Fuel Tanker"
+
+- model: core.FuelCategory
+  pk: 1
+  fields:
+    name: "Jet Turbine Fuel"
+- model: core.FuelCategory
+  pk: 2
+  fields:
+    name: "Aviation Gasoline"
+- model: core.FuelCategory
+  pk: 3
+  fields:
+    name: "Diesel Fuel"
+- model: core.FuelCategory
+  pk: 4
+  fields:
+    name: "JP-4 Only"
+
+#- model: core.FuelType
+#  pk: 1
+#  fields:
+#    name: "JET A1"
+#    iata_code: "JETA1"
+#    nato_code: "F-35"
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 2
+#  fields:
+#    name: "JET A"
+#    iata_code: "JETA"
+#    nato_code: null
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 3
+#  fields:
+#    name: "JET B"
+#    iata_code: "JETB"
+#    nato_code: null
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 4
+#  fields:
+#    name: "JP-4"
+#    iata_code: "JP4"
+#    nato_code: "F-40"
+##    contains_fsii: true
+#
+#- model: core.FuelType
+#  pk: 5
+#  fields:
+#    name: "JP-5"
+#    iata_code: "JP5"
+#    nato_code: "F-44"
+##    contains_fsii: true
+#
+#- model: core.FuelType
+#  pk: 6
+#  fields:
+#    name: "JP-8"
+#    iata_code: "JP8"
+#    nato_code: "F-34"
+##    contains_fsii: true
+#
+#- model: core.FuelType
+#  pk: 7
+#  fields:
+#    name: "TS-1"
+#    iata_code: "TS1"
+#    nato_code: null
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 8
+#  fields:
+#    name: "AVGAS"
+#    iata_code: "AG100"
+#    nato_code: "F-18"
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 9
+#  fields:
+#    name: "MOGAS"
+#    iata_code: "AG80"
+#    nato_code: null
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 10
+#  fields:
+#    name: "UL91"
+#    iata_code: null
+#    nato_code: null
+##    contains_fsii: false
+#
+#- model: core.FuelType
+#  pk: 11
+#  fields:
+#    name: "Diesel"
+#    iata_code: null
+#    nato_code: null
+##    contains_fsii: false

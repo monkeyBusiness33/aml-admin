@@ -1,0 +1,34 @@
+<div class="row align-items-center justify-content-center">
+  <div class="col-md-3 mb-3">
+    {{ calculation_id_field }}
+  </div>
+  <div class="col-md-4 mb-3 text-center">
+    <small>Calculated FX Rate</small>
+  </div>
+  <div class="col-md-4 mb-3 text-center">
+    <small>Override FX Rate</small>
+  </div>
+</div>
+{% for row in form_rows %}
+  <div class="row align-items-top justify-content-center">
+    <div class="col-md-3 text-end">
+      <div class="mt-2">
+        <span>{{ row.curr_codes }}</span>
+      </div>
+    </div>
+
+    <div class="col-md-4 form-group">
+      <div class="mb-3">
+        {% include 'includes/_form_field.html' with field=row.curr_xr hide_label=True %}
+      </div>
+    </div>
+
+    <div class="col-md-4 form-group">
+      <div class="mb-3">
+        {% include 'includes/_form_field.html' with field=row.new_xr hide_label=True %}
+      </div>
+    </div>
+  </div>
+  <div id="override-error-section" class="col-md-12 mt-3">
+  </div>
+{% endfor %}

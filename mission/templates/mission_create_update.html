@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}
+  {% if not mission %}
+    Create Mission
+  {% else %}
+    Update Mission
+  {% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{% static 'assets/vendor/flatpickr-4.6.13/themes/confetti.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12 col-xl-12 my-2">
+      <script type="module" crossorigin src="{% static 'mission/index.js' %}"></script>
+      <link rel="stylesheet" href="{% static 'mission/index.css' %}">
+      <div id="plane-app"></div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+  <script>
+  window.mission_id = {% if mission.pk %}{{ mission.pk }}{% else %}null{% endif %}
+  window.is_admin = {% if user.is_staff %}true{% else %}false{% endif %}
+  window.redirect_uri = "{% if request.app_mode == 'ops_portal' %}{% url 'admin:missions_details' 0 %}{% else %}{% url 'dod:missions_details' 0 %}{% endif %}"
+  </script>
+{% endblock javascripts %}

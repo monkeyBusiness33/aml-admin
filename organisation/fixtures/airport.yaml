@@ -1,0 +1,20 @@
+- model: organisation.AirportWeightUnit
+  pk: 1
+  fields:
+    name: "MTOW (kgs)"
+
+- model: organisation.AirportWeightUnit
+  pk: 2
+  fields:
+    name: "MTOW (lbs)"
+
+- model: organisation.AirportWeightUnit
+  pk: 3
+  fields:
+    name: "MLW (kgs)"
+
+- model: organisation.AirportWeightUnit
+  pk: 4
+  fields:
+    name: "MLW (lbs)"
+

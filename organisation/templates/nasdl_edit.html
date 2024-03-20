@@ -1,0 +1,118 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {% if organisation.nasdl_details %}Edit NASDL Details{% else %}
+  Create NASDL Details{% endif %}: {{ organisation.details.registered_name }} {% endblock %}
+
+{% block stylesheets %}
+  {{ nasdl_details_form.media.css }}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <form id="nasdl_details_form" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        <div class="card border-0 shadow mb-4">
+
+          <div class="card-header p-3">
+            <div class="row align-items-center">
+              <div class="col">
+                <h2 class="fs-5 fw-bold mb-0">{% if organisation.nasdl_details %}Edit Non-Airport Location Details
+                {% else %}Create Non-Airport Location Details{% endif %}:
+                  {{ organisation.details.registered_name }}</h2>
+              </div>
+
+            </div>
+          </div>
+          <div class="card-body pt-3">
+                    <span class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold">
+                        Non-Airport Location Details
+                    </span>
+            <div class="invalid-feedback">{{ nasdl_details_form.non_field_errors }}</div>
+            <div class="row pb-2">
+
+              <div class="col-6">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=nasdl_details_form.type %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+
+                    <what3words-autosuggest api_key="{{ WHAT3WORDS_API_KEY }}" return_coordinates=true
+                                            variant="inherit">
+                      <div>
+                        <label
+                          class="{% if nasdl_details_form.what3words_code.field.required %}required{% endif %}"
+                          for="{{ nasdl_details_form.what3words_code.id_for_label }}">
+                          {{ nasdl_details_form.what3words_code.label }}
+                        </label>
+                        {{ nasdl_details_form.what3words_code }}
+                        {% if nasdl_details_form.what3words_code.help_text %}
+                          <small
+                            class="form-text text-muted">{{ nasdl_details_form.what3words_code.help_text|safe }}</small>
+                        {% endif %}
+                        {% if nasdl_details_form.what3words_code.errors %}
+                          {% for error in field.errors %}
+                            <div class="invalid-feedback">
+                              {{ error|escape }}
+                            </div>
+                          {% endfor %}
+                        {% endif %}
+                      </div>
+                    </what3words-autosuggest>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=nasdl_details_form.latitude %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=nasdl_details_form.longitude %}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=nasdl_details_form.use_address %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    {% include 'includes/_form_field.html' with field=nasdl_details_form.comment_guidance %}
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="col-6 mb-2 ">
+                <div id="nasdl_map"></div>
+              </div>
+            </div>
+
+            <hr>
+            <div class="mt-3">
+              <button class="btn btn-primary mt-2 animate-up-2" type="submit">{% if organisation.nasdl_details %}Update Non-Airport
+                Location Details{% else %}Create Non-Airport Location Details{% endif %}</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  <script async type="module"
+          src="https://cdn.what3words.com/javascript-components@4-latest/dist/what3words/what3words.esm.js"></script>
+  <script async nomodule
+          src="https://cdn.what3words.com/javascript-components@4-latest/dist/what3words/what3words.js?key={{ WHAT3WORDS_API_KEY }}"></script>
+  <script async src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'js/nasdl_map.js' %}"></script>
+
+  {{ nasdl_details_form.media.js }}
+
+{% endblock javascripts %}

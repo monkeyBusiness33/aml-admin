@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="modal-header">
+  <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>Amend Mission Timings </h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+
+{% block javascripts %}
+
+{% endblock javascripts %}
+<div class="modal-body p-2">
+  <script type="module" src="{% static 'mission/index.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'mission/index.css' %}">
+  <div id="mission-amend-timings-modal"></div>
+</div>
+
+<script type="text/javascript" charset="utf8">
+  window.vue_elements_mode = "mission_amend_timings_modal"
+  window.mission_id = {{ mission.pk }}
+  window.is_admin = {% if user.is_staff %}true{% else %}false{% endif %}
+  window.redirect_uri = "{% if request.app_mode == 'ops_portal' %}{% url 'admin:missions_details' 0 %}{% else %}{% url 'dod:missions_details' 0 %}{% endif %}"
+</script>

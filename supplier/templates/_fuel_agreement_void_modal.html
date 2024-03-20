@@ -1,0 +1,56 @@
+{% load static %}
+{{ form.media.css }}
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% if metacontext.text %}
+      {% autoescape off %}
+        <p>{{ metacontext.text }}</p>
+      {% endautoescape %}
+    {% endif %}
+
+    <div class="row mb-3">
+      <div class="col-12">
+        {% include 'includes/_form_field.html' with field=form.end_date %}
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-12">
+        <label class="form-check-label">
+          {{ form.void_immediately }}
+          <span class="form-check-sign">{{ form.void_immediately.label }}</span>
+        </label><br/>
+        {% for error in form.void_immediately.errors %}
+          <div class="invalid-feedback" style="display: unset;">{{ error|safe }}</div>
+          {% if not forloop.last %}<br/>{% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}"
+            data-bs-dismiss="modal">Close
+    </button>
+    <button type="submit" form="{{ metacontext.form_id }}"
+            class="submit-btn btn {{ metacontext.action_button_class|default:'btn-secondary' }}">
+      {% if metacontext.action_button_text %}{{ metacontext.action_button_text }}{% else %}Save{% endif %}</button>
+  </div>
+
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+
+{% for script in metacontext.js_scripts %}
+  <script type="text/javascript" charset="utf8" src="{{ script }}"></script>
+{% endfor %}

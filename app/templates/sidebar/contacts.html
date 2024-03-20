@@ -1,0 +1,154 @@
+{% load filters %}
+
+{% if perms.core.p_contacts_view %}
+  <li class="nav-item">
+    <span class="nav-link  collapsed  d-flex justify-content-between align-items-center"
+          data-bs-toggle="collapse" data-bs-target="#contacts-section"
+          aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'organisations,aircraft_operators,aircraft_operators_create,aircraft_operators_edit,aircraft_operator,airports,airport,daos,dao,fuel_agents,fuel_agent_create,fuel_agent,fuel_agent_edit,fuel_resellers,fuel_reseller_create,fuel_reseller_edit,fuel_reseller,ipas,ipa,ipa_create,ipa_edit,ground_handlers,ground_handler,ground_handler_edit,ground_handler_create,oilcos,oilco,oilco_create,oilco_edit,nasdls,nasdl,nasdl_create,nasdl_edit,service_providers,service_provider,service_provider_create,service_provider_edit,trip_support_companies,trip_support_company,trip_support_company_create,trip_support_company_edit,sanctioned_organisations,sanctions_exceptions,' %}true{% else %}false{% endif %}">
+    <span>
+        <span class="sidebar-icon"><span class="icon icon-xs me-2 fas fa-users"></span></span>
+        <span class="sidebar-text">Contacts</span>
+    </span>
+      <span class="link-arrow">
+        <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z">
+          </path>
+        </svg>
+      </span>
+    </span>
+    <div
+      class="multi-level top-tier collapse {% if request.resolver_match.url_name|is_url_name_in:'organisations,aircraft_operators,aircraft_operators_create,aircraft_operators_edit,aircraft_operator,airports,airport,daos,dao,fuel_agents,fuel_agent_create,fuel_agent,fuel_agent_edit,fuel_resellers,fuel_reseller_create,fuel_reseller_edit,fuel_reseller,ipas,ipa,ipa_create,ipa_edit,ground_handlers,ground_handler,ground_handler_edit,ground_handler_create,oilcos,oilco,oilco_create,oilco_edit,nasdls,nasdl,nasdl_create,nasdl_edit,service_providers,service_provider,service_provider_create,service_provider_edit,trip_support_companies,trip_support_company,trip_support_company_create,trip_support_company_edit,sanctioned_organisations,sanctions_exceptions,people,person,person_create,person_edit' %} show {% endif %}"
+      role="list" id="contacts-section" aria-expanded="false">
+      <ul class="flex-column nav">
+        <li class="nav-item {% if request.resolver_match.url_name == 'organisations' %} active {% endif %}">
+          <span class="nav-link expandable-link collapsed d-flex justify-content-between align-items-center">
+            <a class="d-flex flex-grow-1" href="{% url 'admin:organisations' %}">
+            <span>
+                <span class="sidebar-text-contracted">O</span>
+                <span class="sidebar-text">Organisations</span>
+            </span>
+            </a>
+            <span class="link-arrow" data-bs-toggle="collapse" data-bs-target="#organisations-section"
+                  aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'organisations,aircraft_operators,aircraft_operators_create,aircraft_operators_edit,aircraft_operator,airports,airport,daos,dao,fuel_agents,fuel_agent_create,fuel_agent,fuel_agent_edit,fuel_resellers,fuel_reseller_create,fuel_reseller_edit,fuel_reseller,ipas,ipa,ipa_create,ipa_edit,ground_handlers,ground_handler,ground_handler_edit,ground_handler_create,oilcos,oilco,oilco_create,oilco_edit,nasdls,nasdl,nasdl_create,nasdl_edit,service_providers,service_provider,service_provider_create,service_provider_edit,trip_support_companies,trip_support_company,trip_support_company_create,trip_support_company_edit,sanctioned_organisations,sanctions_exceptions' %}true{% else %}false{% endif %}">
+              <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z">
+                </path>
+              </svg>
+            </span>
+          </span>
+          <div
+            class="multi-level collapse {% if request.resolver_match.url_name|is_url_name_in:'organisations,aircraft_operators,aircraft_operators_create,aircraft_operators_edit,aircraft_operator,airports,airport,daos,dao,fuel_agents,fuel_agent_create,fuel_agent,fuel_agent_edit,fuel_resellers,fuel_reseller_create,fuel_reseller_edit,fuel_reseller,ipas,ipa,ipa_create,ipa_edit,ground_handlers,ground_handler,ground_handler_edit,ground_handler_create,oilcos,oilco,oilco_create,oilco_edit,nasdls,nasdl,nasdl_create,nasdl_edit,service_providers,service_provider,service_provider_create,service_provider_edit,trip_support_companies,trip_support_company,trip_support_company_create,trip_support_company_edit,sanctioned_organisations,sanctions_exceptions' %} show {% endif %}"
+            role="list" id="organisations-section" aria-expanded="false">
+            <ul class="flex-column nav">
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'aircraft_operators,aircraft_operators_create,aircraft_operators_edit,aircraft_operator' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:aircraft_operators' %}">
+                  <span class="sidebar-text-contracted">O</span>
+                  <span class="sidebar-text">Aircraft Operators</span>
+                </a>
+              </li>
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'airports,airport' %} active {% endif %}">
+                <a class="nav-link airport" href="{% url 'admin:airports' %}">
+                  <span class="sidebar-text-contracted">A</span>
+                  <span class="sidebar-text">Airports</span>
+                </a>
+              </li>
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'daos,dao' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:daos' %}">
+                  <span class="sidebar-text-contracted">D</span>
+                  <span class="sidebar-text">DAOs</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'fuel_resellers,fuel_reseller_create,fuel_reseller_edit,fuel_reseller' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:fuel_resellers' %}">
+                  <span class="sidebar-text-contracted">FR</span>
+                  <span class="sidebar-text">Fuel Sellers</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'ground_handlers,ground_handler,ground_handler_edit,ground_handler_create' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:ground_handlers' %}">
+                  <span class="sidebar-text-contracted">G</span>
+                  <span class="sidebar-text">Ground Handlers</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'ipas,ipa,ipa_create,ipa_edit' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:ipas' %}">
+                  <span class="sidebar-text-contracted">I</span>
+                  <span class="sidebar-text">Into-Plane Agents</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'oilcos,oilco,oilco_create,oilco_edit' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:oilcos' %}">
+                  <span class="sidebar-text-contracted">I</span>
+                  <span class="sidebar-text">Oil Companies</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'nasdls,nasdl,nasdl_create,nasdl_edit' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:nasdls' %}">
+                  <span class="sidebar-text-contracted">N</span>
+                  <span class="sidebar-text">Non-Airport Locations</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'service_providers,service_provider,service_provider_create,service_provider_edit' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:service_providers' %}">
+                  <span class="sidebar-text-contracted">S</span>
+                  <span class="sidebar-text">Service Providers</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'trip_support_companies,trip_support_company,trip_support_company_create,trip_support_company_edit' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:trip_support_companies' %}">
+                  <span class="sidebar-text-contracted">T</span>
+                  <span class="sidebar-text">Trip Support Cos</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'sanctioned_organisations' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:sanctioned_organisations' %}">
+                  <span class="sidebar-text-contracted">S</span>
+                  <span class="sidebar-text "><i class="fas fa-ban"></i>Sanctioned</span>
+                </a>
+              </li>
+
+              <li
+                class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'sanctions_exceptions' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'admin:sanctions_exceptions' %}">
+                  <span class="sidebar-text-contracted">S</span>
+                  <span class="sidebar-text "><i class="fas fa-check"></i>Sanction Exceptions</span>
+                </a>
+              </li>
+
+            </ul>
+          </div>
+        </li>
+
+        <li
+          class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'people,person,person_create,person_edit' %} active {% endif %}">
+          <a class="nav-link" href="{% url 'admin:people' %}">
+            <span class="sidebar-text-contracted">P</span>
+            <span class="sidebar-text">People</span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </li>
+{% endif %}

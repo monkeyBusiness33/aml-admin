@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} {{ metacontext.title }} {% endblock %}
+
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'assets/vendor/select2/select2.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row align-items-center mb-3">
+    <div class="col-8">
+      <h2 class="fs-5 fw-bold mb-0">{{ metacontext.title }}</h2>
+    </div>
+  </div>
+
+  <!-- Tabs - navigation section  -->
+  <div class='org-details-navbar d-flex' data-org-type="{{ organisation.details.type }}">
+    <button id="addresses" class="nav-button btn btn-primary">Addresses</button>
+    <button id="recipient-rules" class="nav-button btn btn-primary">Specific Recipient Rules</button>
+    <button id="airport-rules" class="nav-button btn btn-primary">Specific Airport Rules</button>
+    <button id="country-rules" class="nav-button btn btn-primary">Specific Country Rules</button>
+  </div>
+
+  <!-- Tabs - page body section  -->
+  <div id="addresses-container" class="details-section d-none">
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        {% include 'email_distribution_control/_tab_addresses.html' %}
+      </div>
+    </div>
+  </div>
+
+  <div id="recipient-rules-container" class="details-section d-none">
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        {% include 'email_distribution_control/_tab_rules.html' with rule_target='recipient_organisation' %}
+      </div>
+    </div>
+  </div>
+
+  <div id="airport-rules-container" class="details-section d-none">
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        {% include 'email_distribution_control/_tab_rules.html' with rule_target='recipient_based_airport' %}
+      </div>
+    </div>
+  </div>
+
+  <div id="country-rules-container" class="details-section d-none">
+    <div class="row">
+      <div class="col-12 col-xl-12">
+        {% include 'email_distribution_control/_tab_rules.html' with rule_target='recipient_based_country' %}
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+  <script type="text/javascript" charset="utf8" src="{% static 'js/organisation_details.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/datatables.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/vendor/select2/select2.min.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+
+{% endblock javascripts %}

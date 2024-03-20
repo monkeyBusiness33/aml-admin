@@ -1,0 +1,60 @@
+<div class="d-sm-flex flex-wrap justify-content-end m-2 mx-3">
+  {% if handling_request in request.dod_selected_position.owned_sfr_list and handling_request.is_details_editable %}
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button" data-modal="#modal-xxl"
+            data-form-url="{% url 'dod:handling_request_payload' handling_request.pk %}"
+      {% if not handling_request.is_services_editable %}
+            disabled
+      {% endif %}>
+      <i class="fas fa-luggage-cart"></i> Manage Payload
+    </button>
+
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button" data-modal="#modal-xl"
+            data-form-url="{% url 'dod:request_manage_crew' handling_request.pk %}"
+      {% if not handling_request.is_services_editable %}
+            disabled
+      {% endif %}>
+      <i class="fas fa-users"></i> Manage Assigned Crew
+    </button>
+  {% endif %}
+
+  <a class="btn btn-outline-primary d-inline-flex align-items-center me-2"
+     href="{% url 'dod:request_copy' handling_request.pk %}">
+    <i class="fas fa-copy"></i>
+    Copy S&F Request
+  </a>
+
+  {% if handling_request in managed_sfr_list %}
+    {% if not handling_request.is_aog %}
+      <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+              type="button" name="button"
+              data-form-url="{% url 'dod:handling_request_set_aog' handling_request.pk %}"
+        {% if not handling_request.is_aog_available %}
+              disabled
+        {% endif %}>
+        <i class="fas fa-tools"></i>
+        AOG
+      </button>
+    {% endif %}
+
+    {% if handling_request.is_aog %}
+      <button class="modal_button_validation bs-modal btn btn-outline-warning d-inline-flex align-items-center me-2"
+              type="button" name="button"
+              data-form-url="{% url 'dod:handling_request_aircraft_serviceable' handling_request.departure_movement.pk %}">
+        <i class="fas fa-tools"></i>
+        Aircraft Serviceable
+      </button>
+    {% endif %}
+
+    <button class="modal_button_validation bs-modal btn btn-outline-primary d-inline-flex align-items-center me-2"
+            type="button" name="button"
+            data-form-url="{% url 'dod:handling_request_cancel' handling_request.id %}"
+      {% if not handling_request.is_standalone or handling_request.cancelled %}
+            disabled
+      {% endif %}>
+      <i class="fas fa-ban"></i>
+      Cancel S&F Request
+    </button>
+  {% endif %}
+</div>

@@ -1,0 +1,12 @@
+- model: handling.handlingrequestcrewmemberposition
+  pk: 1
+  fields:
+    name: "Flight Crew"
+- model: handling.handlingrequestcrewmemberposition
+  pk: 2
+  fields:
+    name: "Cabin Crew"
+- model: handling.handlingrequestcrewmemberposition
+  pk: 3
+  fields:
+    name: "Operational Crew"

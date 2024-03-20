@@ -1,0 +1,118 @@
+{% load static %}
+<!doctype html>
+
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width">
+	<title>:: AML Global ::</title>
+	<link rel="stylesheet" href="{% static 'frontpage/bootstrap-4.5.3-dist/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'frontpage/css/aml.css' %}">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+	{% comment %} {% recaptcha_init %}
+    {% recaptcha_ready action_name='homepage' %} {% endcomment %}
+</head>
+
+<body>
+
+	<!-- <div class="nav"> -->
+		<div class="navbar navbar-expand-lg navbar-dark sticky-top nav">
+			<div class="container">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle Navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<a class="navbar-brand navbar-right mr-0" href="/"><img class="aml-logo" src="/static/frontpage/img/aml_logo.png" alt="aml global"></a>
+			<div class="collapse navbar-collapse justify-content-md-center" id="navbar">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" href="#aboutus">About Us</a>
+					</li>
+{#					<li class="nav-item">#}
+{#						<a class="nav-link" href="#coverage">Coverage</a>#}
+{#					</li>#}
+					<li class="nav-item">
+						<a class="nav-link" href="#contact">Contact Us</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="https://fuel.amlglobal.net/" target="_blank">Client Portal / Login</a>
+					</li>
+{#					<li class="nav-item">#}
+{#						<a class="nav-link" href="#sustainability">Sustainability</a>#}
+{#					</li>#}
+					<li class="nav-item">
+						<a class="nav-link" href="#legal">Legal</a>
+					</li>
+					<li class="nav-item">
+						<div class="nav-link">
+						{{ time }} GMT
+						</div>
+					</li>
+				</ul>
+			</div>
+			</div>
+		</div>
+	<!-- </div> -->
+{% block content %}{% endblock content %}
+
+	<div class="foot">
+		<div class="container text-center text-white p-3">
+			Copyright &copy; AML Global Limited {% now "Y" %}
+		</div>
+	</div>
+	<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labeledby="modalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content text-dark">
+				<div class="modal-header">
+					<h5 class="modal-title w-100 text-center text-white" id="modalLabel">Sign In</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true" class="text-white">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body text-center py-4 px-5">
+					<form method="post" action="#">
+						<input class="form-control form-control-lg mb-3 text-center" type="text" name="username"
+							placeholder="Username">
+						<input class="form-control form-control-lg mb-3 text-center" type="password" name="password"
+							placeholder="Password">
+						<input class="btn btn-primary bg-blue btn-block btn-lg mb-3" type="button" value="Submit">
+						Forgot <a class="text-dark" href="/Home/ForgotUsername">Username</a> / <a class="text-dark"
+							href="/Home/ForgotPassword">Password</a> ?
+					</form>
+				</div>
+				<div class="modal-footer">
+					<div class="text-center">
+						*** If you are experiencing issues logging into your account please send email to <a
+							class="text-dark font-weight-bold"
+							href="mailto:fuelteam@amlglobal.net">fuelteam@amlglobal.net</a> or send message <a
+							class="text-dark font-weight-bold" href="/#contactus"
+							onclick="$('#modal').modal('hide')">here</a>.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Default Statcounter code for AMLGLOBALLIMITED
+https://www.amlglobal.net/ -->
+	<script type="text/javascript">
+		var sc_project = 12357586;
+		var sc_invisible = 0;
+		var sc_security = "435be0cc";
+		var scJsHost = "https://";
+		document.write("<sc" + "ript type='text/javascript' src='" +
+			scJsHost +
+			"statcounter.com/counter/counter.js'></" + "script>");
+	</script>
+	<noscript>
+		<div class="statcounter"><a title="Web Analytics" href="https://statcounter.com/" target="_blank"><img
+					class="statcounter" src="https://c.statcounter.com/12357586/0/435be0cc/0/" alt="Web Analytics"></a>
+		</div>
+	</noscript>
+	<!-- End of Statcounter Code -->
+<script src="{% static 'frontpage/js/aml.js' %}"></script>
+	</body>
+
+	</html>

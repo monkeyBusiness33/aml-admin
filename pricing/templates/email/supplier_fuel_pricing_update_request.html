@@ -1,0 +1,29 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+  {% block content %}
+    <p>Dear Colleagues,</p>
+
+    <p>
+      Could you please provide pricing updates for the following locations and fuels:
+    </p>
+
+    <p>
+      <table>
+        <tbody>
+        {% for location_icao_iata, fuel_types in locations_fuel_dict.items %}
+          <tr>
+            <td><b>{{ location_icao_iata }}:</b></td><td>{{ fuel_types|join:", " }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </p>
+
+    <p>
+      Please also advise any changes to applicable fees that have been updated since the last fuel pricing was issued.
+    </p>
+
+    {% include 'email/includes/user_footer.html' %}
+
+  {% endblock content %}
+{% endautoescape %}

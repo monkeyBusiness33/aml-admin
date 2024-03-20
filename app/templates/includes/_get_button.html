@@ -1,0 +1,9 @@
+{% if btn_modal %}
+    <button name="button" type="button" data-bs-toggle="modal" data-form-url="{{ url }}"
+            class="{% if modal_validation %}modal_button_validation{% else %}modal_button_novalidation{% endif %}
+                    bs-modal btn {{ class|default:'btn-gray-200' }}">
+        {{ title }}
+    </button>
+{% else %}
+    Not Implemented
+{% endif %}

@@ -1,0 +1,3 @@
+.django-flatpickr .form-control[readonly] {
+    background-color: unset;
+}

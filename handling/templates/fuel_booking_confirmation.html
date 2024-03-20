@@ -1,0 +1,100 @@
+{% extends "layouts/base-fullscreen.html" %}
+{% load i18n static %}
+{% block title %} Fuel Booking Confirmation {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+  {{ form.media.css }}
+  <link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+  <!-- Section -->
+  <section class="vh-100 bg-soft d-flex align-items-center">
+    <div class="container">
+      <div class="row justify-content-center form-bg-image">
+        <div class="col-12 d-flex align-items-center justify-content-center">
+          <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+            <div class="text-center text-md-center mb-0 mt-md-0">
+              <h1 class="mb-0 h3">
+                Fuel Booking Confirmation
+              </h1>
+              <br/>
+            </div>
+            {% for error in form.non_field_errors %}
+              <div class="alert alert-danger d-flex align-items-center is-invalid" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <div>
+                  {{ error }}
+                </div>
+              </div>
+            {% endfor %}
+            {% if not is_fuel_booking_confirmed %}
+              {% if not form.instance.is_confirmed %}
+                <div class="alert alert-success d-flex align-items-center is-invalid" role="alert">
+                  <i class="fas fa-exclamation-triangle me-2"></i>
+                  <div>
+                    Update of the existing fuel booking.
+                  </div>
+                </div>
+              {% endif %}
+              <form id="fuel_booking_confirmation" method="post" action="" class="mt-4"
+                    enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-md-12 mb-1">
+                  {% include 'includes/_form_field.html' with field=form.dla_contracted_fuel %}
+                </div>
+
+                {% if dla_contract %}
+                  {% autoescape off %}
+                    <div class="alert alert-danger d-flex align-items-center is-invalid mb-3"
+                         role="alert">
+                      <i class="fas fa-exclamation-triangle me-3"></i>
+                      <div>
+                        Please note that fuel at this location is contracted to
+                        <b>{{ dla_contract.supplier.full_repr }}</b>
+                      </div>
+                    </div>
+                  {% endautoescape %}
+                {% endif %}
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.reference %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.fuel_order_number %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.ipa %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.processed_by %}
+                </div>
+                <div class="col-md-12 mb-3">
+                  {% include 'includes/_form_field.html' with field=form.fuel_release %}
+                </div>
+
+                <div class="d-grid">
+                  <button type="submit" class="btn btn btn-primary mt-2">{% trans "Submit" %}</button>
+                </div>
+
+              </form>
+            {% elif not form.non_field_errors %}
+              <div class="alert alert-primary" role="alert">
+                <center>Fuel Booking submitted.</center>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+  {{ form.media.js }}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/fuel_booking_confirmation.js' %}"></script>
+{% endblock javascripts %}

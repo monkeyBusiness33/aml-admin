@@ -1,0 +1,163 @@
+{% load static %}
+{% load filters %}
+
+<nav id="sidebarMenu" class="sidebar d-lg-block bg-primary text-white collapse" data-simplebar>
+  <div class="sidebar-inner px-3 pt-3">
+    <div class="user-card d-flex d-md-none justify-content-between justify-content-md-center pb-4">
+      <div class="d-flex align-items-center">
+        <div class="d-block">
+          <h2 class="h5 mb-3">Hi, {{ request.user.username }}</h2>
+          <a href="{% url 'dod:logout' %}" class="btn btn-secondary btn-sm d-inline-flex align-items-center">
+            <svg class="icon icon-xxs me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Sign Out
+          </a>
+        </div>
+      </div>
+      <div class="collapse-close d-md-none">
+        <a href="#sidebarMenu" data-bs-toggle="collapse"
+           data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="true"
+           aria-label="Toggle navigation">
+          <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20"
+               xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+    <ul class="nav flex-column pt-3 pt-md-0">
+      <li class="nav-item d-flex justify-content-center sidebar-header">
+        <div class="text-center">
+          <span class="sidebar-icon sidebar-logo">
+            <img src="{% static 'assets/img/aml_logo.png' %}" width="50" alt="AML Logo">
+          </span>
+          <span class="align-middle text-center fw-bold sidebar-header-text">Flight Servicing Portal</span>
+        </div>
+      </li>
+      <li role="separator" class="dropdown-divider mt-0 mb-2 border-gray-700 sidebar-header-divider"></li>
+
+      {% if 'dod_planners' in request.dod_selected_position_perms %}
+        <li class="nav-item{% if request.resolver_match.url_name|is_url_name_in:'fleet' %} active {% endif %}">
+          <a href="{% url 'dod:fleet' %}" class="nav-link d-flex align-items-center justify-content-between">
+            <span>
+              <span class="sidebar-icon"><span class="icon icon-xs me-2 fas fa-warehouse"></span></span>
+              <span class="sidebar-text">Fleet</span>
+            </span>
+          </a>
+        </li>
+      {% endif %}
+
+      <li class="nav-item">
+        <span class="nav-link  collapsed  d-flex justify-content-between align-items-center"
+              data-bs-toggle="collapse" data-bs-target="#handling-section"
+              aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'missions_list,missions_calendar,missions_daily_schedule,missions_details' %}true{% else %}false{% endif %}">
+          <span>
+            <span class="sidebar-icon"><span class="icon icon-xs me-2 fas fa-calendar-alt"></span></span>
+            <span class="sidebar-text">Missions</span>
+          </span>
+          <span class="link-arrow">
+            <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"></path>
+            </svg>
+          </span>
+        </span>
+
+        <div
+          class="multi-level top-tier collapse {% if request.resolver_match.url_name|is_url_name_in:'missions_list,missions_calendar,missions_daily_schedule,missions_details' %} show {% endif %}"
+          role="list" id="handling-section" aria-expanded="false">
+          <ul class="flex-column nav">
+            <li
+              class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'missions_list,missions_details' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'dod:missions_list' %}">
+                <span class="sidebar-text-contracted">L</span>
+                <span class="sidebar-text">Mission List</span>
+              </a>
+            </li>
+            <li
+              class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'missions_calendar' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'dod:missions_calendar' %}">
+                <span class="sidebar-text-contracted">C</span>
+                <span class="sidebar-text">Mission Calendar</span>
+              </a>
+            </li>
+          <li
+            class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'missions_daily_schedule' %} active {% endif %}">
+            <a class="nav-link" href="{% url 'dod:missions_daily_schedule' %}">
+              <span class="sidebar-text-contracted">C</span>
+              <span class="sidebar-text">Mission Daily Schedule</span>
+            </a>
+          </li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <span class="nav-link  collapsed  d-flex justify-content-between align-items-center"
+              data-bs-toggle="collapse" data-bs-target="#missions-section"
+              aria-expanded="{% if request.resolver_match.url_name|is_url_name_in:'requests,handling_requests_calendar,request,request_create,request_update' %}true{% else %}false{% endif %}">
+          <span>
+            <span class="sidebar-icon"><span class="icon icon-xs me-2 fas fa-fighter-jet"></span></span>
+            <span class="sidebar-text">Standalone Servicing</span>
+          </span>
+          <span class="link-arrow">
+            <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"></path>
+            </svg>
+          </span>
+        </span>
+
+        <div
+          class="multi-level top-tier collapse {% if request.resolver_match.url_name|is_url_name_in:'requests,handling_requests_calendar,request,request_create,request_update' %} show {% endif %}"
+          role="list" id="missions-section" aria-expanded="false">
+          <ul class="flex-column nav">
+            <li
+              class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'requests,request,request_create,request_update' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'dod:requests' %}">
+                <span class="sidebar-text-contracted">L</span>
+                <span class="sidebar-text">SS List</span>
+              </a>
+            </li>
+            <li
+              class="nav-item {% if request.resolver_match.url_name|is_url_name_in:'handling_requests_calendar,request,request_create,request_update' %} active {% endif %}">
+              <a class="nav-link" href="{% url 'dod:handling_requests_calendar' %}">
+                <span class="sidebar-text-contracted">C</span>
+                <span class="sidebar-text">SS Calendar</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      {% if request.dod_selected_position.role.is_ops %}
+        <li
+          class="nav-item{% if request.resolver_match.url_name|is_url_name_in:'missions_export,' %} active {% endif %}">
+          <a class="nav-link d-flex align-items-center justify-content-between modal_button_validation bs-modal"
+             data-form-url="{% url 'dod:missions_export' %}">
+            <span>
+              <span class="sidebar-icon">
+                <span class="icon icon-xs me-2 fas fa-file-export"></span>
+              </span>
+              <span class="sidebar-text">Export Data</span>
+            </span>
+          </a>
+        </li>
+      {% endif %}
+
+    </ul>
+
+
+    {#    <div class="position-fixed bottom-0">#}
+    {#        <a class="font-small ms-3" href="{% url 'dod:tos' %}">AML DoD Terms & Conditions</a>#}
+    {#    </div>#}
+
+  </div>
+</nav>

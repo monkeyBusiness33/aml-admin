@@ -1,0 +1,23 @@
+.grid-3-col {
+    display: grid!important;
+    grid-template-columns: repeat(3, auto minmax(auto, 25%));
+    align-items: center
+}
+
+.grid-3-col div {
+    margin: 0.5rem 1rem 0.5rem 0.5rem;
+}
+
+.grid-3-col .grid-label {
+    padding-left: 1rem;
+}
+
+.grid-3-col .grid-value {
+    font-weight: 500 !important;
+}
+
+@media (max-width: 767.98px) {
+    .grid-3-col {
+        grid-template-columns: auto minmax(auto, 75%);
+    }
+}

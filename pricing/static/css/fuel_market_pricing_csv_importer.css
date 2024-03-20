@@ -1,0 +1,9 @@
+#reconcile-ipas-modal {
+    .form-control+span span {
+        font-size: 0.875rem!important;
+    }
+
+    .form-control:disabled {
+        background-color: #eee !important;
+    }
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "model": "core.hookupmethod",
+    "pk": "SP",
+    "fields": {
+      "name": "Single-Point Pressure Fueling"
+    }
+  },
+  {
+    "model": "core.hookupmethod",
+    "pk": "OW",
+    "fields": {
+      "name": "Over-Wing Fueling"
+    }
+  }
+]

@@ -1,0 +1,101 @@
+- model: organisation.organisationtype
+  pk: 1
+  fields:
+    name: "Aircraft Operator"
+    is_fuel_end_user: true
+
+- model: organisation.organisationtype
+  pk: 2
+  fields:
+    name: "Fuel Reseller"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 3
+  fields:
+    name: "Handling Agent"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 4
+  fields:
+    name: "Into-Plane Agent"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 5
+  fields:
+    name: "Oil Co"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 6
+  fields:
+    name: "Maintenance Organisation"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 7
+  fields:
+    name: "Handling Brand"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 8
+  fields:
+    name: "Airport"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 9
+  fields:
+    name: "Airport Authority"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 10
+  fields:
+    name: "Aircraft Manufacturer"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 11
+  fields:
+    name: "Trip Support Company"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 12
+  fields:
+    name: "Aviation Authority"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 13
+  fields:
+    name: "Fuel Agent"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 14
+  fields:
+    name: "Service Provider"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 1000
+  fields:
+    name: "AML Global Group Company"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 1001
+  fields:
+    name: "Defense Attaché Office"
+    is_fuel_end_user: false
+
+- model: organisation.organisationtype
+  pk: 1002
+  fields:
+    name: "Non-Airport Service Delivery Location"
+    is_fuel_end_user: false

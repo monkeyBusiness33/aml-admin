@@ -1,0 +1,237 @@
+- model: user.personrole
+  pk: 1
+  fields:
+    name: "Organisation Director"
+    code_name: "ORD"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 2
+  fields:
+    name: "Organisation Manager"
+    code_name: "ORM"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 3
+  fields:
+    name: "Sales Manager"
+    code_name: "SAM"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: true
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 4
+  fields:
+    name: "Sales Staff"
+    code_name: "SAS"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: true
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 5
+  fields:
+    name: "Operations Manager"
+    code_name: "OPM"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: true
+    is_sales: false
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 6
+  fields:
+    name: "Operations Staff"
+    code_name: "OPS"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: true
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 7
+  fields:
+    name: "Finance Manager"
+    code_name: "FIM"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: true
+    is_ops: false
+    is_sales: false
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 8
+  fields:
+    name: "Finance Staff"
+    code_name: "FIS"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: true
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 9
+  fields:
+    name: "Maintenance Manager"
+    code_name: "MAM"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: true
+    is_maintainer: true
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 10
+  fields:
+    name: "Maintenance Staff"
+    code_name: "MAS"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: true
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 11
+  fields:
+    name: "Fueling Manager"
+    code_name: "FUM"
+    is_flight_crew: false
+    is_refueller: true
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 12
+  fields:
+    name: "Fueling Staff"
+    code_name: "FUS"
+    is_flight_crew: false
+    is_refueller: true
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 13
+  fields:
+    name: "General Manager"
+    code_name: "GEM"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: true
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 14
+  fields:
+    name: "General Staff"
+    code_name: "OTS"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 15
+  fields:
+    name: "Flight Crew"
+    code_name: "FCR"
+    is_flight_crew: true
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: false
+
+- model: user.personrole
+  pk: 16
+  fields:
+    name: "Aircraft Owner"
+    code_name: "AON"
+    is_flight_crew: false
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: true
+
+- model: user.personrole
+  pk: 17
+  fields:
+    name: "Aircraft Owner-Pilot"
+    code_name: "AOP"
+    is_flight_crew: true
+    is_refueller: false
+    is_finance: false
+    is_ops: false
+    is_sales: false
+    is_management: false
+    is_maintainer: false
+    is_aircraft_owner: true

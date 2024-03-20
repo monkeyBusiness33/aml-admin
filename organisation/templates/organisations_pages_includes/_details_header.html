@@ -1,0 +1,18 @@
+<div class="row align-items-center mb-3">
+    <div class="col-8">
+        <h2 class="fs-5 fw-bold mb-0 {{ organisation.operational_status.header_color }}">{{ organisation.details.registered_and_trading_name }}</h2>
+        <small class="{{ organisation.operational_status.text_color }}">
+            {% if organisation.details.department_of.get_absolute_url %}
+            <a href="{{ organisation.details.department_of.get_absolute_url }}">{{ organisation.details.department_of.details.registered_and_trading_name }}</a>
+            {% else %}
+            {{ organisation.details.department_of.details.registered_and_trading_name }}
+            {% endif %}
+        </small>
+    </div>
+
+    <div class="col text-end">
+        <span class="badge organisation-status-badge {{ organisation.operational_status.badge_bg }}">
+            {{ organisation.operational_status.text }}
+        </span>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}
+  Team Availability Calendar
+{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" href="{% static 'assets/vendor/flatpickr-4.6.13/themes/confetti.css' %}">
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-12 col-xl-12 my-2">
+      <script type="module" crossorigin src="{% static 'staff/index.js' %}"></script>
+      <link rel="stylesheet" href="{% static 'staff/index.css' %}">
+      <div id="staff-calendar-app"></div>
+    </div>
+  </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+{% endblock javascripts %}

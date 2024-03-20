@@ -1,0 +1,306 @@
+{% autoescape on %}
+  {% load static tz %}
+  {% load partition_filters %}
+
+  <html lang="en">
+  <head>
+    <link rel="stylesheet" href="{{ static_path }}/assets/vendor/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ pdf_templates_path }}/pdf_v2.css">
+    <style>
+      @page {
+        size: A4;
+        margin-left: 0mm;
+        margin-right: 0mm;
+        margin-top: 95px;
+        margin-bottom: 45px;
+      }
+
+      @font-face {
+        font-family: 'FuturaBookBT';
+        src: url('{{ static_path }}/assets/fonts/futura_book_bt.ttf') format('truetype');
+      }
+
+      @font-face {
+        font-family: 'FuturaBookBT';
+        font-weight: bold;
+        src: url('{{ static_path }}/assets/fonts/futura_book_bold.ttf') format('truetype');
+      }
+    </style>
+  </head>
+
+  <header class="aml_bg header">
+
+    <div class="row">
+
+      <div class="col header_details">
+      <span class="header_created_at">
+        Created At: {{ mission.created_at|date:'M-d-Y H:i'|upper }}Z
+      </span>
+        <br/>
+        <span class="header_created_by">
+        Created By: {{ mission.created_by.fullname }}
+      </span>
+        <br/>
+      </div>
+
+      <div class="col text-center">
+        <div class="organisation_logo_container">
+          {% if mission.organisation.logo_motto.logo %}
+            <img src="{{ mission.organisation.logo_motto.logo.url }}"
+                 alt="Logo"
+                 class="organisation_logo_image">
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col header_details text-end">
+        <span class="header_mission_number_title">
+          Mission Number:
+        </span>
+        <br/>
+        <span class="header_mission_number_value pe-1">
+        {{ mission.mission_number_repr|default:'--' }}
+        </span>
+      </div>
+
+    </div>
+  </header>
+
+  <body>
+
+  <div class="details_body">
+    <div class="general_details">
+      <span class="details_title">
+        Mission Packet:
+      </span>
+      <br>
+      <span class="details_title_handling_request">
+        {{ mission.mission_number_repr }} - {{ mission.callsign }} - {{ mission.start_date|date:'M-d' }} - {{ mission.end_date|date:'M-d' }}
+      </span>
+    </div>
+
+    <div class="details_card mb-0">
+      <div class="card-header aml_bg">Itinerary</div>
+      <div class="details_card_body">
+        <table class="table table-bordered mb-0 pb-0">
+          <tbody>
+          <tr>
+            <th class="col_leg">Leg</th>
+
+            <th class="border_bold">From</th>
+            <th>Date</th>
+            <th class="col_time">Time (Z)</th>
+
+            <th class="border_bold">To</th>
+            <th>Date</th>
+            <th>Time (Z)</th>
+
+            <th class="border_bold">Pax</th>
+            <th>Cargo</th>
+            <th>Payload Lbs</th>
+
+            <th class="border_bold">AML Service</th>
+          </tr>
+
+          {% for mission_leg in mission.active_legs %}
+            <tr>
+              <td class="col_leg">{{ mission_leg.sequence_id }}</td>
+
+              <td class="border_bold">{{ mission_leg.departure_location.short_repr }}</td>
+              <td>{{ mission_leg.departure_datetime|date:'M-d-Y' }}</td>
+              <td class="col_time">{{ mission_leg.departure_datetime|date:'H:i' }}</td>
+
+              <td class="border_bold">{{ mission_leg.arrival_location.short_repr }}</td>
+              <td>{{ mission_leg.arrival_datetime|date:'M-d-Y' }}</td>
+              <td class="col_time">{{ mission_leg.arrival_datetime|date:'H:i' }}
+
+              <td class="border_bold">{{ mission_leg.pob_pax|default:'--' }}</td>
+              <td>{{ mission_leg.cob_lbs|default:'--' }}</td>
+              <td>{{ mission_leg.payload_total_lbs|default:'N/A' }}</td>
+
+              <td class="border_bold">{{ mission_leg.arrival_aml_service|yesno|capfirst }}</td>
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="details_card mb-0">
+      <div class="card-header aml_bg">Crew</div>
+      <div class="">
+        <table class="table table-bordered mb-0 pb-0">
+          <tbody>
+          <tr>
+            <th rowspan="2">Crew Member</th>
+            <th rowspan="2">Position</th>
+            <th colspan="{{ mission.active_legs.count }}" style="width: {{ flight_legs_header_width }}px;">Flight Legs
+            </th>
+          </tr>
+          <tr>
+            {% for mission_leg in mission.active_legs %}
+              <th class="payload_flight_leg_col">{{ mission_leg.sequence_id }}</th>
+            {% endfor %}
+          </tr>
+
+          {% for mission_crew_position in mission.mission_crew_positions.all %}
+            <tr>
+              <td>{{ mission_crew_position.person.fullname }}</td>
+              <td>{{ mission_crew_position.position }}</td>
+              {% for mission_leg in mission.active_legs %}
+                <td class="payload_flight_leg_col">
+                  {% if mission_leg in mission_crew_position.legs.all %}
+                    X
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="details_card mb-0">
+      <div class="card-header aml_bg">Passengers</div>
+      <div class="details_card_body">
+        <table class="table table-bordered mb-0 pb-0">
+          <tbody>
+
+          <tr>
+            <th class="pax_payload_rank" rowspan="2">Rank</th>
+            <th rowspan="2">Name</th>
+            <th class="pax_payload_pax_weight" rowspan="2">Wt (lbs)</th>
+            <th rowspan="2">Comments</th>
+            <th colspan="{{ mission.active_legs.count }}" style="width: {{ flight_legs_header_width }}px;">Flight Legs
+            </th>
+          </tr>
+          <tr>
+            {% for mission_leg in mission.active_legs %}
+              <th class="payload_flight_leg_col">{{ mission_leg.sequence_id }}</th>
+            {% endfor %}
+          </tr>
+
+          {% if passengers_payload.exists %}
+            {% for passenger in passengers_payload %}
+              {% include 'mission_packet_pdf/passengers_payload_row.html' with passenger=passenger %}
+            {% endfor %}
+          {% else %}
+            {% for passenger in passengers_payload_range %}
+              {% include 'mission_packet_pdf/passengers_payload_row.html' with passenger=passenger %}
+            {% endfor %}
+          {% endif %}
+
+          <tr>
+            <td class="pax_payload_total_weight" colspan="4">Total Passenger Weights (per Flight Leg):</td>
+            {% for mission_leg in mission.active_legs %}
+              <td>
+              {% if passengers_payload.exists %}
+              	{{ mission_leg.payload_passengers_lbs }}
+              {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="details_card mb-0">
+      <div class="card-header aml_bg">Cargo</div>
+      <div class="details_card_body">
+        <table class="table table-bordered mb-0 pb-0">
+          <tbody>
+
+          <tr>
+            <th rowspan="2">Description</th>
+            <th rowspan="2" class="cargo_payload_weight">Wt (lbs)</th>
+            <th rowspan="2" class="cargo_payload_dimensions">Dims.</th>
+            <th rowspan="2" class="cargo_payload_qty">Qty.</th>
+            <th rowspan="2" class="cargo_payload_dg">DG?</th>
+            <th rowspan="2">Comments</th>
+            <th colspan="{{ mission.active_legs.count }}" style="width: {{ flight_legs_header_width }}px;">Flight Legs
+            </th>
+          </tr>
+          <tr>
+            {% for mission_leg in mission.active_legs %}
+              <th class="payload_flight_leg_col">{{ mission_leg.sequence_id }}</th>
+            {% endfor %}
+          </tr>
+
+          {% if cargo_payload.exists %}
+            {% for row in cargo_payload %}
+              {% include 'mission_packet_pdf/cargo_payload_row.html' with cargo=cargo %}
+            {% endfor %}
+          {% else %}
+            {% for cargo in cargo_payloads_range %}
+              {% include 'mission_packet_pdf/cargo_payload_row.html' with cargo=cargo %}
+            {% endfor %}
+          {% endif %}
+
+          <tr>
+            <td class="pax_payload_total_weight" colspan="6">Total Cargo Weights (per Flight Leg):</td>
+            {% for mission_leg in mission.active_legs %}
+              <td>
+              {% if cargo_payload.exists %}
+              	{{ mission_leg.payload_cargo_lbs }}
+              {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-3">
+        <div class="details_card">
+          <div class="card-header bg-transparent">Signature</div>
+          <div class="signature_card_body p-3"></div>
+        </div>
+      </div>
+    </div>
+
+{#  <div class="break"></div>#}
+
+  </div>
+  </body>
+
+  <footer class="aml_bg footer">
+
+    <div class="row">
+      <div class="col footer_company_name_div">
+        <span class="footer_company_name">
+          AML GLOBAL LIMITED
+        </span>
+      </div>
+
+      <div class="col ms-5 footer_company_email_div">
+        <div class="d-flex flex-column">
+          <p class="header_created_by">AML Global Team Support:</p>
+          <p class="header_created_by">Email: ops@amlglobal.net</p>
+        </div>
+      </div>
+
+      <div class="col text-end">
+        <div class="aml_logo_image_container">
+          <img
+            src="{{ static_path }}/assets/img/aml_logo_slim.png"
+            alt="AML Logo"
+            class="aml_logo_image">
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  </html>
+{% endautoescape %}

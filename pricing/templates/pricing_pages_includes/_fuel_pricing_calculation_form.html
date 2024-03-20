@@ -1,0 +1,207 @@
+{% block content %}
+
+  <form id="fuel-pricing-calculation-form" enctype="multipart/form-data">
+    {{ formset.management_form }}
+    {{ formset.non_field_errors }}
+    {{ formset.non_form_errors }}
+    {% for form in formset %}
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-12 col-xl-12">
+          <div class="card border-0 shadow mb-4">
+
+            <div class="card-header p-1 bg-primary text-white">
+              <h2 class="fs-6 ps-2 fw-bold mb-0">Pricing Scenario</h2>
+            </div>
+            <div class="card-body pt-3">
+
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.fuel_type field_title=form.fuel_type.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3 d-flex">
+                    {% include 'includes/_form_field.html' with field=form.uplift_qty field_title=form.uplift_qty.label %}
+                    {% include 'includes/_form_field.html' with field=form.uplift_uom %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3 d-flex">
+                    {% include 'includes/_form_field.html' with field=form.uplift_datetime field_title=form.uplift_datetime.label %}
+                    {% include 'includes/_form_field.html' with field=form.uplift_time_type %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.location %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.is_international field_title=form.is_international.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.flight_type field_title=form.flight_type.label %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.is_private field_title=form.is_private.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.aircraft field_title=form.aircraft.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.aircraft_type field_title=form.aircraft_type.label %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.specific_client field_title=form.specific_client.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.handler field_title=form.handler.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.apron %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.overwing_fueling %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.currency field_title=form.currency.label %}
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+                  <div class="mb-3">
+                    {% include 'includes/_form_field.html' with field=form.override_xr %}
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="accordion" id="advancedOptionsAccordion">
+                <button class="badge bg-primary w-100 fs-6 text-start px-3 py-2 mb-3 fw-bold collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseAdvancedOptions"
+                        aria-expanded="true" aria-controls="collapseOne">
+                  <div class="flex-space-between">
+                    <span>Advanced Options</span>
+                    <span class="accordion-arrow">&#x25BC;</span>
+                  </div>
+                </button>
+
+                <div id="collapseAdvancedOptions" class="accordion-collapse collapse"
+                     data-bs-parent="#advancedOptionsAccordion">
+
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <div class="mb-3">
+                        {% include 'includes/_form_field.html' with field=form.is_fuel_taken %}
+                      </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                      <div class="mb-3">
+                        {% include 'includes/_form_field.html' with field=form.is_defueling %}
+                      </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                      <div class="mb-3">
+                        {% include 'includes/_form_field.html' with field=form.is_multi_vehicle %}
+                      </div>
+                    </div>
+                    <span class="mb-3"></span>
+                  </div>
+
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <div class="mb-3">
+                        {% include 'includes/_form_field.html' with field=form.extend_expired_agreement_client_pricing field_title=form.extend_expired_agreement_client_pricing.label|safe %}
+                      </div>
+                    </div>
+                    <span class="mb-3"></span>
+                  </div>
+                </div>
+              </div>
+
+
+              <span class="mb-3"></span>
+
+              <div class="mt-3 mb-4">
+                <button id="calculate_pricing_scenario_btn" type="button"
+                        class="btn btn-outline-success">{{ metacontext.btn_text }}</button>
+              </div>
+
+              <div id="supplier_fuel_pricing_header" class="card-header p-1 bg-primary text-white" hidden>
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Supplier Fuel Pricing</h2>
+              </div>
+
+              <div id="fuel-pricing-results" class="row">
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class='form-modal'>
+        <div class="modal fade" id="modal-override-xr" aria-labelledby="modalLabel"
+             aria-hidden="true" data-bs-backdrop="static">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Override Calculation Exchange Rates</h5>
+                <div><i class="ms-1 fa fa-info-circle" data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-original-title="For any Override fields that are left blank,
+                            the calculated FX rate will be used"></i>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="original-xr-btn" class="btn btn-secondary" data-bs-dismiss="modal">
+                  Use Original FX Rates
+                </button>
+                <button type="button" id="override-xr-btn" class="btn btn-primary" data-bs-dismiss="modal">
+                  Apply FX Rate Override
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </form>
+
+{% endblock content %}

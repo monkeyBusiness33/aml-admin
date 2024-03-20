@@ -1,0 +1,12 @@
+{% load static %}
+{% block stylesheets %}
+  <link type="text/css" href="{% static 'css/fuel_pricing_calculation.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="col-12 col-xl-12">
+    {% include 'pricing_pages_includes/_fuel_pricing_calculation_form.html' %}
+  </div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->

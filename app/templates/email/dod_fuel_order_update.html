@@ -1,0 +1,158 @@
+{% extends "email/base.html" %}
+{% autoescape on %}
+    {% block content %}
+        <pre>{{ amended_fields }}</pre>
+        <p>Dear Fuel Team,</p>
+
+        <p>
+            Please process the following {% if amendment %}<b>UPDATE </b> for {% endif %} US DoD fuel order:
+        </p>
+
+        {% if handling_request.fuel_dla_contract and handling_request.fuel_dla_contract.supplier %}
+            <p style="color: red; font-weight: bold">
+            ** Please note that fuel at this location is contracted to {{ handling_request.fuel_dla_contract.supplier.details.registered_name }} **
+            </p>
+        {% endif %}
+
+        <p>
+        <table>
+            <tbody>
+            <tr>
+                <td>Request Reference:</td>
+                <td><b>{{ handling_request.reference }}</b></td>
+            </tr>
+            <tr>
+                <td>Location of Uplift:</td>
+                <td>
+                    <span class="{% if diff_obj.airport.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.airport.value.tiny_repr }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Tail Number:</td>
+                <td>
+                    <span class="{% if diff_obj.tail_number.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.tail_number.value.registration|default:'Not yet assigned' }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Aircraft Type:</td>
+                <td>
+                    <span class="{% if diff_obj.aircraft_type.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.aircraft_type.value }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Callsign:</td>
+                <td>
+                    <span class="{% if diff_obj.callsign.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.callsign.value }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Unit:</td>
+                <td><b>{{ handling_request.customer_organisation.details.registered_name }}</b></td>
+            </tr>
+
+            <tr>
+                <td>ETA:</td>
+                {% filter upper %}
+                    <td>
+                        <span class="{% if diff_obj.arrival_movement.date.is_different %}value-updated{% endif %}">
+                            <b>{{ diff_obj.arrival_movement.date.value|date:'M d / H:i' }}Z</b>
+                        </span>
+                    </td>
+                {% endfilter %}
+            </tr>
+
+            <tr>
+                <td>ETD:</td>
+                {% filter upper %}
+                    <td>
+                        <span class="{% if diff_obj.departure_movement.date.is_different %}value-updated{% endif %}">
+                            <b>{{ diff_obj.departure_movement.date.value|date:'M d / H:i' }}Z</b>
+                        </span>
+                    </td>
+                {% endfilter %}
+            </tr>
+
+            <tr>
+                <td>Destination of Flight:</td>
+                <td>
+                    <span class="{% if diff_obj.departure_movement.airport.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.departure_movement.airport.value.short_repr|default:'N/A' }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Fuel Required On:</td>
+                <td>
+                    <span class="{% if diff_obj.fuel_required.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.fuel_required.value.code|capfirst }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Fuel Quantity Requested:</td>
+                <td>
+                    <b>
+                    <span class="{% if diff_obj.fuel_quantity.is_different %}value-updated{% endif %}">
+                        {{ diff_obj.fuel_quantity.value }}
+                    </span>
+                        <span class="{% if diff_obj.fuel_unit.is_different %}value-updated{% endif %}">
+                        {{ diff_obj.fuel_unit.value.code }}
+                    </span>
+                    </b>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Prist Required?:</td>
+                <td>
+                    <span class="{% if diff_obj.fuel_prist_required.is_different %}value-updated{% endif %}">
+                        <b>{{ diff_obj.fuel_prist_required.value|yesno|capfirst }}</b>
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Requested By:</td>
+                <td>
+                    <b>{{ handling_request.primary_contact.details.first_name }} {{ handling_request.primary_contact.details.last_name }}</b>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        {% if handling_request.enforce_fuel_order_note %}
+          <br/><span style="color: red">{{ handling_request.enforce_fuel_order_note }}</span><br/>
+        {% endif %}
+
+        <br/>
+        Once the fuel order is confirmed, please click on the button below to submit the details to the client:
+        </p>
+
+        <p>
+        <center>
+            <a href="http://{{ domain }}{{ fuel_booking_confirmation_url }}" target="_blank">
+                <button class="button">FUEL ORDER CONFIRMED</button>
+            </a>
+        </center>
+        </p>
+
+    {% endblock content %}
+{% endautoescape %}
+
+{% block under_footer %}
+  {% include 'email/sfr_footer_reference.html' with handling_request=handling_request %}
+{% endblock under_footer %}

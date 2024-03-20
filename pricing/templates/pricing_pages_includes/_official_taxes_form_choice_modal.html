@@ -1,0 +1,22 @@
+{% load static %}
+
+ <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body modal-choice-flex">
+    <a href="{% url 'admin:tax_rule_create' pk=metacontext.country.id type="country" %}" class = "btn btn-primary mt-2">Country</a>
+    <a href="{% url 'admin:tax_rule_create' pk=metacontext.country.id type="airport" %}" class = "btn btn-primary mt-2">Airport</a>
+    <a href="{% url 'admin:tax_rule_create' pk=metacontext.country.id type="regional" %}" class = "btn btn-primary mt-2">Regional</a>
+  </div>
+
+    <div class="modal-footer">
+        <button type="button" data-bs-dismiss="modal"
+                class="btn {{ metacontext.cancel_button_class|default:'btn-gray-200' }}">
+            Close
+        </button>
+
+    </div>
+
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>

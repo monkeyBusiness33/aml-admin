@@ -1,0 +1,34 @@
+{% load currency_uom_tags %}
+
+<div class="border-0 mb-3">
+  <div class="row">
+    <div class="col">
+      <div class="card mb-2 ms-2 me-2">
+        <div class="card-header border-bottom d-flex align-items-center justify-content-between p-2">
+          <h2 class="fs-6 fw-bold mx-auto my-0">Fuel Pricing</h2>
+        </div>
+        <div class="col pt-2 px-4 mb-2">
+          {% if fuel_price != None and fuel_price.amount != None %}
+            <table class="w-100">
+              <tbody>
+              <tr class="d-flex justify-content-between">
+                <td>
+                  {{ fuel_price.notes_icon|safe|default:'' }}<span>{{ fuel_price.fuel.name }},
+                  {% as_currency fuel_price.unit_price fuel_price.original_currency fuel_price.original_pricing_unit.currency_division_used 4 %}
+                  {% price_unit_repr fuel_price %}</span><br>
+                  {% if fuel_price.discount_applied %}
+                    <span class="discount-details">(Discount Applied = {{ fuel_price.discount_applied }})</span>
+                  {% endif %}
+                </td>
+                <td class="fw-bolder">{% as_currency fuel_price.amount results_row.currency %}</td>
+              </tr>
+              </tbody>
+            </table>
+          {% else %}
+            No fuel pricing found.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

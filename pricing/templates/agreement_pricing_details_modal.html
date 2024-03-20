@@ -1,0 +1,32 @@
+<div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i> {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+
+        <div class="col-12 col-xl-12">
+            {% include 'pricing_pages_includes/_agreement_pricing_details.html' with pricing=pricing %}
+        </div>
+
+        <div class="col-12 col-xl-12">
+            {% include 'pricing_pages_includes/_agreement_pricing_pricing.html' with pricing=pricing pricing_type=pricing_type %}
+        </div>
+
+        <div class="col-12 col-xl-12">
+            {% include 'pricing_pages_includes/_agreement_pricing_fees.html' with fuel_fees=fuel_fees %}
+        </div>
+
+        <div class="col-12 col-xl-12">
+            {% include 'pricing_pages_includes/_agreement_pricing_taxes.html' with pricing=pricing %}
+        </div>
+
+        {% if pricing.comment %}
+        <div class="col-12 col-xl-12">
+            {% include 'pricing_pages_includes/_agreement_pricing_comments.html' with pricing=pricing %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>

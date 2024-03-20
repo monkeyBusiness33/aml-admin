@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %} Handling Requests Calendar {% endblock %}
+
+{% block stylesheets %}
+    <link type="text/css" href="{% static 'assets/css/fullcalendar.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="card border-0 shadow">
+        <div id="handling_requests_calendar" class="p-3"></div>
+    </div>
+
+{% endblock content %}
+
+{% block javascripts %}
+
+    {% if request.app_mode == 'ops_portal' %}
+        <script type="text/javascript" charset="utf8">
+            handling_requests_json_url = "{% url 'admin:handling_requests_calendar_json' %}"
+            handling_requests_list_url = "{% url 'admin:handling_requests' %}"
+            handling_request_create_url = "{% if perms.handling.p_create %}{% url 'admin:handling_request_create' %}{% endif %}"
+            enable_assigned_to_me_filter = true
+        </script>
+    {% elif request.app_mode == 'dod_portal' %}
+        <script type="text/javascript" charset="utf8">
+            handling_requests_json_url = "{% url 'dod:handling_requests_calendar_json' %}"
+            handling_requests_list_url = "{% url 'dod:requests' %}"
+            handling_request_create_url = "{% url 'dod:request_create' %}"
+            enable_assigned_to_me_filter = {% if user.is_dod_planners_perms %}true{% else %}false{% endif %}
+        </script>
+    {% endif %}
+
+    <script type="text/javascript" charset="utf8" src="{% static 'assets/js/handling_requests_calendar.js' %}"></script>
+{% endblock javascripts %}

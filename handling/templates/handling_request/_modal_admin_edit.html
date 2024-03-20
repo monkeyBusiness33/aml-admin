@@ -1,0 +1,75 @@
+{% load static %}
+{{ form.media.css }}
+<link type="text/css" href="{% static 'assets/css/select2.css' %}" rel="stylesheet">
+{% for file_path in metacontext.css_files %}
+  <link type="text/css" href="{{ file_path }}" rel="stylesheet">
+{% endfor %}
+
+
+<form id="{{ metacontext.form_id }}" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="modal-header">
+    <h5 class="modal-title"><i class="fas {{ metacontext.icon }}"></i>
+      {% autoescape off %}{{ metacontext.title }}{% endautoescape %}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    {% include 'modal_form/info-text.html' with position='top' %}
+    {% include 'modal_form/body-top.html' %}
+
+    {% if form %}
+      <div class="row mb-3">
+        <div class="col-8">
+          {% include 'includes/_form_field.html' with field=form.arrival_date %}
+        </div>
+        <div class="col-4">
+          {% include 'includes/_form_field.html' with field=form.arrival_is_local_timezone %}
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-8">
+          {% include 'includes/_form_field.html' with field=form.departure_date %}
+        </div>
+        <div class="col-4">
+          {% include 'includes/_form_field.html' with field=form.departure_is_local_timezone %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          {% include 'includes/_form_field.html' with field=form.retain_fuel_order checkbox_left=True %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          {% include 'includes/_form_field.html' with field=form.confirm_ground_handling checkbox_left=True %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          {% include 'includes/_form_field.html' with field=form.confirm_all_services checkbox_left=True %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% include 'modal_form/info-text.html' with position='bottom' %}
+  </div>
+  {% include 'modal_form/footer.html' %}
+</form>
+
+{{ form.media.js }}
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/select2.js' %}"></script>
+<script type="text/javascript" charset="utf8" src="{% static 'assets/js/global.js' %}"></script>
+
+{% block javascripts %}
+  <script type="text/javascript" charset="utf8" src="{% static 'assets/js/flatpickr_bootstrap_modal.js' %}"></script>
+{% endblock javascripts %}
+
+{% for script in metacontext.js_scripts %}
+  <script type="text/javascript" charset="utf8" src="{{ script }}"></script>
+{% endfor %}

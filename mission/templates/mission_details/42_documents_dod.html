@@ -1,0 +1,37 @@
+{% with mission.attached_documents.exists as documents_exists %}
+  <div class="card border-0 shadow mb-2">
+    <div
+      class="card-header p-1 bg-primary text-white {% if not documents_exists %}card-header-empty-section{% endif %}">
+      <div class="row align-items-center">
+
+        <div class="col">
+          <h2 class="fs-6 ps-2 fw-bold mb-0">Mission Documents</h2>
+        </div>
+
+        <div class="col text-end">
+          <button class="modal_button_validation btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                  type="button" name="button"
+                  data-form-url="{% url 'dod:missions_documents_create' mission.pk %}">
+            <i class="fas fa-file-upload"></i>Create Document
+          </button>
+        </div>
+
+      </div>
+    </div>
+    {% if documents_exists %}
+      <div>
+
+        <div id="mission_documents_list"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+          <div class="table-responsive ajax-datatable-container pt-0">
+            <table id="mission_documents_list_datatable"
+                   class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                   data-datatable-url="{% url 'dod:missions_documents_ajax' mission.pk %}">
+            </table>
+          </div>
+        </div>
+
+      </div>
+    {% endif %}
+  </div>
+{% endwith %}

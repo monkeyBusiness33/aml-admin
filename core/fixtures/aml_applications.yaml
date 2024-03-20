@@ -1,0 +1,10 @@
+- model: core.amlapplication
+  pk: 1
+  fields:
+    name: "DoD Flight Crew"
+    code: "dod_flightcrew"
+- model: core.amlapplication
+  pk: 2
+  fields:
+    name: "DoD Planners"
+    code: "dod_planners"

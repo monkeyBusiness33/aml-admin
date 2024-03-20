@@ -1,0 +1,33 @@
+<div class="card border-0 shadow mb-4">
+    <div class="card-header p-1 bg-primary text-white {% if not person.travel_documents.exists %}card-header-empty-section{% endif %}">
+        <div class="row align-items-center">
+
+            <div class="col">
+                <h2 class="fs-6 ps-2 fw-bold mb-0">Travel Documents</h2>
+            </div>
+
+            <div class="col text-end">
+                <button class="modal_button_validation bs-modal btn btn-sm btn-link p-0 pe-1 card-header-text-action-button"
+                        type="button" name="button" data-modal="#modal-lg"
+                        data-form-url="{% url 'admin:person_travel_document_create' person.pk %}"
+                        {% if not perms.core.p_contacts_update %} disabled {% endif %}>Add Document</button>
+            </div>
+
+        </div>
+    </div>
+    {% if person.travel_documents.exists %}
+    <div class="{{ person.details.operational_status.text_color }}">
+
+        <div id="person_travel_documents_list"
+             class="card {{ metacontext.page_css_class }} compact_datatable datatable_auto_compact_div">
+            <div class="table-responsive ajax-datatable-container pt-0">
+                <table id="person_travel_documents_list_datatable" width="100%"
+                       class="table table-flush table-hover ajax-datatable align-middle nowrap datatable_auto_compact"
+                    data-datatable-url="{% url 'admin:person_travel_documents_ajax' person.pk %}">
+                </table>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+</div>

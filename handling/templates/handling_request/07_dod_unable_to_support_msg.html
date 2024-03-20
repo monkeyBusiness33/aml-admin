@@ -1,0 +1,30 @@
+{% if request.app_mode == 'dod_portal' and handling_request.is_unable_to_support %}
+    <div class="row">
+        <div class="col">
+            <span class="badge bg-yellow-200 text-body w-100 fw-bold text-start p-3 mb-3" style="white-space:inherit;">
+            {% if not handling_request.handling_agent %}
+                <p class="fw-bold mb-0">
+                AML Global is unable to support this servicing & fueling request for the following reason: {{ handling_request.decline_reason }}.
+                <br>
+                Kind regards, the AML Global Team.
+                </p>
+            {% else %}
+                <p class="fw-bold">
+                AML Global is unable to support this servicing & fueling request for the following reason: {{ handling_request.decline_reason }}.<br>
+                Here are the contact details for the ground handler at this location so that you may liaise directly with them:
+                <br><br>
+
+
+                Ground Handler: {{ handling_request.handling_agent.details.registered_name }}<br>
+                Contact Phone: {{ handling_request.handling_agent.handler_details.contact_phone|default:'N/A' }}<br>
+                Contact Email: {{ handling_request.handling_agent.handler_details.contact_email|default:'N/A' }}<br>
+                Operations Phone: {{ handling_request.handling_agent.handler_details.ops_phone|default:'N/A' }}<br>
+                Operations Email: {{ handling_request.handling_agent.handler_details.ops_email|default:'N/A' }}<br>
+                <br>
+
+                Kind regards, the AML Global Team.</p>
+            {% endif %}
+            </span>
+        </div>
+    </div>
+{% endif %}
